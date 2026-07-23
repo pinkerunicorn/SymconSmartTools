@@ -1,0 +1,3 @@
+[submodule "SmartLog/libs/shared"]
+	path = SmartLog/libs/shared
+	url = z:/Code/Symcon/SymconSharedLibs

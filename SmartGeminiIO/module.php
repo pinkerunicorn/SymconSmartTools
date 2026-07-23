@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../SmartLog/libs/Trait_SmartLog.php';
+require_once __DIR__ . '/../SmartLog/libs/shared/Trait_SmartLog.php';
 
 /**
  * SmartGeminiIO — Zentraler Gemini API Client für alle IP-Symcon KI-Module.
