@@ -57,11 +57,9 @@ class SmartLog extends IPSModuleStrict
         }
 
         // Variablen
-        $this->RegisterVariableInteger('EntryCount', 'Log-Einträge', '', 1);
-        IPS_SetIcon($this->GetIDForIdent('EntryCount'), 'Information');
+        $this->RegisterVariableInteger('EntryCount', 'Log-Einträge', ['ICON' => 'Information'], 1);
 
-        $this->RegisterVariableString('LastEntry', 'Letzter Eintrag', '', 2);
-        IPS_SetIcon($this->GetIDForIdent('LastEntry'), 'Information');
+        $this->RegisterVariableString('LastEntry', 'Letzter Eintrag', ['ICON' => 'Information'], 2);
 
         // Timer für Auto-Refresh
         $this->RegisterTimer('VisualisierungAktualisieren', 0, 'SLOG_AktualisierenVisualisierung($_IPS[\'TARGET\']);');

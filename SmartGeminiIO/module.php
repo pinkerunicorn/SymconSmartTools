@@ -34,20 +34,11 @@ class SmartGeminiIO extends IPSModuleStrict
         $this->RegisterPropertyInteger('TimeoutSeconds', 30);
 
         // Statistik & Status (intern, nicht primär für Webfront)
-        $this->RegisterVariableInteger('TotalRequests', 'Gesamt-Anfragen', '', 1);
-        IPS_SetIcon($this->GetIDForIdent('TotalRequests'), 'Information');
-
-        $this->RegisterVariableInteger('SuccessfulRequests', 'Erfolgreiche Anfragen', '', 2);
-        IPS_SetIcon($this->GetIDForIdent('SuccessfulRequests'), 'Ok');
-
-        $this->RegisterVariableInteger('FailedRequests', 'Fehlgeschlagene Anfragen', '', 3);
-        IPS_SetIcon($this->GetIDForIdent('FailedRequests'), 'Warning');
-
-        $this->RegisterVariableString('LastError', 'Letzter Fehler', '', 4);
-        IPS_SetIcon($this->GetIDForIdent('LastError'), 'Warning');
-
-        $this->RegisterVariableString('LastModel', 'Letztes Modell', '', 5);
-        IPS_SetIcon($this->GetIDForIdent('LastModel'), 'Information');
+        $this->RegisterVariableInteger('TotalRequests', 'Gesamt-Anfragen', ['ICON' => 'Information'], 1);
+        $this->RegisterVariableInteger('SuccessfulRequests', 'Erfolgreiche Anfragen', ['ICON' => 'Ok'], 2);
+        $this->RegisterVariableInteger('FailedRequests', 'Fehlgeschlagene Anfragen', ['ICON' => 'Warning'], 3);
+        $this->RegisterVariableString('LastError', 'Letzter Fehler', ['ICON' => 'Warning'], 4);
+        $this->RegisterVariableString('LastModel', 'Letztes Modell', ['ICON' => 'Information'], 5);
     }
 
     public function ApplyChanges(): void
