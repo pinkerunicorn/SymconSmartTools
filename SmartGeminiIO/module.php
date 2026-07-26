@@ -30,7 +30,7 @@ class SmartGeminiIO extends IPSModuleStrict
 
         // Konfiguration
         $this->RegisterPropertyString('ApiKey', '');
-        $this->RegisterPropertyString('Model', 'gemini-2.5-flash');
+        $this->RegisterPropertyString('Model', 'gemini-3.6-flash');
         $this->RegisterPropertyInteger('TimeoutSeconds', 30);
 
         // Statistik & Status (intern, nicht primär für Webfront)
@@ -269,7 +269,7 @@ class SmartGeminiIO extends IPSModuleStrict
                 {
                     "type": "ValidationTextBox",
                     "name": "Model",
-                    "caption": "Modell (z.B. gemini-2.5-flash)"
+                    "caption": "Modell (z.B. gemini-3.6-flash)"
                 }
             ]
         },
@@ -282,7 +282,7 @@ class SmartGeminiIO extends IPSModuleStrict
         },
         {
             "type": "Label",
-            "caption": "Tipp: Empfohlene Modelle:\n- gemini-2.5-flash (schnell, kosteneffizient)\n- gemini-2.5-pro (höchste Qualität, langsamer)"
+            "caption": "Tipp: Empfohlene Modelle:\n- gemini-3.6-flash (schnell, kosteneffizient)\n- gemini-2.5-flash (schnell, bewährt)\n- gemini-2.5-pro (höchste Qualität, langsamer)"
         }
     ],
     "actions": [

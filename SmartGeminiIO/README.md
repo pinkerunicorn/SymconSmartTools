@@ -30,7 +30,7 @@ SmartGeminiIO ist ein Type 1 I/O Modul für die Google Gemini API, das als zentr
 ### 4. Konfiguration
 
 * **ApiKey:** Der Google Gemini API-Key für die Authentifizierung.
-* **Model:** Das zu verwendende Modell (z.B. gemini-2.5-flash). Empfohlen: gemini-2.5-flash oder gemini-2.5-pro.
+* **Model:** Das zu verwendende Modell (z.B. gemini-3.6-flash). Empfohlen: gemini-3.6-flash, gemini-2.5-flash oder gemini-2.5-pro.
 * **TimeoutSeconds:** Timeout für API-Anfragen in Sekunden (Standard: 30, max: 120).
 
 ### 5. Statusvariablen und Profile
