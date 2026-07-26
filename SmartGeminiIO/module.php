@@ -71,6 +71,18 @@ class SmartGeminiIO extends IPSModuleStrict
         string $schemaJson = '',
         float  $temperature = 0.1
     ): string {
+        // Defensive: Caller könnten NULL übergeben (z.B. aus generierten Scripts)
+        $userPrompt        = $userPrompt ?? '';
+        $systemInstruction = $systemInstruction ?? '';
+        $schemaJson        = $schemaJson ?? '';
+
+        if (empty(trim($userPrompt))) {
+            $this->SLog('ERROR', 'Query() abgebrochen.', 'Grund: userPrompt ist leer oder null');
+            $this->SetValue('LastError', 'Leerer Prompt übergeben.');
+            $this->SetValue('FailedRequests', $this->GetValue('FailedRequests') + 1);
+            return '';
+        }
+
         $apiKey  = trim($this->ReadPropertyString('ApiKey'));
         $model   = trim($this->ReadPropertyString('Model'));
         $timeout = $this->ReadPropertyInteger('TimeoutSeconds');
@@ -181,6 +193,13 @@ class SmartGeminiIO extends IPSModuleStrict
 
         // Erfolgreiche Antwort parsen
         $data = json_decode($rawResponse, true);
+        if (!is_array($data)) {
+            $errorMsg = 'Gemini API: Antwort ist kein gültiges JSON. (json_last_error: ' . json_last_error_msg() . ')';
+            $this->SetValue('LastError', $errorMsg);
+            $this->SetValue('FailedRequests', $this->GetValue('FailedRequests') + 1);
+            $this->SLog('ERROR', 'Gemini API Fehler.', $errorMsg);
+            return '';
+        }
         $extractedText = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
 
         if (empty($extractedText)) {
@@ -244,8 +263,12 @@ class SmartGeminiIO extends IPSModuleStrict
 
     protected function LogMessage(string $Message, int $Type): bool
     {
-        $this->SLog('INFO', $Message);
-        IPS_LogMessage('SmartVillaKunterbunt', 'SmartGeminiIO: ' . $Message);
+        $level = match(true) {
+            $Type >= IS_EBASE  => 'ERROR',
+            $Type >= IS_WBASE  => 'WARNING',
+            default            => 'INFO',
+        };
+        $this->SLog($level, $Message);
         return true;
     }
 
