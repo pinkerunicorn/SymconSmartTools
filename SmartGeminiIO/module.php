@@ -34,11 +34,11 @@ class SmartGeminiIO extends IPSModuleStrict
         $this->RegisterPropertyInteger('TimeoutSeconds', 30);
 
         // Statistik & Status (intern, nicht primär für Webfront)
-        $this->RegisterVariableInteger('TotalRequests', 'Gesamt-Anfragen', ['ICON' => 'Information'], 1);
-        $this->RegisterVariableInteger('SuccessfulRequests', 'Erfolgreiche Anfragen', ['ICON' => 'Ok'], 2);
-        $this->RegisterVariableInteger('FailedRequests', 'Fehlgeschlagene Anfragen', ['ICON' => 'Warning'], 3);
-        $this->RegisterVariableString('LastError', 'Letzter Fehler', ['ICON' => 'Warning'], 4);
-        $this->RegisterVariableString('LastModel', 'Letztes Modell', ['ICON' => 'Information'], 5);
+        $this->RegisterVariableInteger('TotalRequests', 'Gesamt-Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Information'], 1);
+        $this->RegisterVariableInteger('SuccessfulRequests', 'Erfolgreiche Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Ok'], 2);
+        $this->RegisterVariableInteger('FailedRequests', 'Fehlgeschlagene Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Warning'], 3);
+        $this->RegisterVariableString('LastError', 'Letzter Fehler', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Warning'], 4);
+        $this->RegisterVariableString('LastModel', 'Letztes Modell', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Information'], 5);
     }
 
     public function ApplyChanges(): void
