@@ -264,9 +264,12 @@ class SmartLog extends IPSModuleStrict
 
     private function leseLogDaten(): array
     {
-        $json = $this->ReadAttributeString(self::ATTR_LOG_DATA);
+        $json = @$this->ReadAttributeString(self::ATTR_LOG_DATA);
+        if ($json === false || $json === null || $json === '') {
+            return [];
+        }
         try {
-            $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode((string)$json, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $e) {
             IPS_LogMessage('SmartLog', 'JSON-Fehler: ' . $e->getMessage());
             $data = [];
@@ -276,20 +279,25 @@ class SmartLog extends IPSModuleStrict
 
     private function leseStatus(): array
     {
-        $json = $this->ReadAttributeString(self::ATTR_STATUS);
-        try {
-            $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
-            IPS_LogMessage('SmartLog', 'JSON-Fehler: ' . $e->getMessage());
-            $data = [];
-        }
-        return is_array($data) ? $data : [
+        $defaultStatus = [
             'seite' => 0,
             'maxZeilen' => 30,
             'levelFilter' => [],
             'textFilter' => '',
             'sourceFilter' => [],
         ];
+        
+        $json = @$this->ReadAttributeString(self::ATTR_STATUS);
+        if ($json === false || $json === null || $json === '') {
+            return $defaultStatus;
+        }
+        try {
+            $data = json_decode((string)$json, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            IPS_LogMessage('SmartLog', 'JSON-Fehler: ' . $e->getMessage());
+            $data = [];
+        }
+        return is_array($data) && !empty($data) ? $data : $defaultStatus;
     }
 
     private function schreibeStatus(array $status): void
