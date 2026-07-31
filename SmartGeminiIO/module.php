@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../SmartLog/libs/Trait_SmartLog.php';
 require_once __DIR__ . '/../libs/Trait_SmartHttp.php';
+require_once __DIR__ . '/../libs/Trait_DeviceAvailability.php';
 
 /**
  * SmartGeminiIO — Zentraler Gemini API Client für alle IP-Symcon KI-Module.
@@ -23,12 +24,16 @@ class SmartGeminiIO extends IPSModuleStrict
 {
     use SmartLog_Trait;
     use SmartHttp_Trait;
+    use DeviceAvailability_Trait;
     // Gemini API Basis-URL (v1beta für responseSchema-Support)
     private const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
     public function Create(): void
     {
         parent::Create();
+
+        $this->RegisterPropertyInteger('AvailabilityAlarmPriority', 0);
+        $this->DA_RegisterAvailability(900);
 
         // Konfiguration
         $this->RegisterPropertyString('ApiKey', '');
@@ -46,6 +51,8 @@ class SmartGeminiIO extends IPSModuleStrict
     public function ApplyChanges(): void
     {
         parent::ApplyChanges();
+        
+        $this->DA_ApplyPresentation();
 
         if (empty($this->ReadPropertyString('ApiKey'))) {
             $this->SetStatus(104); // IS_INACTIVE
@@ -158,6 +165,7 @@ class SmartGeminiIO extends IPSModuleStrict
             $errorMsg = "Gemini API Fehler nach $maxRetries Versuchen.";
             $this->SetValue('LastError', $errorMsg);
             $this->SetValue('FailedRequests', $this->GetValue('FailedRequests') + 1);
+            $this->DA_SetAvailable(false, $errorMsg);
             return '';
         }
         $extractedText = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
@@ -172,6 +180,7 @@ class SmartGeminiIO extends IPSModuleStrict
 
         $this->SetValue('LastError', '');
         $this->SetValue('SuccessfulRequests', $this->GetValue('SuccessfulRequests') + 1);
+        $this->DA_SetAvailable(true);
         $this->SLog('INFO', 'Gemini API erfolgreich abgefragt.', "Modell: $model | Prompt-Länge: " . strlen($userPrompt));
 
         return $extractedText;
@@ -282,7 +291,11 @@ class SmartGeminiIO extends IPSModuleStrict
     ],
     "status": [
         {"code": 102, "icon": "active",   "caption": "Bereit — API-Key konfiguriert."},
-        {"code": 104, "icon": "inactive", "caption": "Kein API-Key konfiguriert."}
+        {"code": 104, "icon": "inactive", "caption": "Kein API-Key konfiguriert."},
+        { "code": 201, "icon": "error", "caption": "Verbindungsfehler" },
+        { "code": 202, "icon": "error", "caption": "API Fehler" },
+        { "code": 203, "icon": "error", "caption": "Rate Limit erreicht" },
+        { "code": 204, "icon": "error", "caption": "Unbekannter Fehler" }
     ]
 }
 EOT;
