@@ -32,7 +32,6 @@ class SmartGeminiIO extends IPSModuleStrict
     {
         parent::Create();
 
-        $this->RegisterPropertyInteger('AvailabilityAlarmPriority', 0);
         $this->DA_RegisterAvailability(900);
 
         // Konfiguration
