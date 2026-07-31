@@ -2,8 +2,8 @@
     "id": "{4C8B2A6D-9E3F-4A7B-8C5D-1F6E2A3B7C4D}",
     "name": "Smart Gemini IO",
     "type": 1,
-    "vendor": "Florian Graßinger",
-    "url": "https://github.com/pinkerunicorn/",
+    "vendor": "Florian Gra\u00dfinger",
+    "url": "https://github.com/pinkerunicorn/SymconSmartTools/tree/main/SmartGeminiIO",
     "aliases": [
         "Smart Gemini IO"
     ],
@@ -11,5 +11,5 @@
     "childRequirements": [],
     "implemented": [],
     "prefix": "GIO",
-    "author": "Florian Graßinger"
+    "author": "Florian Gra\u00dfinger"
 }

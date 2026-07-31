@@ -2,7 +2,7 @@
     "id": "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}",
     "name": "Smart Log",
     "type": 3,
-    "vendor": "Florian Graßinger",
+    "vendor": "Florian Gra\u00dfinger",
     "aliases": [
         "Smart Log"
     ],
@@ -10,6 +10,6 @@
     "childRequirements": [],
     "implemented": [],
     "prefix": "SLOG",
-    "author": "Florian Graßinger",
-    "url": "https://github.com/pinkerunicorn/"
+    "author": "Florian Gra\u00dfinger",
+    "url": "https://github.com/pinkerunicorn/SymconSmartTools/tree/main/SmartLog"
 }
