@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../SmartLog/libs/Trait_SmartLog.php';
+require_once __DIR__ . '/../libs/Trait_SmartHttp.php';
 
 /**
  * SmartGeminiIO — Zentraler Gemini API Client für alle IP-Symcon KI-Module.
@@ -21,6 +22,7 @@ require_once __DIR__ . '/../SmartLog/libs/Trait_SmartLog.php';
 class SmartGeminiIO extends IPSModuleStrict
 {
     use SmartLog_Trait;
+    use SmartHttp_Trait;
     // Gemini API Basis-URL (v1beta für responseSchema-Support)
     private const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
@@ -135,69 +137,27 @@ class SmartGeminiIO extends IPSModuleStrict
         $this->SetValue('TotalRequests', $this->GetValue('TotalRequests') + 1);
         $this->SetValue('LastModel', $model);
 
-        // HTTP POST via cURL (synchron)
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json'
-        ]);
-
+        // HTTP POST via HttpRequest (synchron)
         $maxRetries = 2;
         $attempt = 0;
-        $rawResponse = false;
-        $httpCode = 0;
-        $curlError = '';
+        $data = null;
 
         do {
-            $rawResponse = curl_exec($ch);
-            if ($rawResponse === false) {
-                $curlError = curl_error($ch);
-                $this->SLog('WARNING', 'API-Anfrage fehlgeschlagen, Wiederholungsversuch...', 'Versuch: ' . ($attempt + 1) . ' | Fehler: ' . $curlError);
-                $attempt++;
-                if ($attempt < $maxRetries) {
-                    usleep(500000); // 500ms warten
-                }
-                continue;
+            $data = $this->HttpRequest($url, 'POST', [], $payload, $timeout);
+            if ($data !== null) {
+                break; // Erfolg
             }
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if ($httpCode !== 200) {
-                $this->SLog('WARNING', 'API-Fehlercode erhalten, Wiederholungsversuch...', 'Versuch: ' . ($attempt + 1) . ' | HTTP: ' . $httpCode);
-                $attempt++;
-                if ($attempt < $maxRetries) usleep(500000);
-                continue;
+            
+            $attempt++;
+            if ($attempt < $maxRetries) {
+                usleep(500000); // 500ms warten
             }
-            break; // Erfolg
         } while ($attempt < $maxRetries);
 
-        curl_close($ch);
-
-        if ($rawResponse === false || $httpCode !== 200) {
-            $errorMsg = "Gemini API Fehler (HTTP $httpCode)";
-            if ($rawResponse === false) {
-                $errorMsg .= ': cURL Error - ' . $curlError;
-            } else {
-                $errData = json_decode($rawResponse, true);
-                if (isset($errData['error']['message'])) {
-                    $errorMsg .= ': ' . $errData['error']['message'];
-                }
-            }
+        if ($data === null) {
+            $errorMsg = "Gemini API Fehler nach $maxRetries Versuchen.";
             $this->SetValue('LastError', $errorMsg);
             $this->SetValue('FailedRequests', $this->GetValue('FailedRequests') + 1);
-            $this->SLog('ERROR', 'Gemini API Fehler.', "Grund: $errorMsg");
-            return '';
-        }
-
-        // Erfolgreiche Antwort parsen
-        $data = json_decode($rawResponse, true);
-        if (!is_array($data)) {
-            $errorMsg = 'Gemini API: Antwort ist kein gültiges JSON. (json_last_error: ' . json_last_error_msg() . ')';
-            $this->SetValue('LastError', $errorMsg);
-            $this->SetValue('FailedRequests', $this->GetValue('FailedRequests') + 1);
-            $this->SLog('ERROR', 'Gemini API Fehler.', $errorMsg);
             return '';
         }
         $extractedText = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';

@@ -27,7 +27,7 @@ if (!trait_exists('SmartHttp_Trait')) {
          * @param int $timeout Timeout in Sekunden
          * @return array|null Gibt das JSON-dekodierte Array zurück oder null bei Fehlern.
          */
-        protected function HttpRequest(string $url, string $method = 'GET', array $headers = [], $payload = null, int $timeout = 5): ?array
+        protected function HttpRequest(string $url, string $method = 'GET', array $headers = [], $payload = null, int $timeout = 5, bool $expectJson = true): ?array
         {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -75,6 +75,10 @@ if (!trait_exists('SmartHttp_Trait')) {
 
             if (trim((string)$response) === '') {
                 return [];
+            }
+
+            if (!$expectJson) {
+                return ['response' => $response];
             }
 
             $data = json_decode($response, true);
