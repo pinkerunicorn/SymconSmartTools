@@ -6,7 +6,7 @@ declare(strict_types=1);
  * SmartLog Trait — Einbinden in jedes Modul für zentrales Logging.
  *
  * Verwendung:
- *   require_once __DIR__ . '/../SmartLog/libs/Trait_SmartLog.php';
+ *   require_once __DIR__ . '/../libs/Trait_SmartLog.php';
  *   class MeinModul extends IPSModuleStrict {
  *       use SmartLog_Trait;
  *       ...
