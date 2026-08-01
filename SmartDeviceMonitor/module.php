@@ -214,22 +214,24 @@ EOT;
             if (!IPS_VariableExists($vid)) continue;
 
             $obj = IPS_GetObject($vid);
-            $parentObj = IPS_GetObject($obj['ParentID']);
-            $deviceName = $parentObj['ObjectName'];
-            
-            $grandParentId = $parentObj['ParentID'];
-            if ($grandParentId > 0) {
-                $grandParentName = IPS_GetName($grandParentId);
-                // Oft heißt der Parent einfach nur "Geräteinformationen" oder "Device"
-                // Deswegen hängen wir den übergeordneten Namen (das eigentliche Gerät) davor an
-                if (!in_array($grandParentName, ['IP-Symcon', 'Symcon'], true)) {
-                    $deviceName = $grandParentName . ' / ' . $deviceName;
-                }
-            }
-
             $varName = $obj['ObjectName'];
             $ident = strtoupper($obj['ObjectIdent']);
             $val = GetValue($vid);
+            
+            // Komplette Pfad-Hierarchie aus IP-Symcon holen, um maximale Klarheit zu schaffen
+            $fullLoc = IPS_GetLocation($vid);
+            // fullLoc sieht z.B. so aus: "Smarthome \ Erdgeschoss \ Wohnzimmer \ Thermostat \ Geräteinformationen \ Batterie"
+            $pathParts = explode('\\', $fullLoc);
+            // Letztes Element (den Variablen-Namen selbst) entfernen
+            array_pop($pathParts);
+            
+            // Wenn der Pfad extrem lang ist, schneiden wir die obersten Level ab (z.B. Smarthome \ Erdgeschoss)
+            // Wir behalten maximal die letzten 3 Ebenen des Geräts
+            if (count($pathParts) > 3) {
+                $pathParts = array_slice($pathParts, -3);
+            }
+            
+            $deviceName = trim(implode(' / ', $pathParts));
             
             $var = IPS_GetVariable($vid);
             $profile = $var['VariableCustomProfile'] !== '' ? $var['VariableCustomProfile'] : $var['VariableProfile'];
