@@ -187,7 +187,7 @@ EOT;
         $this->CheckHealth(false);
     }
 
-    public function CheckHealth(bool $triggerNotification = false): void
+        public function CheckHealth(bool $triggerNotification = false): void
     {
         $threshold = $this->ReadPropertyInteger('LowBatteryThreshold');
         $lowBatteries = [];
@@ -195,10 +195,21 @@ EOT;
         $htmlRows = [];
 
         $varIDs = IPS_GetVariableList();
-        foreach ($varIDs as $vid) {
-            if (!IPS_VariableExists($vid)) {
-                continue;
+        
+        // Custom Variables laden
+        $customVars = [];
+        $customJson = $this->ReadPropertyString('CustomVariables');
+        $customList = json_decode($customJson, true);
+        if (is_array($customList)) {
+            foreach ($customList as $item) {
+                if (isset($item['VariableID'])) {
+                    $customVars[] = (int)$item['VariableID'];
+                }
             }
+        }
+
+        foreach ($varIDs as $vid) {
+            if (!IPS_VariableExists($vid)) continue;
 
             $obj = IPS_GetObject($vid);
             $parentObj = IPS_GetObject($obj['ParentID']);
@@ -206,35 +217,84 @@ EOT;
             $varName = $obj['ObjectName'];
             $ident = strtoupper($obj['ObjectIdent']);
             $val = GetValue($vid);
+            
+            $var = IPS_GetVariable($vid);
+            $profile = $var['VariableCustomProfile'] !== '' ? $var['VariableCustomProfile'] : $var['VariableProfile'];
 
+            $isMonitored = false;
             $statusText = 'OK';
             $statusColor = '#00FF00';
-
-            if (in_array($ident, ['LOWBAT', 'LOW_BAT', 'BATTERY_STATE'], true) && $val === true) {
-                $lowBatteries[] = "$deviceName ($varName)";
-                $statusText = 'BATTERIE SCHWACH';
-                $statusColor = '#FF0000';
-            } elseif ($ident === 'OPERATINGVOLTAGE' && is_numeric($val) && $val < $threshold) {
-                $lowBatteries[] = "$deviceName ($val V)";
-                $statusText = "SPANNUNG NIEDRIG ($val V)";
-                $statusColor = '#FF0000';
-            } elseif (in_array($ident, ['BATTERY', 'BATTERY_LEVEL'], true) && is_numeric($val) && $val < $threshold) {
-                $lowBatteries[] = "$deviceName ($val %)";
-                $statusText = "BATTERIE NIEDRIG ($val %)";
-                $statusColor = '#FF0000';
+            
+            // Ist es manuell hinzugefügt?
+            if (in_array($vid, $customVars, true)) {
+                $isMonitored = true;
+                // Bei manuellen Variablen versuchen wir zu raten
+                if (is_bool($val)) {
+                    if ($val === true) {
+                        $statusText = 'AKTIV / OFFLINE';
+                        $statusColor = '#FF9900';
+                    } else {
+                        $statusText = 'INAKTIV / ONLINE';
+                    }
+                } else {
+                    $statusText = (string)$val;
+                    $statusColor = '#FFFFFF';
+                }
             }
 
-            if (in_array($ident, ['UNREACH', 'STICKY_UNREACH', 'OFFLINE'], true) && $val === true) {
-                $offlineDevices[] = "$deviceName ($varName)";
-                $statusText = 'OFFLINE';
-                $statusColor = '#FF9900';
-            } elseif ($ident === 'DEVICEAVAILABLE' && $val === false) {
-                $offlineDevices[] = "$deviceName (Offline)";
-                $statusText = 'OFFLINE';
-                $statusColor = '#FF9900';
+            // Battery check
+            if (in_array($ident, ['LOWBAT', 'LOW_BAT', 'BATTERY_STATE'], true)) {
+                $isMonitored = true;
+                if ($val === true) {
+                    $lowBatteries[] = "$deviceName ($varName)";
+                    $statusText = 'BATTERIE SCHWACH';
+                    $statusColor = '#FF0000';
+                } else {
+                    $statusText = 'BATTERIE OK';
+                }
+            } elseif ($ident === 'OPERATINGVOLTAGE') {
+                $isMonitored = true;
+                if (is_numeric($val) && $val < $threshold) {
+                    $lowBatteries[] = "$deviceName ($val V)";
+                    $statusText = "SPANNUNG NIEDRIG ($val V)";
+                    $statusColor = '#FF0000';
+                } else {
+                    $statusText = "SPANNUNG OK (" . (is_numeric($val) ? "$val V" : $val) . ")";
+                }
+            } elseif (in_array($ident, ['BATTERY', 'BATTERY_LEVEL'], true) || ($profile !== '' && (stripos($profile, 'battery') !== false || stripos($profile, 'batterie') !== false))) {
+                $isMonitored = true;
+                if (is_numeric($val) && $val < $threshold) {
+                    $lowBatteries[] = "$deviceName ($val %)";
+                    $statusText = "BATTERIE NIEDRIG ($val %)";
+                    $statusColor = '#FF0000';
+                } else {
+                    $statusText = "BATTERIE OK (" . (is_numeric($val) ? "$val %" : (is_bool($val) ? ($val ? 'Voll' : 'Leer') : $val)) . ")";
+                }
             }
 
-            if ($statusText !== 'OK') {
+            // Offline check
+            if (in_array($ident, ['UNREACH', 'STICKY_UNREACH', 'OFFLINE'], true)) {
+                $isMonitored = true;
+                if ($val === true) {
+                    $offlineDevices[] = "$deviceName ($varName)";
+                    $statusText = 'OFFLINE';
+                    $statusColor = '#FF9900';
+                } else {
+                    $statusText = 'ONLINE';
+                }
+            } elseif ($ident === 'DEVICEAVAILABLE') {
+                $isMonitored = true;
+                if ($val === false) {
+                    $offlineDevices[] = "$deviceName ($varName)";
+                    $statusText = 'OFFLINE';
+                    $statusColor = '#FF9900';
+                } else {
+                    $statusText = 'ONLINE';
+                }
+            }
+
+            // Build HTML table row for ALL monitored devices
+            if ($isMonitored) {
                 $htmlRows[] = "<tr><td><b>$deviceName</b></td><td>$varName</td><td style='color:$statusColor;'><b>$statusText</b></td></tr>";
             }
         }
@@ -257,11 +317,11 @@ EOT;
         $this->SetValue('SummaryText', $text);
 
         $html = "<table style='width:100%; border-collapse:collapse;'>";
-        $html .= "<tr style='text-align:left;'><th>Gerät</th><th>Variable</th><th>Status</th></tr>";
+        $html .= "<tr style='text-align:left; border-bottom: 1px solid #555;'><th>Gerät</th><th>Variable</th><th>Status</th></tr>";
         if (count($htmlRows) > 0) {
             $html .= implode('', $htmlRows);
         } else {
-            $html .= "<tr><td colspan='3' style='color:#00FF00;'>Alle überwachten Geräte sind OK</td></tr>";
+            $html .= "<tr><td colspan='3' style='color:#00FF00;'>Keine Geräte zur Überwachung gefunden.</td></tr>";
         }
         $html .= "</table>";
         $this->SetValue('MonitoredListHTML', $html);
