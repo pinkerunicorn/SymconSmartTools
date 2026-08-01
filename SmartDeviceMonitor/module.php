@@ -7,9 +7,9 @@ require_once __DIR__ . '/../libs/Trait_DeviceAvailability.php';
 
 /**
  * SmartDeviceMonitor
- * Vollautomatischer Monitor für Batteriestände, Gerätestatus (Offline) und Updates.
+ * Vollautomatischer Monitor fÃ¼r BatteriestÃ¤nde, GerÃ¤testatus (Offline) und Updates.
  *
- * @author Florian Graßinger
+ * @author Florian GraÃŸinger
  * @url https://github.com/pinkerunicorn/SymconSmartTools/tree/main/SmartDeviceMonitor
  */
 class SmartDeviceMonitor extends IPSModuleStrict
@@ -35,7 +35,7 @@ class SmartDeviceMonitor extends IPSModuleStrict
             'ICON' => 'battery-10'
         ], 1);
 
-        $this->RegisterVariableInteger('OfflineDeviceCount', 'Offline Geräte', [
+        $this->RegisterVariableInteger('OfflineDeviceCount', 'Offline GerÃ¤te', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'ICON' => 'alert-triangle'
         ], 2);
@@ -45,7 +45,7 @@ class SmartDeviceMonitor extends IPSModuleStrict
             'ICON' => 'information'
         ], 100);
 
-        $this->RegisterVariableString('MonitoredListHTML', 'Überwachte Geräte (Übersicht)', [
+        $this->RegisterVariableString('MonitoredListHTML', 'Ãœberwachte GerÃ¤te (Ãœbersicht)', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'ICON' => 'list'
         ], 101);
@@ -128,7 +128,7 @@ class SmartDeviceMonitor extends IPSModuleStrict
         {
             "type": "List",
             "name": "CustomVariables",
-            "caption": "Zusätzliche / Manuelle Variablen",
+            "caption": "ZusÃ¤tzliche / Manuelle Variablen",
             "columns": [
                 {
                     "name": "VariableID",
@@ -144,7 +144,7 @@ class SmartDeviceMonitor extends IPSModuleStrict
     "actions": [
         {
             "type": "Button",
-            "caption": "Jetzt alle Batterien & Geräte scannen",
+            "caption": "Jetzt alle Batterien & GerÃ¤te scannen",
             "onClick": "SDM_UpdateMonitoredDevices($id);"
         }
     ]
@@ -165,7 +165,7 @@ EOT;
      */
     public function UpdateMonitoredDevices(): void
     {
-        $this->SLog('INFO', 'Starte automatischen Scan nach Batterien und Offline-Geräten...');
+        $this->SendDebug('Info', 'Starte automatischen Scan nach Batterien und Offline-GerÃ¤ten...');
 
         // Reset timer interval back to 24h after trigger
         $this->SetTimerInterval('DailyScanTimer', 86400 * 1000);
@@ -217,7 +217,7 @@ EOT;
             $this->RegisterMessage($vid, VM_UPDATE);
         }
 
-        $this->SLog('INFO', count($monitoredVars) . ' Variablen zur Überwachung registriert.');
+        $this->SendDebug('Info', count($monitoredVars) . ' Variablen zur Ãœberwachung registriert.');
 
         // Initial Health Check
         $this->CheckHealth(false);
@@ -292,19 +292,19 @@ EOT;
             $summary[] = "Batterien leer ($batCount): " . implode(', ', $lowBatteries);
         }
         if ($offCount > 0) {
-            $summary[] = "Offline Geräte ($offCount): " . implode(', ', $offlineDevices);
+            $summary[] = "Offline GerÃ¤te ($offCount): " . implode(', ', $offlineDevices);
         }
 
-        $text = count($summary) > 0 ? implode(' | ', $summary) : 'Alle Geräte betriebsbereit.';
+        $text = count($summary) > 0 ? implode(' | ', $summary) : 'Alle GerÃ¤te betriebsbereit.';
         $this->SetValue('SummaryText', $text);
 
         // Build HTML Overview
         $html = "<table style='width:100%; border-collapse:collapse;'>";
-        $html .= "<tr style='text-align:left;'><th>Gerät</th><th>Variable</th><th>Status</th></tr>";
+        $html .= "<tr style='text-align:left;'><th>GerÃ¤t</th><th>Variable</th><th>Status</th></tr>";
         if (count($htmlRows) > 0) {
             $html .= implode('', $htmlRows);
         } else {
-            $html .= "<tr><td colspan='3' style='color:#00FF00;'>Alle überwachten Geräte sind OK</td></tr>";
+            $html .= "<tr><td colspan='3' style='color:#00FF00;'>Alle Ã¼berwachten GerÃ¤te sind OK</td></tr>";
         }
         $html .= "</table>";
         $this->SetValue('MonitoredListHTML', $html);
@@ -314,7 +314,7 @@ EOT;
             $notifierId = $this->ReadPropertyInteger('TargetNotifier');
             if ($notifierId > 0 && @IPS_InstanceExists($notifierId)) {
                 $payload = json_encode([
-                    'Title' => 'Geräteüberwachung',
+                    'Title' => 'GerÃ¤teÃ¼berwachung',
                     'Message' => $text,
                     'Priority' => 1 // Warning
                 ]);
