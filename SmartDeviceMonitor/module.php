@@ -163,6 +163,10 @@ EOT;
     public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
     {
         if ($Message === VM_UPDATE) {
+            // Nur reagieren, wenn sich der Wert auch WIRKLICH geändert hat
+            if (isset($Data[1]) && $Data[1] === false) {
+                return;
+            }
             $this->CheckHealth(true);
         }
     }
@@ -426,7 +430,10 @@ EOT;
         }
 
         $text = count($summary) > 0 ? implode(' | ', $summary) : 'Alle Geräte betriebsbereit.';
+        $oldText = $this->GetValue('SummaryText');
         $this->SetValue('SummaryText', $text);
+        
+        $hasChanged = ($text !== $oldText);
 
         $buildTable = function($title, $rows) {
             $t = "<div style='margin-top: 10px; margin-bottom: 5px; padding-bottom: 2px; border-bottom: 1px solid #555; color: #ddd; font-weight: bold; text-transform: uppercase;'>$title</div>";
@@ -448,7 +455,7 @@ EOT;
 
         $this->SetValue('MonitoredListHTML', $html);
 
-        if ($triggerNotification && (count($lowBatteries) > 0 || count($offlineDevices) > 0)) {
+        if ($triggerNotification && $hasChanged && (count($lowBatteries) > 0 || count($offlineDevices) > 0)) {
             $notifierId = $this->ReadPropertyInteger('TargetNotifier');
             if ($notifierId > 0 && @IPS_InstanceExists($notifierId)) {
                 $payload = json_encode([
