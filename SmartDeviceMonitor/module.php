@@ -26,6 +26,8 @@ class SmartDeviceMonitor extends IPSModuleStrict
         $this->RegisterPropertyInteger('TargetNotifier', 0);
         $this->RegisterPropertyInteger('LowBatteryThreshold', 15);
         $this->RegisterPropertyString('CustomVariables', '[]');
+        $this->RegisterPropertyString('CustomBatteryVariables', '[]');
+        $this->RegisterPropertyString('CustomOfflineVariables', '[]');
 
         // Variablen (Status)
         $this->RegisterVariableInteger('LowBatteryCount', 'Schwache Batterien', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Battery'], 1);
@@ -103,8 +105,38 @@ HTML;
         },
         {
             "type": "List",
+            "name": "CustomBatteryVariables",
+            "caption": "Manuelle Variablen: Batterie",
+            "columns": [
+                {
+                    "name": "VariableID",
+                    "type": "SelectVariable",
+                    "caption": "Variable",
+                    "width": "100%"
+                }
+            ],
+            "add": true,
+            "delete": true
+        },
+        {
+            "type": "List",
+            "name": "CustomOfflineVariables",
+            "caption": "Manuelle Variablen: Erreichbarkeit (On/Offline)",
+            "columns": [
+                {
+                    "name": "VariableID",
+                    "type": "SelectVariable",
+                    "caption": "Variable",
+                    "width": "100%"
+                }
+            ],
+            "add": true,
+            "delete": true
+        },
+        {
+            "type": "List",
             "name": "CustomVariables",
-            "caption": "Zusätzliche / Manuelle Variablen",
+            "caption": "Manuelle Variablen: Sonstige",
             "columns": [
                 {
                     "name": "VariableID",
@@ -147,6 +179,7 @@ EOT;
         foreach ($varIDs as $vid) {
             $obj = IPS_GetObject($vid);
             $ident = strtoupper($obj['ObjectIdent']);
+            $varName = $obj['ObjectName'];
             $var = IPS_GetVariable($vid);
             $profile = $var['VariableCustomProfile'] !== '' ? $var['VariableCustomProfile'] : $var['VariableProfile'];
 
@@ -160,18 +193,27 @@ EOT;
                 continue;
             }
 
+            // Fallback: Name contains Batterie/Battery (e.g. "Batterie schwach")
+            if (stripos($varName, 'batterie') !== false || stripos($varName, 'battery') !== false || stripos($varName, 'lowbat') !== false) {
+                $monitoredVars[] = $vid;
+                continue;
+            }
+
             if (in_array($ident, ['UNREACH', 'STICKY_UNREACH', 'DEVICEAVAILABLE', 'OFFLINE'], true)) {
                 $monitoredVars[] = $vid;
                 continue;
             }
         }
 
-        $customJson = $this->ReadPropertyString('CustomVariables');
-        $customList = json_decode($customJson, true);
-        if (is_array($customList)) {
-            foreach ($customList as $item) {
-                if (isset($item['VariableID']) && IPS_VariableExists((int)$item['VariableID'])) {
-                    $monitoredVars[] = (int)$item['VariableID'];
+        $customLists = ['CustomVariables', 'CustomBatteryVariables', 'CustomOfflineVariables'];
+        foreach ($customLists as $propName) {
+            $customJson = $this->ReadPropertyString($propName);
+            $customList = json_decode($customJson, true);
+            if (is_array($customList)) {
+                foreach ($customList as $item) {
+                    if (isset($item['VariableID']) && IPS_VariableExists((int)$item['VariableID'])) {
+                        $monitoredVars[] = (int)$item['VariableID'];
+                    }
                 }
             }
         }
@@ -200,15 +242,26 @@ EOT;
         
         // Custom Variables laden
         $customVars = [];
-        $customJson = $this->ReadPropertyString('CustomVariables');
-        $customList = json_decode($customJson, true);
-        if (is_array($customList)) {
-            foreach ($customList as $item) {
-                if (isset($item['VariableID'])) {
-                    $customVars[] = (int)$item['VariableID'];
+        $customBatteryVars = [];
+        $customOfflineVars = [];
+        
+        $loadCustomList = function($propName) {
+            $list = [];
+            $json = $this->ReadPropertyString($propName);
+            $decoded = json_decode($json, true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $item) {
+                    if (isset($item['VariableID'])) {
+                        $list[] = (int)$item['VariableID'];
+                    }
                 }
             }
-        }
+            return $list;
+        };
+
+        $customVars = $loadCustomList('CustomVariables');
+        $customBatteryVars = $loadCustomList('CustomBatteryVariables');
+        $customOfflineVars = $loadCustomList('CustomOfflineVariables');
 
         foreach ($varIDs as $vid) {
             if (!IPS_VariableExists($vid)) continue;
@@ -242,7 +295,32 @@ EOT;
             $statusColor = '#00FF00';
             
             // Ist es manuell hinzugefügt?
-            if (in_array($vid, $customVars, true)) {
+            if (in_array($vid, $customBatteryVars, true)) {
+                $isMonitored = true;
+                $type = 'battery';
+                if ($val === true) {
+                    $lowBatteries[] = "$deviceName ($varName)";
+                    $statusText = 'BATTERIE SCHWACH';
+                    $statusColor = '#FF0000';
+                } else {
+                    $statusText = 'BATTERIE OK';
+                }
+            } elseif (in_array($vid, $customOfflineVars, true)) {
+                $isMonitored = true;
+                $type = 'offline';
+                if ($val === true || $val === false) { // Boolean handling
+                    // For typical Unreach variables, true = Offline. For DeviceAvailable, false = Offline.
+                    // Assuming standard Unreach format (true = fault):
+                    $isFault = ($val === true);
+                    if ($isFault) {
+                        $offlineDevices[] = "$deviceName ($varName)";
+                        $statusText = 'OFFLINE';
+                        $statusColor = '#FF9900';
+                    } else {
+                        $statusText = 'ONLINE';
+                    }
+                }
+            } elseif (in_array($vid, $customVars, true)) {
                 $isMonitored = true;
                 $type = 'custom';
                 // Bei manuellen Variablen versuchen wir zu raten
@@ -259,8 +337,8 @@ EOT;
                 }
             }
 
-            // Battery check
-            if (in_array($ident, ['LOWBAT', 'LOW_BAT', 'BATTERY_STATE'], true)) {
+            // Battery check (Auto-Detect)
+            if (!$isMonitored && in_array($ident, ['LOWBAT', 'LOW_BAT', 'BATTERY_STATE'], true)) {
                 $isMonitored = true;
                 $type = 'battery';
                 if ($val === true) {
@@ -280,7 +358,7 @@ EOT;
                 } else {
                     $statusText = "SPANNUNG OK (" . (is_numeric($val) ? "$val V" : $val) . ")";
                 }
-            } elseif (in_array($ident, ['BATTERY', 'BATTERY_LEVEL'], true) || ($profile !== '' && (stripos($profile, 'battery') !== false || stripos($profile, 'batterie') !== false))) {
+            } elseif (!$isMonitored && (in_array($ident, ['BATTERY', 'BATTERY_LEVEL'], true) || ($profile !== '' && (stripos($profile, 'battery') !== false || stripos($profile, 'batterie') !== false)) || stripos($varName, 'batterie') !== false || stripos($varName, 'battery') !== false || stripos($varName, 'lowbat') !== false)) {
                 $isMonitored = true;
                 $type = 'battery';
                 if (is_numeric($val) && $val < $threshold) {
@@ -288,12 +366,17 @@ EOT;
                     $statusText = "BATTERIE NIEDRIG ($val %)";
                     $statusColor = '#FF0000';
                 } else {
-                    $statusText = "BATTERIE OK (" . (is_numeric($val) ? "$val %" : (is_bool($val) ? ($val ? 'Voll' : 'Leer') : $val)) . ")";
+                    $statusText = "BATTERIE OK (" . (is_numeric($val) ? "$val %" : (is_bool($val) ? ($val ? 'Schwach' : 'Gut') : $val)) . ")";
+                    if (is_bool($val) && $val === true) {
+                        $lowBatteries[] = "$deviceName ($varName)";
+                        $statusText = 'BATTERIE SCHWACH';
+                        $statusColor = '#FF0000';
+                    }
                 }
             }
 
-            // Offline check
-            if (in_array($ident, ['UNREACH', 'STICKY_UNREACH', 'OFFLINE'], true)) {
+            // Offline check (Auto-Detect)
+            if (!$isMonitored && in_array($ident, ['UNREACH', 'STICKY_UNREACH', 'OFFLINE'], true)) {
                 $isMonitored = true;
                 $type = 'offline';
                 if ($val === true) {
@@ -303,7 +386,7 @@ EOT;
                 } else {
                     $statusText = 'ONLINE';
                 }
-            } elseif ($ident === 'DEVICEAVAILABLE') {
+            } elseif (!$isMonitored && $ident === 'DEVICEAVAILABLE') {
                 $isMonitored = true;
                 $type = 'offline';
                 if ($val === false) {
