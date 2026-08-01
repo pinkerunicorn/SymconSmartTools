@@ -173,6 +173,8 @@ class SmartDeviceMonitor extends IPSModuleStrict
             IPS_ApplyChanges($this->InstanceID);
             echo "Scan abgeschlossen. Neue Geräte wurden hinzugefügt!\n";
         } else {
+            // Selbst wenn keine neuen Geräte gefunden wurden, aktualisieren wir die GUI-Variablen (HTML-Tabelle etc.)
+            $this->CheckHealth(false);
             echo "Scan abgeschlossen. Keine neuen Geräte gefunden.\n";
         }
     }
