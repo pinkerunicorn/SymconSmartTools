@@ -119,6 +119,12 @@ class SmartDeviceMonitor extends IPSModuleStrict
         $varIDs = IPS_GetVariableList();
         foreach ($varIDs as $vid) {
             $obj = IPS_GetObject($vid);
+            if ($obj['ParentID'] == $this->InstanceID) {
+                unset($batteryMap[$vid]);
+                unset($offlineMap[$vid]);
+                continue;
+            }
+            
             $ident = strtoupper($obj['ObjectIdent']);
             $varName = $obj['ObjectName'];
             $var = IPS_GetVariable($vid);
