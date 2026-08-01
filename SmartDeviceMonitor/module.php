@@ -224,11 +224,11 @@ EOT;
                 $statusColor = '#FF0000';
             }
 
-            if (in_array($ident, ['UNREACH', 'STICKY_UNREACH'], true) && $val === true) {
+            if (in_array($ident, ['UNREACH', 'STICKY_UNREACH', 'OFFLINE'], true) && $val === true) {
                 $offlineDevices[] = "$deviceName ($varName)";
                 $statusText = 'OFFLINE';
                 $statusColor = '#FF9900';
-            } elseif (in_array($ident, ['DEVICEAVAILABLE', 'OFFLINE'], true) && $val === false) {
+            } elseif ($ident === 'DEVICEAVAILABLE' && $val === false) {
                 $offlineDevices[] = "$deviceName (Offline)";
                 $statusText = 'OFFLINE';
                 $statusColor = '#FF9900';
