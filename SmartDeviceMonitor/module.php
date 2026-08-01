@@ -216,6 +216,17 @@ EOT;
             $obj = IPS_GetObject($vid);
             $parentObj = IPS_GetObject($obj['ParentID']);
             $deviceName = $parentObj['ObjectName'];
+            
+            $grandParentId = $parentObj['ParentID'];
+            if ($grandParentId > 0) {
+                $grandParentName = IPS_GetName($grandParentId);
+                // Oft heißt der Parent einfach nur "Geräteinformationen" oder "Device"
+                // Deswegen hängen wir den übergeordneten Namen (das eigentliche Gerät) davor an
+                if (!in_array($grandParentName, ['IP-Symcon', 'Symcon'], true)) {
+                    $deviceName = $grandParentName . ' / ' . $deviceName;
+                }
+            }
+
             $varName = $obj['ObjectName'];
             $ident = strtoupper($obj['ObjectIdent']);
             $val = GetValue($vid);
