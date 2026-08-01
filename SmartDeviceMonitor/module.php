@@ -45,6 +45,11 @@ class SmartDeviceMonitor extends IPSModuleStrict
             'ICON' => 'information'
         ], 100);
 
+        $this->RegisterVariableString('MonitoredListHTML', 'Überwachte Geräte (Übersicht)', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'list'
+        ], 101);
+
         // Timer for daily scan / resubscribe (at 03:00 AM)
         $this->RegisterTimer('DailyScanTimer', 0, 'SDM_UpdateMonitoredDevices($_IPS[\'TARGET\']);');
     }
@@ -103,6 +108,50 @@ class SmartDeviceMonitor extends IPSModuleStrict
         $this->DA_SetAvailable(true);
     }
 
+    public function GetConfigurationForm(): string
+    {
+        return <<<'EOT'
+{
+    "elements": [
+        {
+            "type": "SelectInstance",
+            "name": "TargetNotifier",
+            "caption": "SmartNotifier Instanz"
+        },
+        {
+            "type": "NumberSpinner",
+            "name": "LowBatteryThreshold",
+            "caption": "Batterie Warnschwelle (%)",
+            "minimum": 1,
+            "maximum": 50
+        },
+        {
+            "type": "List",
+            "name": "CustomVariables",
+            "caption": "Zusätzliche / Manuelle Variablen",
+            "columns": [
+                {
+                    "name": "VariableID",
+                    "type": "SelectVariable",
+                    "caption": "Variable",
+                    "width": "100%"
+                }
+            ],
+            "add": true,
+            "delete": true
+        }
+    ],
+    "actions": [
+        {
+            "type": "Button",
+            "caption": "Jetzt alle Batterien & Geräte scannen",
+            "onClick": "SDM_UpdateMonitoredDevices($id);"
+        }
+    ]
+}
+EOT;
+    }
+
     public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
     {
         if ($Message === VM_UPDATE) {
@@ -128,15 +177,23 @@ class SmartDeviceMonitor extends IPSModuleStrict
         foreach ($varIDs as $vid) {
             $obj = IPS_GetObject($vid);
             $ident = strtoupper($obj['ObjectIdent']);
+            $var = IPS_GetVariable($vid);
+            $profile = $var['VariableCustomProfile'] !== '' ? $var['VariableCustomProfile'] : $var['VariableProfile'];
 
-            // Battery Idents
-            if (in_array($ident, ['LOWBAT', 'LOW_BAT', 'BATTERY_STATE', 'OPERATINGVOLTAGE'], true)) {
+            // A) Battery Ident Check
+            if (in_array($ident, ['LOWBAT', 'LOW_BAT', 'BATTERY', 'BATTERY_STATE', 'BATTERY_LEVEL', 'BATTERIE', 'OPERATINGVOLTAGE'], true)) {
                 $monitoredVars[] = $vid;
                 continue;
             }
 
-            // Reachability / Availability Idents
-            if (in_array($ident, ['UNREACH', 'STICKY_UNREACH', 'DEVICEAVAILABLE'], true)) {
+            // B) Battery Profile Check
+            if ($profile !== '' && (stripos($profile, 'battery') !== false || stripos($profile, 'batterie') !== false)) {
+                $monitoredVars[] = $vid;
+                continue;
+            }
+
+            // C) Reachability / Availability Idents
+            if (in_array($ident, ['UNREACH', 'STICKY_UNREACH', 'DEVICEAVAILABLE', 'OFFLINE'], true)) {
                 $monitoredVars[] = $vid;
                 continue;
             }
@@ -174,6 +231,7 @@ class SmartDeviceMonitor extends IPSModuleStrict
         $threshold = $this->ReadPropertyInteger('LowBatteryThreshold');
         $lowBatteries = [];
         $offlineDevices = [];
+        $htmlRows = [];
 
         $varIDs = IPS_GetVariableList();
         foreach ($varIDs as $vid) {
@@ -188,18 +246,38 @@ class SmartDeviceMonitor extends IPSModuleStrict
             $ident = strtoupper($obj['ObjectIdent']);
             $val = GetValue($vid);
 
+            $statusText = 'OK';
+            $statusColor = '#00FF00';
+
             // Battery check
-            if (in_array($ident, ['LOWBAT', 'LOW_BAT'], true) && $val === true) {
+            if (in_array($ident, ['LOWBAT', 'LOW_BAT', 'BATTERY_STATE'], true) && $val === true) {
                 $lowBatteries[] = "$deviceName ($varName)";
+                $statusText = 'BATTERIE SCHWACH';
+                $statusColor = '#FF0000';
             } elseif ($ident === 'OPERATINGVOLTAGE' && is_numeric($val) && $val < $threshold) {
                 $lowBatteries[] = "$deviceName ($val V)";
+                $statusText = "SPANNUNG NIEDRIG ($val V)";
+                $statusColor = '#FF0000';
+            } elseif (in_array($ident, ['BATTERY', 'BATTERY_LEVEL'], true) && is_numeric($val) && $val < $threshold) {
+                $lowBatteries[] = "$deviceName ($val %)";
+                $statusText = "BATTERIE NIEDRIG ($val %)";
+                $statusColor = '#FF0000';
             }
 
             // Offline check
             if (in_array($ident, ['UNREACH', 'STICKY_UNREACH'], true) && $val === true) {
                 $offlineDevices[] = "$deviceName ($varName)";
-            } elseif ($ident === 'DEVICEAVAILABLE' && $val === false) {
+                $statusText = 'OFFLINE';
+                $statusColor = '#FF9900';
+            } elseif (in_array($ident, ['DEVICEAVAILABLE', 'OFFLINE'], true) && $val === false) {
                 $offlineDevices[] = "$deviceName (Offline)";
+                $statusText = 'OFFLINE';
+                $statusColor = '#FF9900';
+            }
+
+            // Build HTML table row for visibility
+            if ($statusText !== 'OK') {
+                $htmlRows[] = "<tr><td><b>$deviceName</b></td><td>$varName</td><td style='color:$statusColor;'><b>$statusText</b></td></tr>";
             }
         }
 
@@ -217,8 +295,19 @@ class SmartDeviceMonitor extends IPSModuleStrict
             $summary[] = "Offline Geräte ($offCount): " . implode(', ', $offlineDevices);
         }
 
-        $text = count($summary) > 0 ? implode(' | ', $summary) : 'Alle Systeme betriebsbereit.';
+        $text = count($summary) > 0 ? implode(' | ', $summary) : 'Alle Geräte betriebsbereit.';
         $this->SetValue('SummaryText', $text);
+
+        // Build HTML Overview
+        $html = "<table style='width:100%; border-collapse:collapse;'>";
+        $html .= "<tr style='text-align:left;'><th>Gerät</th><th>Variable</th><th>Status</th></tr>";
+        if (count($htmlRows) > 0) {
+            $html .= implode('', $htmlRows);
+        } else {
+            $html .= "<tr><td colspan='3' style='color:#00FF00;'>Alle überwachten Geräte sind OK</td></tr>";
+        }
+        $html .= "</table>";
+        $this->SetValue('MonitoredListHTML', $html);
 
         // Push via SmartNotifier if issues detected and notification requested
         if ($triggerNotification && (count($lowBatteries) > 0 || count($offlineDevices) > 0)) {
