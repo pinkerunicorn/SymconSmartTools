@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 class SymconSmartSimulator extends IPSModuleStrict
 {
-    public function Create()
+    public function Create(): void
     {
         // Never delete this line!
         parent::Create();
@@ -47,13 +47,13 @@ class SymconSmartSimulator extends IPSModuleStrict
         $this->EnableAction('TestAvailability');
     }
 
-    public function Destroy()
+    public function Destroy(): void
     {
         // Never delete this line!
         parent::Destroy();
     }
 
-    public function ApplyChanges()
+    public function ApplyChanges(): void
     {
         // Never delete this line!
         parent::ApplyChanges();
@@ -69,7 +69,7 @@ class SymconSmartSimulator extends IPSModuleStrict
         }
     }
 
-    public function RequestAction($Ident, $Value)
+    public function RequestAction(string $Ident, mixed $Value): void
     {
         switch ($Ident) {
             case 'TestWindow':
@@ -84,6 +84,4 @@ class SymconSmartSimulator extends IPSModuleStrict
                 throw new Exception('Invalid Ident: ' . $Ident);
         }
     }
-
-
 }
