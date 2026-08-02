@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-class SymconSmartSimulator extends IPSModule
+class SymconSmartSimulator extends IPSModuleStrict
 {
     public function Create()
     {
