@@ -1,0 +1,13 @@
+{
+    "id": "{7d02c936-3fd8-4548-9ad3-c4d3d33a2cbf}",
+    "name": "Symcon Smart Simulator",
+    "type": 3,
+    "vendor": "Florian Graßinger",
+    "aliases": [
+        "Simulator"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "SIM"
+}
