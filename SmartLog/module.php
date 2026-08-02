@@ -387,7 +387,7 @@ class SmartLog extends IPSModuleStrict
             // Text-Filter
             if ($textFilter !== '') {
                 $haystack = strtolower(($entry['m'] ?? '') . ' ' . ($entry['d'] ?? '') . ' ' . ($entry['s'] ?? ''));
-                if (strpos($haystack, $textFilter) === false) {
+                if (!str_contains($haystack, $textFilter)) {
                     return false;
                 }
             }
