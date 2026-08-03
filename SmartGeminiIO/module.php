@@ -50,8 +50,6 @@ class SmartGeminiIO extends IPSModuleStrict
     public function ApplyChanges(): void
     {
         parent::ApplyChanges();
-        
-        $this->DA_ApplyPresentation();
 
         if (empty($this->ReadPropertyString('ApiKey'))) {
             $this->SetStatus(104); // IS_INACTIVE

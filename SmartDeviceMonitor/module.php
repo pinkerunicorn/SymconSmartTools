@@ -47,7 +47,6 @@ class SmartDeviceMonitor extends IPSModuleStrict
         
         $this->SetVisualizationType(1);
         $this->SetStatus(102);
-        $this->DA_ApplyPresentation();
 
         // Alte Registrierungen löschen
         foreach ($this->GetMessageList() as $senderID => $messages) {
