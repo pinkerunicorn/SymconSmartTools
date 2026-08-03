@@ -44,6 +44,7 @@ class SmartDeviceMonitor extends IPSModuleStrict
     public function ApplyChanges(): void
     {
         parent::ApplyChanges();
+        $this->DA_ApplyPresentation();
         
         $this->SetVisualizationType(1);
         $this->SetStatus(102);
