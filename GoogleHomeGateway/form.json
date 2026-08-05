@@ -152,6 +152,5 @@
             "caption": "Alle Zustaende pushen (Report State)",
             "onClick": "GHGW_ReportAllStates($id); echo 'Report State gesendet!';"
         }
-    ],
-
+    ]
 }
