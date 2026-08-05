@@ -148,11 +148,6 @@
     "actions": [
         {
             "type": "Button",
-            "caption": "Suche nach Geraeten",
-            "onClick": "echo GHGW_SearchDevices($id);"
-        },
-        {
-            "type": "Button",
             "caption": "SYNC anfordern (nach Aenderungen)",
             "onClick": "GHGW_RequestSync($id); echo 'SYNC angefordert!';"
         },
