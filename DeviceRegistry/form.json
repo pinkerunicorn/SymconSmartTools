@@ -15,13 +15,23 @@
             "items": [
                 {
                     "type": "List",
+                    "name": "Floors",
+                    "caption": "Etagen & Bereiche",
+                    "add": true,
+                    "delete": true,
+                    "columns": [
+                        {"caption": "Name (z.B. Erdgeschoss)", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}}
+                    ]
+                },
+                {
+                    "type": "List",
                     "name": "Rooms",
                     "caption": "Verfügbare Räume",
                     "add": true,
                     "delete": true,
                     "columns": [
                         {"caption": "Raum Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Etage / Bereich", "name": "floor", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}}
+                        {"caption": "Etage / Bereich", "name": "floor", "width": "200px", "add": "", "edit": {"type": "Select", "options": []}}
                     ]
                 }
             ]

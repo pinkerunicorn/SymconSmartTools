@@ -8,6 +8,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
     {
         parent::Create();
         
+        $this->RegisterPropertyString('Floors', '[]');
         $this->RegisterPropertyString('Rooms', '[]');
 
         // Aktorik
@@ -34,7 +35,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         parent::ApplyChanges();
 
         $mappings = [
-            'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
+            'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene',
             'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor'
         ];
@@ -75,6 +76,17 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $jsonForm = file_get_contents(__DIR__ . '/form.json');
         $form     = json_decode($jsonForm, true);
         
+        $floorsJson = $this->ReadPropertyString('Floors');
+        $floorsList = json_decode($floorsJson, true);
+        $floorOptions = [];
+        if (is_array($floorsList)) {
+            foreach ($floorsList as $f) {
+                if (!empty($f['name'])) {
+                    $floorOptions[] = ['caption' => $f['name'], 'value' => $f['name']];
+                }
+            }
+        }
+        
         $roomsJson = $this->ReadPropertyString('Rooms');
         $roomsList = json_decode($roomsJson, true);
         $roomOptions = [];
@@ -90,18 +102,29 @@ class SymconDeviceRegistry extends IPSModuleStrict
             foreach ($form['elements'] as &$element) {
                 if (($element['type'] ?? '') === 'ExpansionPanel' && isset($element['items'])) {
                     foreach ($element['items'] as &$item) {
-                        if (($item['type'] ?? '') === 'List' && isset($item['name']) && str_starts_with($item['name'], 'Devices')) {
-                            // Inject Room Options
-                            if (isset($item['columns'])) {
-                                foreach ($item['columns'] as &$col) {
-                                    if ($col['name'] === 'room' && isset($col['edit']['type']) && $col['edit']['type'] === 'Select') {
-                                        $col['edit']['options'] = $roomOptions;
+                        if (($item['type'] ?? '') === 'List' && isset($item['name'])) {
+                            if ($item['name'] === 'Rooms') {
+                                // Inject Floor Options
+                                if (isset($item['columns'])) {
+                                    foreach ($item['columns'] as &$col) {
+                                        if ($col['name'] === 'floor' && isset($col['edit']['type']) && $col['edit']['type'] === 'Select') {
+                                            $col['edit']['options'] = $floorOptions;
+                                        }
                                     }
+                                    unset($col);
                                 }
-                                unset($col);
-                            }
-                            
-                            $propName    = $item['name'];
+                            } elseif (str_starts_with($item['name'], 'Devices')) {
+                                // Inject Room Options
+                                if (isset($item['columns'])) {
+                                    foreach ($item['columns'] as &$col) {
+                                        if ($col['name'] === 'room' && isset($col['edit']['type']) && $col['edit']['type'] === 'Select') {
+                                            $col['edit']['options'] = $roomOptions;
+                                        }
+                                    }
+                                    unset($col);
+                                }
+                                
+                                $propName    = $item['name'];
                             $devicesJson = $this->ReadPropertyString($propName);
                             $devices     = json_decode($devicesJson, true);
                             if (is_array($devices)) {
@@ -166,6 +189,13 @@ class SymconDeviceRegistry extends IPSModuleStrict
     }
     
     // API Methoden
+    
+    public function GetFloors(): array
+    {
+        $json = $this->ReadPropertyString('Floors');
+        $list = json_decode($json, true);
+        return is_array($list) ? $list : [];
+    }
     
     public function GetRooms(): array
     {
