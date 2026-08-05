@@ -162,7 +162,7 @@
         },
         {
             "code": 104,
-            "icon": "Inactive",
+            "icon": "Warning",
             "color": -1,
             "caption": "Nicht konfiguriert"
         },
