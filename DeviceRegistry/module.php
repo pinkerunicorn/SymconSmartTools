@@ -26,6 +26,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterPropertyString('DevicesContactSensor', '[]');
         $this->RegisterPropertyString('DevicesSmokeSensor', '[]');
         $this->RegisterPropertyString('DevicesWaterSensor', '[]');
+        $this->RegisterPropertyString('DevicesAlarmSensor', '[]');
         
         // Zähler
         $this->RegisterPropertyString('DevicesMeter', '[]');
@@ -41,7 +42,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene',
             'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
-            'DevicesMeter'
+            'DevicesAlarmSensor', 'DevicesMeter'
         ];
         
         $changed = false;
@@ -368,6 +369,25 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 (strpos(strtolower($name), 'alarm') !== false && (strpos(strtolower($room), 'wasser') !== false || strpos(strtolower($room), 'water') !== false))
             ) && strpos(strtolower($profile), 'volume') === false && strpos(strtolower($name), 'zähler') === false && strpos(strtolower($name), 'verbrauch') === false) {
                 $newDevices['DevicesWaterSensor'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'Status_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
+            // Generic Alarm Sensor (Sabotage, Glass Break, etc)
+            elseif (($var['VariableType'] === 0 || $var['VariableType'] === 1) && !$hasAction && (
+                strpos(strtolower($profile), 'alarm') !== false ||
+                strpos(strtolower($name), 'alarm') !== false ||
+                strpos(strtolower($name), 'sabotage') !== false ||
+                strpos(strtolower($name), 'tamper') !== false ||
+                strpos(strtolower($name), 'glasbruch') !== false ||
+                strpos(strtolower($name), 'erschütterung') !== false ||
+                strpos(strtolower($name), 'vibration') !== false ||
+                strpos(strtolower($name), 'panic') !== false ||
+                strpos(strtolower($name), 'panik') !== false
+            )) {
+                $newDevices['DevicesAlarmSensor'][] = [
                     'name' => $name,
                     'room' => $room,
                     'Status_VarID' => $varId
