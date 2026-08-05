@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../libs/Trait_SmartLog.php';
 require_once __DIR__ . '/../libs/Trait_SmartHttp.php';
-require_once __DIR__ . '/../libs/Trait_GoogleOAuth.php';
-require_once __DIR__ . '/../libs/Trait_GoogleSync.php';
-require_once __DIR__ . '/../libs/Trait_GoogleQuery.php';
-require_once __DIR__ . '/../libs/Trait_GoogleExecute.php';
-require_once __DIR__ . '/../libs/Trait_ReportState.php';
+require_once __DIR__ . '/libs/Trait_GoogleOAuth.php';
+require_once __DIR__ . '/libs/Trait_GoogleSync.php';
+require_once __DIR__ . '/libs/Trait_GoogleQuery.php';
+require_once __DIR__ . '/libs/Trait_GoogleExecute.php';
+require_once __DIR__ . '/libs/Trait_ReportState.php';
 
 /**
  * GoogleHomeGateway — Moderne Google Home Cloud-to-Cloud Integration für IP-Symcon.
