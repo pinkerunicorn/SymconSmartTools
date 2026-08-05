@@ -124,8 +124,23 @@ class GoogleHomeGateway extends IPSModuleStrict
         $this->GH_RegisterHook(self::HOOK_BASE . '/auth');
         $this->GH_RegisterHook(self::HOOK_BASE . '/token');
 
-        // Variablen-Watcher auf alle konfigurierten Variablen registrieren
+        // Device-IDs auto-generieren falls fehlend und zurückschreiben
         $devices = $this->GetDevices();
+        $changed = false;
+        foreach ($devices as &$device) {
+            if (empty($device['id'])) {
+                $device['id'] = mt_rand(10000, 99999);
+                $changed = true;
+            }
+        }
+        unset($device);
+        if ($changed) {
+            IPS_SetProperty($this->InstanceID, 'Devices', json_encode(array_values($devices)));
+            IPS_ApplyChanges($this->InstanceID);
+            return;
+        }
+
+        // Variablen-Referenzen registrieren
         foreach ($devices as $device) {
             foreach (['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID'] as $field) {
                 $varId = (int)($device[$field] ?? 0);

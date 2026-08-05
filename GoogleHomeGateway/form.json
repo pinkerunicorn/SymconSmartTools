@@ -1,0 +1,176 @@
+{
+    "elements": [
+        {
+            "type": "ExpansionPanel",
+            "caption": "Google Home Zugangsdaten",
+            "expanded": true,
+            "items": [
+                {
+                    "type": "ValidationTextBox",
+                    "name": "GoogleClientID",
+                    "caption": "OAuth Client ID",
+                    "width": "400px"
+                },
+                {
+                    "type": "PasswordTextBox",
+                    "name": "GoogleClientSecret",
+                    "caption": "OAuth Client Secret",
+                    "width": "400px"
+                },
+                {
+                    "type": "ValidationTextBox",
+                    "name": "HomeGraphAPIKey",
+                    "caption": "Home Graph API Key",
+                    "width": "400px"
+                },
+                {
+                    "type": "PasswordTextBox",
+                    "name": "PinCode",
+                    "caption": "PIN Code (fuer OAuth-Login)",
+                    "width": "200px"
+                }
+            ]
+        },
+        {
+            "type": "Label",
+            "caption": " "
+        },
+        {
+            "type": "List",
+            "name": "Devices",
+            "caption": "Geraete",
+            "rowCount": 10,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "name",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "ID",
+                    "name": "id",
+                    "width": "50px",
+                    "visible": false,
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "width": "200px",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Typ",
+                    "name": "type",
+                    "width": "170px",
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            {"caption": "Schalter",          "value": 0},
+                            {"caption": "Steckdose",         "value": 1},
+                            {"caption": "Licht (Schalter)",  "value": 2},
+                            {"caption": "Licht (Dimmer)",    "value": 3},
+                            {"caption": "Licht (Farbe/CCT)", "value": 4},
+                            {"caption": "Jalousie/Rolllade", "value": 5}
+                        ]
+                    }
+                },
+                {
+                    "caption": "Raum",
+                    "name": "room",
+                    "width": "130px",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "An/Aus Variable",
+                    "name": "OnOff_VarID",
+                    "width": "200px",
+                    "edit": {
+                        "type": "SelectVariable",
+                        "validVariableTypes": [0, 1]
+                    }
+                },
+                {
+                    "caption": "Helligkeit Variable",
+                    "name": "Brightness_VarID",
+                    "width": "200px",
+                    "edit": {
+                        "type": "SelectVariable",
+                        "validVariableTypes": [1, 2]
+                    }
+                },
+                {
+                    "caption": "Farbe RGB Variable",
+                    "name": "ColorRGB_VarID",
+                    "width": "200px",
+                    "edit": {
+                        "type": "SelectVariable",
+                        "validVariableTypes": [1]
+                    }
+                },
+                {
+                    "caption": "Farbtemperatur Variable",
+                    "name": "ColorTemp_VarID",
+                    "width": "200px",
+                    "edit": {
+                        "type": "SelectVariable",
+                        "validVariableTypes": [1]
+                    }
+                },
+                {
+                    "caption": "Oeffnen/Schliessen Variable",
+                    "name": "OpenClose_VarID",
+                    "width": "200px",
+                    "edit": {
+                        "type": "SelectVariable",
+                        "validVariableTypes": [0, 1, 2]
+                    }
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Button",
+            "caption": "Suche nach Geraeten",
+            "onClick": "echo GHGW_SearchDevices($id);"
+        },
+        {
+            "type": "Button",
+            "caption": "SYNC anfordern (nach Aenderungen)",
+            "onClick": "GHGW_RequestSync($id); echo 'SYNC angefordert!';"
+        },
+        {
+            "type": "Button",
+            "caption": "Alle Zustaende pushen (Report State)",
+            "onClick": "GHGW_ReportAllStates($id); echo 'Report State gesendet!';"
+        }
+    ],
+    "status": [
+        {
+            "code": 102,
+            "icon": "Active",
+            "color": -1,
+            "caption": "Online"
+        },
+        {
+            "code": 104,
+            "icon": "Inactive",
+            "color": -1,
+            "caption": "Nicht konfiguriert"
+        },
+        {
+            "code": 201,
+            "icon": "Error",
+            "color": -1,
+            "caption": "Fehler"
+        }
+    ]
+}
