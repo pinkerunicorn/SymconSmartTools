@@ -216,6 +216,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $newDevices = [
             'DevicesSwitch' => [],
             'DevicesSocket' => [],
+            'DevicesLight' => [],
             'DevicesLightDimmer' => [],
             'DevicesBlind' => [],
             'DevicesThermostat' => [],
@@ -354,6 +355,24 @@ class SymconDeviceRegistry extends IPSModuleStrict
             // Socket / Steckdose
             elseif ($var['VariableType'] === 0 && $hasAction && (strpos(strtolower($room), 'steckdose') !== false || strpos(strtolower($name), 'steckdose') !== false)) {
                 $newDevices['DevicesSocket'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'OnOff_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
+            // Light (On/Off)
+            elseif ($var['VariableType'] === 0 && $hasAction && (
+                strpos(strtolower($name), 'licht') !== false || 
+                strpos(strtolower($name), 'lampe') !== false || 
+                strpos(strtolower($name), 'leuchte') !== false || 
+                strpos(strtolower($name), 'light') !== false ||
+                strpos(strtolower($room), 'licht') !== false || 
+                strpos(strtolower($room), 'lampe') !== false || 
+                strpos(strtolower($room), 'leuchte') !== false || 
+                strpos(strtolower($room), 'light') !== false
+            )) {
+                $newDevices['DevicesLight'][] = [
                     'name' => $name,
                     'room' => $room,
                     'OnOff_VarID' => $varId
