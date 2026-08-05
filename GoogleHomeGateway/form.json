@@ -52,6 +52,7 @@
                     "name": "id",
                     "width": "50px",
                     "visible": false,
+                    "add": "",
                     "edit": {
                         "type": "ValidationTextBox"
                     }
@@ -60,6 +61,7 @@
                     "caption": "Name",
                     "name": "name",
                     "width": "200px",
+                    "add": "Neues Geraet",
                     "edit": {
                         "type": "ValidationTextBox"
                     }
@@ -68,6 +70,7 @@
                     "caption": "Typ",
                     "name": "type",
                     "width": "170px",
+                    "add": 0,
                     "edit": {
                         "type": "Select",
                         "options": [
@@ -84,6 +87,7 @@
                     "caption": "Raum",
                     "name": "room",
                     "width": "130px",
+                    "add": "",
                     "edit": {
                         "type": "ValidationTextBox"
                     }
@@ -92,6 +96,7 @@
                     "caption": "An/Aus Variable",
                     "name": "OnOff_VarID",
                     "width": "200px",
+                    "add": 0,
                     "edit": {
                         "type": "SelectVariable",
                         "validVariableTypes": [0, 1]
@@ -101,6 +106,7 @@
                     "caption": "Helligkeit Variable",
                     "name": "Brightness_VarID",
                     "width": "200px",
+                    "add": 0,
                     "edit": {
                         "type": "SelectVariable",
                         "validVariableTypes": [1, 2]
@@ -110,6 +116,7 @@
                     "caption": "Farbe RGB Variable",
                     "name": "ColorRGB_VarID",
                     "width": "200px",
+                    "add": 0,
                     "edit": {
                         "type": "SelectVariable",
                         "validVariableTypes": [1]
@@ -119,6 +126,7 @@
                     "caption": "Farbtemperatur Variable",
                     "name": "ColorTemp_VarID",
                     "width": "200px",
+                    "add": 0,
                     "edit": {
                         "type": "SelectVariable",
                         "validVariableTypes": [1]
@@ -128,6 +136,7 @@
                     "caption": "Oeffnen/Schliessen Variable",
                     "name": "OpenClose_VarID",
                     "width": "200px",
+                    "add": 0,
                     "edit": {
                         "type": "SelectVariable",
                         "validVariableTypes": [0, 1, 2]
