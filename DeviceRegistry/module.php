@@ -178,6 +178,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                 $item['values'] = $devices;
                             }
                         }
+                        }
                     }
                     unset($item);
                 }
