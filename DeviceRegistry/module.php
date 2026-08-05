@@ -526,10 +526,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $changed = false;
         $count = 0;
         foreach ($newDevices as $propName => $list) {
-            if ($category === 'Aktorik' && !in_array($propName, ['DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene'])) continue;
-            if ($category === 'Sensorik' && !in_array($propName, ['DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor', 'DevicesAlarmSensor'])) continue;
-            if ($category === 'Meter' && $propName !== 'DevicesMeter') continue;
-            if ($category === 'Health' && $propName !== 'DevicesHealth') continue;
+            if ($category !== '' && $category !== $propName) {
+                continue;
+            }
 
             if (count($list) > 0) {
                 $existingJson = $this->ReadPropertyString($propName);
