@@ -178,18 +178,25 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                     } else {
                                         $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Value_VarID'];
                                         $primaryFieldFound = false;
+                                        
+                                        $isDimmer = in_array($propName, ['DevicesLightDimmer', 'DevicesLightColor']);
+                                        $hasBrightness = (isset($dev['Brightness_VarID']) && (int)$dev['Brightness_VarID'] > 0 && IPS_VariableExists((int)$dev['Brightness_VarID']));
+
                                         foreach ($varFields as $varField) {
                                             if (isset($dev[$varField])) {
-                                                $primaryFieldFound = true;
-                                                if ($dev[$varField] > 0) {
-                                                    if (!IPS_VariableExists((int)$dev[$varField])) {
+                                                $val = (int)$dev[$varField];
+                                                if ($val > 0) {
+                                                    $primaryFieldFound = true;
+                                                    if (!IPS_VariableExists($val)) {
                                                         $status   = 'Variable fehlt';
                                                         $rowColor = '#FF4040'; 
                                                         $hasError = true;
                                                         break;
                                                     }
                                                 } else {
-                                                    if (in_array($varField, ['OnOff_VarID', 'OpenClose_VarID', 'Status_VarID', 'Value_VarID'])) {
+                                                    if ($varField === 'OnOff_VarID' && $isDimmer && $hasBrightness) {
+                                                        // OK: Dimmer darf nur Brightness haben
+                                                    } elseif (in_array($varField, ['OnOff_VarID', 'OpenClose_VarID', 'Status_VarID', 'Value_VarID'])) {
                                                         $status   = 'Unvollstaendig';
                                                         $rowColor = '#FF8000';
                                                         $hasError = true;
