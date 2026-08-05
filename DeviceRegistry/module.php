@@ -34,7 +34,30 @@ class SymconDeviceRegistry extends IPSModuleStrict
         // Diagnose
         $this->RegisterPropertyString('DevicesHealth', '[]');
         
-        $this->RegisterVariableInteger('RegisteredDevices', 'Registrierte Geraete', '', 1);
+        $this->RegisterVariableInteger('RegisteredDevices', 'Gesamtanzahl Geraete', '', 1);
+        
+        $captions = [
+            'DevicesSwitch' => 'Schalter',
+            'DevicesSocket' => 'Steckdosen',
+            'DevicesLight' => 'Licht (Schalter)',
+            'DevicesLightDimmer' => 'Licht (Dimmer)',
+            'DevicesLightColor' => 'Licht (Farbe)',
+            'DevicesBlind' => 'Jalousien',
+            'DevicesThermostat' => 'Thermostate',
+            'DevicesScene' => 'Szenen',
+            'DevicesMotionSensor' => 'Bewegungsmelder',
+            'DevicesContactSensor' => 'Fenster-/Türkontakte',
+            'DevicesSmokeSensor' => 'Rauchmelder',
+            'DevicesWaterSensor' => 'Wassermelder',
+            'DevicesAlarmSensor' => 'Alarmmelder',
+            'DevicesMeter' => 'Zähler',
+            'DevicesHealth' => 'Offline-Module'
+        ];
+        
+        $pos = 10;
+        foreach ($captions as $prop => $caption) {
+            $this->RegisterVariableInteger("Count_" . $prop, "Anzahl " . $caption, '', $pos++);
+        }
     }
 
     public function ApplyChanges(): void
@@ -63,11 +86,16 @@ class SymconDeviceRegistry extends IPSModuleStrict
                     $propChanged = true;
                     $changed = true;
                 }
-                $totalDevices++;
             }
             unset($device);
             if ($propChanged) {
                 IPS_SetProperty($this->InstanceID, $propName, json_encode(array_values($devices)));
+            }
+            
+            if (str_starts_with($propName, 'Devices')) {
+                $count = count($devices);
+                @$this->SetValue("Count_" . $propName, $count);
+                $totalDevices += $count;
             }
         }
 
