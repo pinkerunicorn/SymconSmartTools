@@ -41,6 +41,8 @@ class GoogleHomeGateway extends IPSModuleStrict
     public const TYPE_LIGHT_DIM   = 3;
     public const TYPE_LIGHT_COLOR = 4;
     public const TYPE_BLIND       = 5;
+    public const TYPE_THERMOSTAT  = 6;
+    public const TYPE_SCENE       = 7;
 
     public const DEVICE_TYPE_LABELS = [
         self::TYPE_SWITCH      => 'Schalter',
@@ -49,6 +51,8 @@ class GoogleHomeGateway extends IPSModuleStrict
         self::TYPE_LIGHT_DIM   => 'Licht (Dimmer)',
         self::TYPE_LIGHT_COLOR => 'Licht (Farbe / CCT)',
         self::TYPE_BLIND       => 'Jalousie / Rolllade',
+        self::TYPE_THERMOSTAT  => 'Thermostat',
+        self::TYPE_SCENE       => 'Szene',
     ];
 
     // Google Action Device Types
@@ -59,6 +63,8 @@ class GoogleHomeGateway extends IPSModuleStrict
         self::TYPE_LIGHT_DIM   => 'action.devices.types.LIGHT',
         self::TYPE_LIGHT_COLOR => 'action.devices.types.LIGHT',
         self::TYPE_BLIND       => 'action.devices.types.BLINDS',
+        self::TYPE_THERMOSTAT  => 'action.devices.types.THERMOSTAT',
+        self::TYPE_SCENE       => 'action.devices.types.SCENE',
     ];
 
     // Hook-Pfad-Basis
@@ -85,6 +91,7 @@ class GoogleHomeGateway extends IPSModuleStrict
         $this->RegisterPropertyString('DevicesLightColor', '[]');
         $this->RegisterPropertyString('DevicesBlind', '[]');
         $this->RegisterPropertyString('DevicesThermostat', '[]');
+        $this->RegisterPropertyString('DevicesScene', '[]');
 
         // Internes Attribut: OAuth Tokens
         $this->RegisterAttributeString('OAuthTokens', '{}');
@@ -140,8 +147,8 @@ class GoogleHomeGateway extends IPSModuleStrict
             if (is_array($oldDevices) && count($oldDevices) > 0) {
                 $migrated = [
                     self::TYPE_SWITCH      => [],
-                    self::TYPE_SOCKET      => [],
-                    self::TYPE_LIGHT       => [],
+                    self::TYPE_OUTLET      => [],
+                    self::TYPE_LIGHT_ONOFF => [],
                     self::TYPE_LIGHT_DIM   => [],
                     self::TYPE_LIGHT_COLOR => [],
                     self::TYPE_BLIND       => [],
@@ -156,8 +163,8 @@ class GoogleHomeGateway extends IPSModuleStrict
                 }
 
                 IPS_SetProperty($this->InstanceID, 'DevicesSwitch', json_encode(array_values($migrated[self::TYPE_SWITCH])));
-                IPS_SetProperty($this->InstanceID, 'DevicesSocket', json_encode(array_values($migrated[self::TYPE_SOCKET])));
-                IPS_SetProperty($this->InstanceID, 'DevicesLight', json_encode(array_values($migrated[self::TYPE_LIGHT])));
+                IPS_SetProperty($this->InstanceID, 'DevicesSocket', json_encode(array_values($migrated[self::TYPE_OUTLET])));
+                IPS_SetProperty($this->InstanceID, 'DevicesLight', json_encode(array_values($migrated[self::TYPE_LIGHT_ONOFF])));
                 IPS_SetProperty($this->InstanceID, 'DevicesLightDimmer', json_encode(array_values($migrated[self::TYPE_LIGHT_DIM])));
                 IPS_SetProperty($this->InstanceID, 'DevicesLightColor', json_encode(array_values($migrated[self::TYPE_LIGHT_COLOR])));
                 IPS_SetProperty($this->InstanceID, 'DevicesBlind', json_encode(array_values($migrated[self::TYPE_BLIND])));
@@ -172,7 +179,7 @@ class GoogleHomeGateway extends IPSModuleStrict
         // Device-IDs auto-generieren falls fehlend
         $mappings = [
             'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
-            'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat'
+            'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene'
         ];
         
         $changed = false;
@@ -402,12 +409,13 @@ class GoogleHomeGateway extends IPSModuleStrict
 
         $mappings = [
             self::TYPE_SWITCH      => 'DevicesSwitch',
-            self::TYPE_SOCKET      => 'DevicesSocket',
-            self::TYPE_LIGHT       => 'DevicesLight',
+            self::TYPE_OUTLET      => 'DevicesSocket',
+            self::TYPE_LIGHT_ONOFF => 'DevicesLight',
             self::TYPE_LIGHT_DIM   => 'DevicesLightDimmer',
             self::TYPE_LIGHT_COLOR => 'DevicesLightColor',
             self::TYPE_BLIND       => 'DevicesBlind',
             self::TYPE_THERMOSTAT  => 'DevicesThermostat',
+            self::TYPE_SCENE       => 'DevicesScene',
         ];
 
         foreach ($mappings as $type => $propName) {

@@ -88,16 +88,25 @@ if (!trait_exists('GoogleSync_Trait')) {
 
                 case GoogleHomeGateway::TYPE_BLIND:
                     $traits[] = 'action.devices.traits.OpenClose';
-                    $attrs['discreteOnlyOpenClose'] = false;
+                    $attrs['openDirection'] = ['UP', 'DOWN'];
+                    break;
+
+                case GoogleHomeGateway::TYPE_SCENE:
+                    $traits[] = 'action.devices.traits.Scene';
+                    // Szene ist deaktivierbar (reversible), wenn eine Ausschalt-Aktion hinterlegt ist
+                    $actionOff = $device['ActionOff'] ?? '{}';
+                    $attrs['sceneReversible'] = ($actionOff !== '{}' && !empty($actionOff));
                     break;
             }
+
+            $willReportState = ($type !== GoogleHomeGateway::TYPE_SCENE);
 
             $syncDev = [
                 'id'              => (string)($device['id']),
                 'type'            => GoogleHomeGateway::GOOGLE_TYPES[$type] ?? 'action.devices.types.SWITCH',
                 'traits'          => $traits,
                 'name'            => ['name' => $device['name'] ?? 'Unbekannt'],
-                'willReportState' => true,
+                'willReportState' => $willReportState,
             ];
 
             if (!empty($device['room'])) {

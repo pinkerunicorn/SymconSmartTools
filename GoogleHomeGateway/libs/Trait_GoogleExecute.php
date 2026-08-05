@@ -151,6 +151,22 @@ if (!trait_exists('GoogleExecute_Trait')) {
                         return $this->SetSymconValue($varId, $openPercent);
                     }
 
+                // ─── ActivateScene ─────────────────────────────────────────
+                case 'action.devices.commands.ActivateScene':
+                    $deactivate = (bool)($params['deactivate'] ?? false);
+                    $actionJson = $deactivate ? ($device['ActionOff'] ?? '{}') : ($device['ActionOn'] ?? '{}');
+                    if ($actionJson === '{}' || empty($actionJson)) {
+                        return false;
+                    }
+                    try {
+                        IPS_RunAction($actionJson, []);
+                        $this->SendDebug('Execute', "IPS_RunAction (Scene) -> $actionJson", 0);
+                        return true;
+                    } catch (\Throwable $e) {
+                        $this->SLogError('Execute Scene fehlgeschlagen', $e->getMessage());
+                        return false;
+                    }
+
                 default:
                     $this->SendDebug('Execute', 'Unbekannter Command: ' . $command, 0);
                     return false;
