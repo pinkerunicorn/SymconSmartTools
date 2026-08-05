@@ -156,19 +156,16 @@
     "status": [
         {
             "code": 102,
-            "icon": "Active",
             "color": -1,
             "caption": "Online"
         },
         {
             "code": 104,
-            "icon": "Warning",
             "color": -1,
             "caption": "Nicht konfiguriert"
         },
         {
             "code": 201,
-            "icon": "Error",
             "color": -1,
             "caption": "Fehler"
         }
