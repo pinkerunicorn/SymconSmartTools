@@ -74,8 +74,17 @@ class GoogleHomeGateway extends IPSModuleStrict
         $this->RegisterPropertyString('HomeGraphAPIKey', '');
         $this->RegisterPropertyString('PinCode', '');
 
-        // Geräteliste als JSON (zentrale Konfiguration)
+        // Geräteliste als JSON (zentrale Konfiguration) - Old (for migration)
         $this->RegisterPropertyString('Devices', '[]');
+
+        // Neue typspezifische Gerätelisten
+        $this->RegisterPropertyString('DevicesSwitch', '[]');
+        $this->RegisterPropertyString('DevicesSocket', '[]');
+        $this->RegisterPropertyString('DevicesLight', '[]');
+        $this->RegisterPropertyString('DevicesLightDimmer', '[]');
+        $this->RegisterPropertyString('DevicesLightColor', '[]');
+        $this->RegisterPropertyString('DevicesBlind', '[]');
+        $this->RegisterPropertyString('DevicesThermostat', '[]');
 
         // Internes Attribut: OAuth Tokens
         $this->RegisterAttributeString('OAuthTokens', '{}');
@@ -124,21 +133,75 @@ class GoogleHomeGateway extends IPSModuleStrict
         $this->GH_RegisterHook(self::HOOK_BASE . '/auth');
         $this->GH_RegisterHook(self::HOOK_BASE . '/token');
 
-        // Device-IDs auto-generieren falls fehlend und zurückschreiben
-        $devices = $this->GetDevices();
-        $changed = false;
-        foreach ($devices as &$device) {
-            if (empty($device['id'])) {
-                $device['id'] = mt_rand(10000, 99999);
-                $changed = true;
+        // Migration von alter 'Devices' Liste auf neue typspezifische Listen
+        $oldDevicesStr = $this->ReadPropertyString('Devices');
+        if (!empty($oldDevicesStr) && $oldDevicesStr !== '[]') {
+            $oldDevices = json_decode($oldDevicesStr, true);
+            if (is_array($oldDevices) && count($oldDevices) > 0) {
+                $migrated = [
+                    self::TYPE_SWITCH      => [],
+                    self::TYPE_SOCKET      => [],
+                    self::TYPE_LIGHT       => [],
+                    self::TYPE_LIGHT_DIM   => [],
+                    self::TYPE_LIGHT_COLOR => [],
+                    self::TYPE_BLIND       => [],
+                    self::TYPE_THERMOSTAT  => [],
+                ];
+                foreach ($oldDevices as $dev) {
+                    $type = (int)($dev['type'] ?? 0);
+                    unset($dev['type']); // Wird nun implizit durch die Liste bestimmt
+                    if (isset($migrated[$type])) {
+                        $migrated[$type][] = $dev;
+                    }
+                }
+
+                IPS_SetProperty($this->InstanceID, 'DevicesSwitch', json_encode(array_values($migrated[self::TYPE_SWITCH])));
+                IPS_SetProperty($this->InstanceID, 'DevicesSocket', json_encode(array_values($migrated[self::TYPE_SOCKET])));
+                IPS_SetProperty($this->InstanceID, 'DevicesLight', json_encode(array_values($migrated[self::TYPE_LIGHT])));
+                IPS_SetProperty($this->InstanceID, 'DevicesLightDimmer', json_encode(array_values($migrated[self::TYPE_LIGHT_DIM])));
+                IPS_SetProperty($this->InstanceID, 'DevicesLightColor', json_encode(array_values($migrated[self::TYPE_LIGHT_COLOR])));
+                IPS_SetProperty($this->InstanceID, 'DevicesBlind', json_encode(array_values($migrated[self::TYPE_BLIND])));
+                IPS_SetProperty($this->InstanceID, 'DevicesThermostat', json_encode(array_values($migrated[self::TYPE_THERMOSTAT])));
+                
+                IPS_SetProperty($this->InstanceID, 'Devices', '[]');
+                IPS_ApplyChanges($this->InstanceID);
+                return;
             }
         }
-        unset($device);
+
+        // Device-IDs auto-generieren falls fehlend
+        $mappings = [
+            'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
+            'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat'
+        ];
+        
+        $changed = false;
+        foreach ($mappings as $propName) {
+            $json = $this->ReadPropertyString($propName);
+            $devices = json_decode($json, true);
+            if (!is_array($devices)) continue;
+            
+            $propChanged = false;
+            foreach ($devices as &$device) {
+                if (empty($device['id'])) {
+                    $device['id'] = mt_rand(10000, 99999);
+                    $propChanged = true;
+                    $changed = true;
+                }
+            }
+            unset($device);
+            if ($propChanged) {
+                IPS_SetProperty($this->InstanceID, $propName, json_encode(array_values($devices)));
+            }
+        }
+
         if ($changed) {
-            IPS_SetProperty($this->InstanceID, 'Devices', json_encode(array_values($devices)));
             IPS_ApplyChanges($this->InstanceID);
             return;
         }
+
+        // Alle konfigurierten Geräte abrufen (GetDevices liest nun aus den typspezifischen Listen)
+        $devices = $this->GetDevices();
 
         // Variablen-Referenzen und Message-Watcher registrieren
         foreach ($devices as $device) {
@@ -330,14 +393,35 @@ class GoogleHomeGateway extends IPSModuleStrict
     }
 
     /**
-     * Gerätekonfiguration aus Property laden.
-     * Jedes Device: ['id', 'name', 'type', 'room', 'OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID']
+     * Gerätekonfiguration aus allen typspezifischen Properties zusammenführen.
+     * Jedes Device erhält seinen Typ implizit anhand der Liste.
      */
     public function GetDevices(): array
     {
-        $json = $this->ReadPropertyString('Devices');
-        $list = json_decode($json, true);
-        return is_array($list) ? $list : [];
+        $allDevices = [];
+
+        $mappings = [
+            self::TYPE_SWITCH      => 'DevicesSwitch',
+            self::TYPE_SOCKET      => 'DevicesSocket',
+            self::TYPE_LIGHT       => 'DevicesLight',
+            self::TYPE_LIGHT_DIM   => 'DevicesLightDimmer',
+            self::TYPE_LIGHT_COLOR => 'DevicesLightColor',
+            self::TYPE_BLIND       => 'DevicesBlind',
+            self::TYPE_THERMOSTAT  => 'DevicesThermostat',
+        ];
+
+        foreach ($mappings as $type => $propName) {
+            $json = $this->ReadPropertyString($propName);
+            $list = json_decode($json, true);
+            if (is_array($list)) {
+                foreach ($list as $dev) {
+                    $dev['type'] = $type; // Typ dynamisch einfügen
+                    $allDevices[] = $dev;
+                }
+            }
+        }
+
+        return $allDevices;
     }
 
     // ─────────────────────────────────────────────────────────────

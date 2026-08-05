@@ -3,7 +3,7 @@
         {
             "type": "ExpansionPanel",
             "caption": "Google Home Zugangsdaten",
-            "expanded": true,
+            "expanded": false,
             "items": [
                 {
                     "type": "ValidationTextBox",
@@ -36,111 +36,152 @@
             "caption": " "
         },
         {
-            "type": "List",
-            "name": "Devices",
-            "caption": "Geraete",
-            "rowCount": 10,
-            "add": true,
-            "delete": true,
-            "sort": {
-                "column": "name",
-                "direction": "ascending"
-            },
-            "columns": [
+            "type": "ExpansionPanel",
+            "caption": "Schalter",
+            "expanded": true,
+            "items": [
                 {
-                    "caption": "ID",
-                    "name": "id",
-                    "width": "50px",
-                    "visible": false,
-                    "add": "",
-                    "edit": {
-                        "type": "ValidationTextBox"
-                    }
-                },
+                    "type": "List",
+                    "name": "DevicesSwitch",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": { "column": "name", "direction": "ascending" },
+                    "columns": [
+                        { "caption": "ID", "name": "id", "width": "50px", "visible": false, "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Name", "name": "name", "width": "200px", "add": "Neues Geraet", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Schaltvariable", "name": "OnOff_VarID", "width": "300px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Steckdose",
+            "expanded": false,
+            "items": [
                 {
-                    "caption": "Name",
-                    "name": "name",
-                    "width": "200px",
-                    "add": "Neues Geraet",
-                    "edit": {
-                        "type": "ValidationTextBox"
-                    }
-                },
+                    "type": "List",
+                    "name": "DevicesSocket",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": { "column": "name", "direction": "ascending" },
+                    "columns": [
+                        { "caption": "ID", "name": "id", "width": "50px", "visible": false, "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Name", "name": "name", "width": "200px", "add": "Neue Steckdose", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Schaltvariable", "name": "OnOff_VarID", "width": "300px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Licht (Schalter)",
+            "expanded": false,
+            "items": [
                 {
-                    "caption": "Typ",
-                    "name": "type",
-                    "width": "170px",
-                    "add": 0,
-                    "edit": {
-                        "type": "Select",
-                        "options": [
-                            {"caption": "Schalter",          "value": 0},
-                            {"caption": "Steckdose",         "value": 1},
-                            {"caption": "Licht (Schalter)",  "value": 2},
-                            {"caption": "Licht (Dimmer)",    "value": 3},
-                            {"caption": "Licht (Farbe/CCT)", "value": 4},
-                            {"caption": "Jalousie/Rolllade", "value": 5}
-                        ]
-                    }
-                },
+                    "type": "List",
+                    "name": "DevicesLight",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": { "column": "name", "direction": "ascending" },
+                    "columns": [
+                        { "caption": "ID", "name": "id", "width": "50px", "visible": false, "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Name", "name": "name", "width": "200px", "add": "Neues Licht", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Schaltvariable", "name": "OnOff_VarID", "width": "300px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Licht (Dimmer)",
+            "expanded": false,
+            "items": [
                 {
-                    "caption": "Raum",
-                    "name": "room",
-                    "width": "130px",
-                    "add": "",
-                    "edit": {
-                        "type": "ValidationTextBox"
-                    }
-                },
+                    "type": "List",
+                    "name": "DevicesLightDimmer",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": { "column": "name", "direction": "ascending" },
+                    "columns": [
+                        { "caption": "ID", "name": "id", "width": "50px", "visible": false, "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Name", "name": "name", "width": "200px", "add": "Neuer Dimmer", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Schaltvariable", "name": "OnOff_VarID", "width": "250px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } },
+                        { "caption": "Helligkeit", "name": "Brightness_VarID", "width": "250px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [1, 2] } }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Licht (Farbe)",
+            "expanded": false,
+            "items": [
                 {
-                    "caption": "An/Aus Variable",
-                    "name": "OnOff_VarID",
-                    "width": "200px",
-                    "add": 0,
-                    "edit": {
-                        "type": "SelectVariable",
-                        "validVariableTypes": [0, 1]
-                    }
-                },
+                    "type": "List",
+                    "name": "DevicesLightColor",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": { "column": "name", "direction": "ascending" },
+                    "columns": [
+                        { "caption": "ID", "name": "id", "width": "50px", "visible": false, "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Name", "name": "name", "width": "200px", "add": "Neue Farblampe", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Raum", "name": "room", "width": "100px", "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "An/Aus", "name": "OnOff_VarID", "width": "150px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } },
+                        { "caption": "Helligkeit", "name": "Brightness_VarID", "width": "150px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [1, 2] } },
+                        { "caption": "Farbe RGB", "name": "ColorRGB_VarID", "width": "150px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [1] } },
+                        { "caption": "Farbtemperatur", "name": "ColorTemp_VarID", "width": "150px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [1] } }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Rollladen / Jalousien",
+            "expanded": false,
+            "items": [
                 {
-                    "caption": "Helligkeit Variable",
-                    "name": "Brightness_VarID",
-                    "width": "200px",
-                    "add": 0,
-                    "edit": {
-                        "type": "SelectVariable",
-                        "validVariableTypes": [1, 2]
-                    }
-                },
+                    "type": "List",
+                    "name": "DevicesBlind",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": { "column": "name", "direction": "ascending" },
+                    "columns": [
+                        { "caption": "ID", "name": "id", "width": "50px", "visible": false, "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Name", "name": "name", "width": "200px", "add": "Neue Rolllade", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Oeffnen/Schliessen", "name": "OpenClose_VarID", "width": "300px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1, 2] } }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Thermostat",
+            "expanded": false,
+            "items": [
                 {
-                    "caption": "Farbe RGB Variable",
-                    "name": "ColorRGB_VarID",
-                    "width": "200px",
-                    "add": 0,
-                    "edit": {
-                        "type": "SelectVariable",
-                        "validVariableTypes": [1]
-                    }
-                },
-                {
-                    "caption": "Farbtemperatur Variable",
-                    "name": "ColorTemp_VarID",
-                    "width": "200px",
-                    "add": 0,
-                    "edit": {
-                        "type": "SelectVariable",
-                        "validVariableTypes": [1]
-                    }
-                },
-                {
-                    "caption": "Oeffnen/Schliessen Variable",
-                    "name": "OpenClose_VarID",
-                    "width": "200px",
-                    "add": 0,
-                    "edit": {
-                        "type": "SelectVariable",
-                        "validVariableTypes": [0, 1, 2]
-                    }
+                    "type": "List",
+                    "name": "DevicesThermostat",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": { "column": "name", "direction": "ascending" },
+                    "columns": [
+                        { "caption": "ID", "name": "id", "width": "50px", "visible": false, "add": "", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Name", "name": "name", "width": "200px", "add": "Neues Thermostat", "edit": { "type": "ValidationTextBox" } },
+                        { "caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": { "type": "ValidationTextBox" } }
+                    ]
                 }
             ]
         }
