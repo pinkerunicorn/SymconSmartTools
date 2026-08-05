@@ -120,9 +120,9 @@ class GoogleHomeGateway extends IPSModuleStrict
     {
         parent::ApplyChanges();
 
-        $this->RegisterHook(self::HOOK_BASE . '/fulfillment');
-        $this->RegisterHook(self::HOOK_BASE . '/auth');
-        $this->RegisterHook(self::HOOK_BASE . '/token');
+        $this->GH_RegisterHook(self::HOOK_BASE . '/fulfillment');
+        $this->GH_RegisterHook(self::HOOK_BASE . '/auth');
+        $this->GH_RegisterHook(self::HOOK_BASE . '/token');
 
         // Variablen-Watcher auf alle konfigurierten Variablen registrieren
         $this->UnregisterAllReferences();
@@ -414,7 +414,7 @@ class GoogleHomeGateway extends IPSModuleStrict
     // Hook-Registrierung (analog TedeeLock)
     // ─────────────────────────────────────────────────────────────
 
-    private function RegisterHook(string $hookPath): void
+    private function GH_RegisterHook(string $hookPath): void
     {
         $ids = IPS_GetInstanceListByModuleID('{015A6EB8-D6E5-4B93-B496-0D3F77AE9FE1}');
         if (empty($ids)) {
