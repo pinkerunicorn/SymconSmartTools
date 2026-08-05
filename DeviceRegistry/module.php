@@ -215,6 +215,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
 
         $newDevices = [
             'DevicesSwitch' => [],
+            'DevicesSocket' => [],
             'DevicesLightDimmer' => [],
             'DevicesMotionSensor' => [],
             'DevicesContactSensor' => []
@@ -263,8 +264,18 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 ];
                 $existingVars[] = $varId;
             }
+            // Socket / Steckdose
+            elseif ($var['VariableType'] === 0 && $hasAction && (strpos(strtolower($room), 'steckdose') !== false || strpos(strtolower($name), 'steckdose') !== false)) {
+                $newDevices['DevicesSocket'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'OnOff_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
             // Switch
-            elseif ($var['VariableType'] === 0 && $hasAction && strpos(strtolower($profile), 'switch') !== false) {
+            elseif ($var['VariableType'] === 0 && $hasAction && (strpos(strtolower($profile), 'switch') !== false || strpos(strtolower($name), 'schalter') !== false || strpos(strtolower($name), 'status') !== false)) {
+                // Bei generischem "Status" prüfen ob es vielleicht ein Licht oder Schalter ist
                 $newDevices['DevicesSwitch'][] = [
                     'name' => $name,
                     'room' => $room,
