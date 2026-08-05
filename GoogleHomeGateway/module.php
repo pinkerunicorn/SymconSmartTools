@@ -394,7 +394,7 @@ class GoogleHomeGateway extends IPSModuleStrict
     public function GetPublicBaseURL(): string
     {
         // Symcon Connect URL automatisch ermitteln
-        $connectIds = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930D26D80F}');
+        $connectIds = IPS_GetInstanceListByModuleID('{9486D575-BE8C-4ED8-B5B5-20930E26DE6F}');
         if (!empty($connectIds)) {
             $url = CC_GetConnectURL($connectIds[0]);
             if (!empty($url)) {
