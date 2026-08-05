@@ -266,6 +266,15 @@ class SymconDeviceRegistry extends IPSModuleStrict
         return [];
     }
 
+    public function ClearList(string $listName): void
+    {
+        if (str_starts_with($listName, 'Devices')) {
+            IPS_SetProperty($this->InstanceID, $listName, '[]');
+            IPS_ApplyChanges($this->InstanceID);
+            echo "Die Liste wurde komplett geleert! Bitte die Seite neu laden.";
+        }
+    }
+
     // Auto-Discovery Funktion
     public function DiscoverDevices(string $category = ''): void
     {
