@@ -23,7 +23,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -36,7 +36,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -49,7 +49,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -63,7 +63,7 @@
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
                         {"caption": "Brightness Variable", "name": "Brightness_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -79,7 +79,7 @@
                         {"caption": "Brightness Variable", "name": "Brightness_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
                         {"caption": "RGB Variable", "name": "ColorRGB_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
                         {"caption": "Kelvin Variable", "name": "ColorTemp_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -92,7 +92,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "OpenClose Variable", "name": "OpenClose_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -105,7 +105,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "TempSet Variable", "name": "TempSet_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -119,7 +119,7 @@
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Action On (JSON)", "name": "ActionOn", "width": "auto", "add": "{}", "edit": {"type": "SelectAction"}},
                         {"caption": "Action Off (JSON)", "name": "ActionOff", "width": "auto", "add": "{}", "edit": {"type": "SelectAction"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 }
             ]
@@ -138,7 +138,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -151,7 +151,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -164,7 +164,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 },
                 {
@@ -177,7 +177,7 @@
                         {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "ValidationTextBox"}},
                         {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px"}
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 }
             ]
