@@ -15,7 +15,15 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name (z.B. Erdgeschoss)", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}}
+                        {
+                            "caption": "Name (z.B. Erdgeschoss)",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        }
                     ]
                 },
                 {
@@ -25,8 +33,25 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Raum Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Etage / Bereich", "name": "floor", "width": "200px", "add": "", "edit": {"type": "Select", "options": []}}
+                        {
+                            "caption": "Raum Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Etage / Bereich",
+                            "name": "floor",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        }
                     ]
                 }
             ]
@@ -36,9 +61,20 @@
             "caption": "Aktorik (Schalter, Dimmer, Jalousien)",
             "items": [
                 {
-                    "type": "Button",
-                    "caption": "Aktorik automatisch suchen",
-                    "onClick": "SDR_DiscoverDevices($id, 'Aktorik');"
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Schalter)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesSwitch');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesSwitch');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
+                    ]
                 },
                 {
                     "type": "List",
@@ -47,10 +83,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "OnOff Variable",
+                            "name": "OnOff_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Steckdosen)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesSocket');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesSocket');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -60,10 +142,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "OnOff Variable",
+                            "name": "OnOff_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Licht (Schalter))",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesLight');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesLight');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -73,10 +201,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "OnOff Variable",
+                            "name": "OnOff_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Licht (Dimmer))",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesLightDimmer');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesLightDimmer');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -86,11 +260,65 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Brightness Variable", "name": "Brightness_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "OnOff Variable",
+                            "name": "OnOff_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Brightness Variable",
+                            "name": "Brightness_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Licht (Farbe))",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesLightColor');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesLightColor');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -100,13 +328,83 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "OnOff Variable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Brightness Variable", "name": "Brightness_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "RGB Variable", "name": "ColorRGB_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Kelvin Variable", "name": "ColorTemp_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "OnOff Variable",
+                            "name": "OnOff_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Brightness Variable",
+                            "name": "Brightness_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "RGB Variable",
+                            "name": "ColorRGB_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Kelvin Variable",
+                            "name": "ColorTemp_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Jalousie / Rolllade)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesBlind');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesBlind');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -116,10 +414,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "OpenClose Variable", "name": "OpenClose_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "OpenClose Variable",
+                            "name": "OpenClose_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Thermostate)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesThermostat');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesThermostat');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -129,10 +473,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "TempSet Variable", "name": "TempSet_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "TempSet Variable",
+                            "name": "TempSet_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Szenen)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesScene');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesScene');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -142,11 +532,49 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "Action On (JSON)", "name": "ActionOn", "width": "auto", "add": "{}", "edit": {"type": "SelectAction"}},
-                        {"caption": "Action Off (JSON)", "name": "ActionOff", "width": "auto", "add": "{}", "edit": {"type": "SelectAction"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Action On (JSON)",
+                            "name": "ActionOn",
+                            "width": "auto",
+                            "add": "{}",
+                            "edit": {
+                                "type": "SelectAction"
+                            }
+                        },
+                        {
+                            "caption": "Action Off (JSON)",
+                            "name": "ActionOff",
+                            "width": "auto",
+                            "add": "{}",
+                            "edit": {
+                                "type": "SelectAction"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
                     ]
                 }
             ]
@@ -156,9 +584,20 @@
             "caption": "Sensorik (Bewegung, Melder)",
             "items": [
                 {
-                    "type": "Button",
-                    "caption": "Sensorik automatisch suchen",
-                    "onClick": "SDR_DiscoverDevices($id, 'Sensorik');"
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Bewegungsmelder)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesMotionSensor');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesMotionSensor');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
+                    ]
                 },
                 {
                     "type": "List",
@@ -167,10 +606,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Status Variable",
+                            "name": "Status_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Fenster- / Türkontakte)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesContactSensor');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesContactSensor');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -180,10 +665,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Status Variable",
+                            "name": "Status_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Rauchmelder)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesSmokeSensor');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesSmokeSensor');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -193,10 +724,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Status Variable",
+                            "name": "Status_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Wassermelder)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesWaterSensor');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesWaterSensor');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -206,10 +783,56 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Status Variable",
+                            "name": "Status_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Sonstige Alarmmelder (Sabotage, Glasbruch, etc.))",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesAlarmSensor');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesAlarmSensor');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
                     ]
                 },
                 {
@@ -219,10 +842,40 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Status Variable",
+                            "name": "Status_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
                     ]
                 }
             ]
@@ -232,9 +885,20 @@
             "caption": "Zähler & Verbrauch (Strom, Wasser, Gas)",
             "items": [
                 {
-                    "type": "Button",
-                    "caption": "Zähler automatisch suchen",
-                    "onClick": "SDR_DiscoverDevices($id, 'Meter');"
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Energiezähler)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesMeter');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesMeter');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
+                    ]
                 },
                 {
                     "type": "List",
@@ -243,18 +907,63 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "Typ", "name": "type", "width": "100px", "add": "Strom", "edit": {
-                            "type": "Select",
-                            "options": [
-                                {"caption": "Strom", "value": "Strom"},
-                                {"caption": "Wasser", "value": "Wasser"},
-                                {"caption": "Gas", "value": "Gas"}
-                            ]
-                        }},
-                        {"caption": "Zählerstand Variable", "name": "Value_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Typ",
+                            "name": "type",
+                            "width": "100px",
+                            "add": "Strom",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    {
+                                        "caption": "Strom",
+                                        "value": "Strom"
+                                    },
+                                    {
+                                        "caption": "Wasser",
+                                        "value": "Wasser"
+                                    },
+                                    {
+                                        "caption": "Gas",
+                                        "value": "Gas"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "caption": "Zählerstand Variable",
+                            "name": "Value_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
                     ]
                 }
             ]
@@ -264,9 +973,20 @@
             "caption": "Diagnose & System",
             "items": [
                 {
-                    "type": "Button",
-                    "caption": "Gerätestatus automatisch suchen",
-                    "onClick": "SDR_DiscoverDevices($id, 'Health');"
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Suchen (Gerätestatus / Offline-Module)",
+                            "onClick": "SDR_DiscoverDevices($id, 'DevicesHealth');"
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Alle löschen",
+                            "onClick": "SDR_ClearList($id, 'DevicesHealth');",
+                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+                        }
+                    ]
                 },
                 {
                     "type": "List",
@@ -275,10 +995,40 @@
                     "add": true,
                     "delete": true,
                     "columns": [
-                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
-                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
-                        {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
-                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Status Variable",
+                            "name": "Status_VarID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        }
                     ]
                 }
             ]
