@@ -140,12 +140,13 @@ class GoogleHomeGateway extends IPSModuleStrict
             return;
         }
 
-        // Variablen-Referenzen registrieren
+        // Variablen-Referenzen und Message-Watcher registrieren
         foreach ($devices as $device) {
             foreach (['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID'] as $field) {
                 $varId = (int)($device[$field] ?? 0);
                 if ($varId > 0 && IPS_ObjectExists($varId)) {
                     $this->RegisterReference($varId);
+                    $this->RegisterMessage($varId, VM_UPDATE);
                 }
             }
         }
@@ -164,6 +165,16 @@ class GoogleHomeGateway extends IPSModuleStrict
             $this->SetValue('GatewayStatus', 1);
             $this->SetStatus(102);
             $this->SetValue('ConnectedDevices', count($devices));
+        }
+    }
+
+    public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
+    {
+        parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
+
+        if ($Message === VM_UPDATE) {
+            $this->SendDebug('MessageSink', "Variable $SenderID hat sich geaendert -> ReportState", 0);
+            $this->ReportStateForVariable($SenderID);
         }
     }
 
