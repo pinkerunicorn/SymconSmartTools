@@ -88,12 +88,25 @@ if (!trait_exists('GoogleExecute_Trait')) {
             switch ($command) {
                 // ─── OnOff ────────────────────────────────────────────────
                 case 'action.devices.commands.OnOff':
-                    $varId = (int)($device['OnOff_VarID'] ?? 0);
-                    if ($varId <= 0 || !IPS_ObjectExists($varId)) {
-                        return false;
-                    }
                     $on = (bool)($params['on'] ?? false);
-                    return $this->SetSymconValue($varId, $on);
+                    $varId = (int)($device['OnOff_VarID'] ?? 0);
+                    
+                    if ($varId > 0 && IPS_ObjectExists($varId)) {
+                        return $this->SetSymconValue($varId, $on);
+                    }
+                    
+                    // Fallback für reine Dimmer ohne OnOff-Variable
+                    $brightnessVarId = (int)($device['Brightness_VarID'] ?? 0);
+                    if ($brightnessVarId > 0 && IPS_ObjectExists($brightnessVarId)) {
+                        $varType = IPS_GetVariable($brightnessVarId)['VariableType'];
+                        if ($on) {
+                            $value = ($varType === 2) ? 1.0 : 100;
+                        } else {
+                            $value = ($varType === 2) ? 0.0 : 0;
+                        }
+                        return $this->SetSymconValue($brightnessVarId, $value);
+                    }
+                    return false;
 
                 // ─── Brightness ───────────────────────────────────────────
                 case 'action.devices.commands.BrightnessAbsolute':

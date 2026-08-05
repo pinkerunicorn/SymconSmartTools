@@ -52,7 +52,14 @@ if (!trait_exists('GoogleQuery_Trait')) {
                 // Boolean direkt, Integer > 0 = an
                 $state['on'] = is_bool($val) ? $val : ($val > 0);
             } else {
-                $state['on'] = false;
+                // Fallback für Dimmer, die nur Intensität haben
+                $brightnessVarId = (int)($device['Brightness_VarID'] ?? 0);
+                if ($brightnessVarId > 0 && IPS_ObjectExists($brightnessVarId)) {
+                    $brightness = GetValue($brightnessVarId);
+                    $state['on'] = ($brightness > 0);
+                } else {
+                    $state['on'] = false;
+                }
             }
 
             switch ($type) {
