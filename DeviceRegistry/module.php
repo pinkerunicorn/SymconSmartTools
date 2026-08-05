@@ -239,16 +239,32 @@ class SymconDeviceRegistry extends IPSModuleStrict
             $room = IPS_ObjectExists($parentId) ? IPS_GetObject($parentId)['ObjectName'] : 'Unbekannt'; 
             
             // Motion
-            if ($var['VariableType'] === 0 && !$hasAction && strpos(strtolower($profile), 'motion') !== false) {
-                $newDevices['DevicesMotionSensor'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'Status_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
+            if ($var['VariableType'] === 0 && !$hasAction && (
+                strpos(strtolower($profile), 'motion') !== false ||
+                strpos(strtolower($name), 'motion') !== false ||
+                strpos(strtolower($name), 'bewegung') !== false ||
+                (strpos(strtolower($name), 'status') !== false && (strpos(strtolower($room), 'bewegung') !== false || strpos(strtolower($room), 'motion') !== false))
+            )) {
+                // Ignore config variables like "Bewegungserkennung aktiv" (which has an action usually, but just in case)
+                if (strpos(strtolower($name), 'aktiv') === false) {
+                    $newDevices['DevicesMotionSensor'][] = [
+                        'name' => $name,
+                        'room' => $room,
+                        'Status_VarID' => $varId
+                    ];
+                    $existingVars[] = $varId;
+                }
             }
             // Window/Door Contact
-            elseif ($var['VariableType'] === 0 && !$hasAction && strpos(strtolower($profile), 'window') !== false) {
+            elseif ($var['VariableType'] === 0 && !$hasAction && (
+                strpos(strtolower($profile), 'window') !== false ||
+                strpos(strtolower($name), 'fenster') !== false ||
+                strpos(strtolower($name), 'tür') !== false ||
+                strpos(strtolower($name), 'door') !== false ||
+                strpos(strtolower($name), 'contact') !== false ||
+                strpos(strtolower($name), 'kontakt') !== false ||
+                (strpos(strtolower($name), 'status') !== false && (strpos(strtolower($room), 'fenster') !== false || strpos(strtolower($room), 'tür') !== false || strpos(strtolower($room), 'kontakt') !== false))
+            )) {
                 $newDevices['DevicesContactSensor'][] = [
                     'name' => $name,
                     'room' => $room,
