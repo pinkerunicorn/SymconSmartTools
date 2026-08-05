@@ -27,6 +27,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterPropertyString('DevicesSmokeSensor', '[]');
         $this->RegisterPropertyString('DevicesWaterSensor', '[]');
         
+        // Zähler
+        $this->RegisterPropertyString('DevicesMeter', '[]');
+        
         $this->RegisterVariableInteger('RegisteredDevices', 'Registrierte Geraete', '', 1);
     }
 
@@ -37,7 +40,8 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $mappings = [
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene',
-            'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor'
+            'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
+            'DevicesMeter'
         ];
         
         $changed = false;
@@ -140,7 +144,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                             $hasError = true;
                                         }
                                     } else {
-                                        $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID'];
+                                        $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Value_VarID'];
                                         $primaryFieldFound = false;
                                         foreach ($varFields as $varField) {
                                             if (isset($dev[$varField])) {
@@ -153,7 +157,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                                         break;
                                                     }
                                                 } else {
-                                                    if (in_array($varField, ['OnOff_VarID', 'OpenClose_VarID', 'Status_VarID'])) {
+                                                    if (in_array($varField, ['OnOff_VarID', 'OpenClose_VarID', 'Status_VarID', 'Value_VarID'])) {
                                                         $status   = 'Unvollstaendig';
                                                         $rowColor = '#FF8000';
                                                         $hasError = true;
@@ -337,7 +341,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 $existingVars[] = $varId;
             }
             // Smoke Sensor
-            elseif (!$hasAction && (
+            elseif (($var['VariableType'] === 0 || $var['VariableType'] === 1) && !$hasAction && (
                 strpos(strtolower($profile), 'smoke') !== false ||
                 strpos(strtolower($profile), 'rauch') !== false ||
                 strpos(strtolower($name), 'rauch') !== false ||
@@ -353,7 +357,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 $existingVars[] = $varId;
             }
             // Water Sensor
-            elseif (!$hasAction && (
+            elseif (($var['VariableType'] === 0 || $var['VariableType'] === 1) && !$hasAction && (
                 strpos(strtolower($profile), 'water') !== false ||
                 strpos(strtolower($profile), 'wasser') !== false ||
                 strpos(strtolower($profile), 'leak') !== false ||
@@ -362,11 +366,35 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 strpos(strtolower($name), 'leak') !== false ||
                 strpos(strtolower($name), 'leck') !== false ||
                 (strpos(strtolower($name), 'alarm') !== false && (strpos(strtolower($room), 'wasser') !== false || strpos(strtolower($room), 'water') !== false))
-            )) {
+            ) && strpos(strtolower($profile), 'volume') === false && strpos(strtolower($name), 'zähler') === false && strpos(strtolower($name), 'verbrauch') === false) {
                 $newDevices['DevicesWaterSensor'][] = [
                     'name' => $name,
                     'room' => $room,
                     'Status_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
+            // Meter (Strom, Wasser, Gas)
+            elseif (($var['VariableType'] === 1 || $var['VariableType'] === 2) && !$hasAction && (
+                strpos(strtolower($profile), 'electricity') !== false || strpos(strtolower($profile), 'watt') !== false || strpos(strtolower($profile), 'power') !== false ||
+                strpos(strtolower($profile), 'water.volume') !== false || strpos(strtolower($profile), 'gas') !== false ||
+                strpos(strtolower($name), 'strom') !== false || strpos(strtolower($name), 'energie') !== false || strpos(strtolower($name), 'leistung') !== false ||
+                strpos(strtolower($name), 'wasserzähler') !== false || strpos(strtolower($name), 'gaszähler') !== false ||
+                strpos(strtolower($name), 'zähler') !== false || strpos(strtolower($name), 'zaehler') !== false || strpos(strtolower($name), 'verbrauch') !== false ||
+                strpos(strtolower($name), 'meter') !== false
+            )) {
+                $type = 'Strom';
+                if (strpos(strtolower($profile), 'water') !== false || strpos(strtolower($name), 'wasser') !== false) {
+                    $type = 'Wasser';
+                } elseif (strpos(strtolower($profile), 'gas') !== false || strpos(strtolower($name), 'gas') !== false) {
+                    $type = 'Gas';
+                }
+                
+                $newDevices['DevicesMeter'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'type' => $type,
+                    'Value_VarID' => $varId
                 ];
                 $existingVars[] = $varId;
             }
