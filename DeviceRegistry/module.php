@@ -333,7 +333,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 strpos(strtolower($room), 'heizen') !== false ||
                 strpos(strtolower($room), 'heizung') !== false ||
                 strpos(strtolower($room), 'thermostat') !== false
-            )) {
+            ) && strpos(strtolower($profile), 'color') === false && strpos(strtolower($name), 'color') === false && strpos(strtolower($name), 'farbe') === false && strpos(strtolower($name), 'farbtemperatur') === false) {
                 $newDevices['DevicesThermostat'][] = [
                     'name' => $name,
                     'room' => $room,
