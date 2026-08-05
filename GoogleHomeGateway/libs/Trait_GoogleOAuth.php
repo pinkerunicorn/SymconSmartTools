@@ -72,10 +72,6 @@ if (!trait_exists('GoogleOAuth_Trait')) {
             $this->ServeAuthForm($redirectUri, $state, false);
         }
 
-        // ─────────────────────────────────────────────────────────────
-        // Token Endpoint: Code gegen Token tauschen
-        // ─────────────────────────────────────────────────────────────
-
         protected function HandleTokenRequest(): void
         {
             header('Content-Type: application/json');
@@ -84,9 +80,24 @@ if (!trait_exists('GoogleOAuth_Trait')) {
             $clientId     = $_POST['client_id'] ?? '';
             $clientSecret = $_POST['client_secret'] ?? '';
 
+            // Client-Authentifizierung via POST oder HTTP Basic Auth erlauben
+            $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+            if (str_starts_with($authHeader, 'Basic ')) {
+                $basic = explode(':', base64_decode(substr($authHeader, 6)), 2);
+                if (count($basic) === 2) {
+                    $clientId     = $basic[0];
+                    $clientSecret = $basic[1];
+                }
+            }
+
+            $this->SendDebug('OAuth Token', "Empfangener Request: grant_type=$grantType, client_id=$clientId", 0);
+
+            $expectedClientID     = $this->ReadPropertyString('GoogleClientID');
+            $expectedClientSecret = $this->ReadPropertyString('GoogleClientSecret');
+
             // Client validieren
-            if ($clientId !== $this->ReadPropertyString('GoogleClientID') ||
-                $clientSecret !== $this->ReadPropertyString('GoogleClientSecret')) {
+            if ($clientId !== $expectedClientID || $clientSecret !== $expectedClientSecret) {
+                $this->SendDebug('OAuth Token Error', "Client-Mismatch! Empfangen: id='$clientId', secret='$clientSecret' | Erwartet: id='$expectedClientID', secret='$expectedClientSecret'", 0);
                 http_response_code(401);
                 echo json_encode(['error' => 'invalid_client']);
                 return;
