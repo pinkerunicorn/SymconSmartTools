@@ -420,33 +420,51 @@ class GoogleHomeGateway extends IPSModuleStrict
      */
     private function GuessDeviceType(array $vars, string $name, string $moduleName): ?array
     {
-        $hasOnOff      = isset($vars['STATE']) || isset($vars['LEVEL']) || isset($vars['ON_OFF']);
-        $hasBrightness = isset($vars['LEVEL']) || isset($vars['BRIGHTNESS']) || isset($vars['DIM_LEVEL']);
-        $hasColor      = isset($vars['COLOR']) || isset($vars['RGB']) || isset($vars['HUE']);
+        // Hilfsfunktion: Hat die Variable eine schaltbare Aktion?
+        $isActionable = function(int $varId): bool {
+            if ($varId <= 0 || !IPS_ObjectExists($varId)) return false;
+            $v = IPS_GetVariable($varId);
+            return ($v['VariableAction'] > 0 || $v['VariableCustomAction'] > 0);
+        };
+
+        $hasState      = isset($vars['STATE']);
+        $hasOnOff      = isset($vars['ON_OFF']);
         $hasLevel      = isset($vars['LEVEL']);
+        $hasBrightness = isset($vars['BRIGHTNESS']) || isset($vars['DIM_LEVEL']);
 
         // Homematic Dimmer
         if ($hasBrightness && str_contains($moduleName, 'HM')) {
-            return [
-                'type'            => self::TYPE_LIGHT_DIM,
-                'OnOff_VarID'     => $vars['STATE'] ?? ($vars['LEVEL'] ?? 0),
-                'Brightness_VarID'=> $vars['LEVEL'] ?? 0,
-            ];
+            $dimVarId = $vars['LEVEL'] ?? 0;
+            if ($isActionable($dimVarId)) {
+                return [
+                    'type'            => self::TYPE_LIGHT_DIM,
+                    'OnOff_VarID'     => $vars['STATE'] ?? $dimVarId,
+                    'Brightness_VarID'=> $dimVarId,
+                ];
+            }
         }
 
         // Homematic Rolllade
-        if ($hasLevel && str_contains(strtolower($name), 'rolllade') || str_contains(strtolower($name), 'jalousie') || str_contains(strtolower($name), 'rollo')) {
-            return [
-                'type'            => self::TYPE_BLIND,
-                'OpenClose_VarID' => $vars['LEVEL'] ?? 0,
-            ];
+        if ($hasLevel && (str_contains(strtolower($name), 'rolllade') || str_contains(strtolower($name), 'jalousie') || str_contains(strtolower($name), 'rollo'))) {
+            $blindVarId = $vars['LEVEL'] ?? 0;
+            if ($isActionable($blindVarId)) {
+                return [
+                    'type'            => self::TYPE_BLIND,
+                    'OpenClose_VarID' => $blindVarId,
+                ];
+            }
         }
 
-        // Generischer Schalter
-        if ($hasOnOff && !$hasBrightness) {
+        // Echter Schaltaktor (muss zwingend eine steuerbare Variablen-Aktion haben)
+        $switchVarId = $vars['STATE'] ?? ($vars['ON_OFF'] ?? 0);
+        if ($switchVarId > 0 && !$hasBrightness && $isActionable($switchVarId)) {
+            // Reine Taster-Namen aussortieren
+            if (str_contains(strtolower($name), 'taster') && !str_contains(strtolower($name), 'aktor')) {
+                return null;
+            }
             return [
                 'type'        => self::TYPE_SWITCH,
-                'OnOff_VarID' => $vars['STATE'] ?? 0,
+                'OnOff_VarID' => $switchVarId,
             ];
         }
 
