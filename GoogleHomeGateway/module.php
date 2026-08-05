@@ -246,17 +246,22 @@ class GoogleHomeGateway extends IPSModuleStrict
     {
         $apiKey = $this->ReadPropertyString('HomeGraphAPIKey');
         if (empty($apiKey)) {
+            $this->SendDebug('RequestSync', 'Kein Home Graph API Key konfiguriert!', 0);
             $this->SLogError('RequestSync: Kein Home Graph API Key konfiguriert');
             return false;
         }
 
         $agentUserId = $this->GetAgentUserId();
+        $this->SendDebug('RequestSync', 'Sende RequestSync an Google fuer agentUserId: ' . $agentUserId, 0);
+
         $result = $this->HttpRequest(
             'https://homegraph.googleapis.com/v1/devices:requestSync?key=' . urlencode($apiKey),
             'POST',
             ['Content-Type: application/json'],
             ['agentUserId' => $agentUserId]
         );
+
+        $this->SendDebug('RequestSync', 'Google Response: ' . json_encode($result), 0);
 
         if ($result !== null) {
             $this->SetValue('LastSync', date('d.m.Y H:i:s'));
