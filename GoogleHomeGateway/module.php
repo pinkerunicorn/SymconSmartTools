@@ -305,6 +305,7 @@ class GoogleHomeGateway extends IPSModuleStrict
             default                  => ['requestId' => $requestId, 'payload' => ['errorCode' => 'notSupported']],
         };
 
+        $this->SendDebug('FulfillmentResponse', json_encode($response), 0);
         echo json_encode($response);
     }
 
@@ -400,12 +401,15 @@ class GoogleHomeGateway extends IPSModuleStrict
         $allDevices = [];
         $registryId = $this->ReadPropertyInteger('RegistryID');
         if ($registryId <= 0 || !IPS_InstanceExists($registryId)) {
+            $this->SendDebug('GetDevices', "RegistryID invalid or missing: $registryId", 0);
             return [];
         }
 
         $blacklistJson = $this->ReadPropertyString('Blacklist');
         $blacklistArr = json_decode($blacklistJson, true) ?: [];
         $blacklistIds = array_column($blacklistArr, 'id');
+
+        $this->SendDebug('GetDevices', "RegistryID: $registryId, Blacklisted IDs: " . count($blacklistIds), 0);
 
         $mappings = [
             self::TYPE_SWITCH      => 'DevicesSwitch',
@@ -421,11 +425,13 @@ class GoogleHomeGateway extends IPSModuleStrict
         foreach ($mappings as $type => $propName) {
             $json = @IPS_GetProperty($registryId, $propName);
             if ($json === false) {
+                $this->SendDebug('GetDevices', "Property $propName could not be read from Registry.", 0);
                 continue;
             }
             
             $list = json_decode($json, true);
             if (is_array($list)) {
+                $this->SendDebug('GetDevices', "Loaded " . count($list) . " devices for $propName", 0);
                 foreach ($list as $dev) {
                     if (in_array((string)$dev['id'], $blacklistIds, true) || in_array((int)$dev['id'], $blacklistIds, true)) {
                         continue; // Ausgefiltert
@@ -436,6 +442,7 @@ class GoogleHomeGateway extends IPSModuleStrict
             }
         }
 
+        $this->SendDebug('GetDevices', "Total Devices to sync: " . count($allDevices), 0);
         return $allDevices;
     }
 
