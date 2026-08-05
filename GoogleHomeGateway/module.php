@@ -338,8 +338,14 @@ class GoogleHomeGateway extends IPSModuleStrict
         // Alle Instanzen durchsuchen
         $allInstances = IPS_GetInstanceList();
         foreach ($allInstances as $instanceId) {
-            $obj    = IPS_GetObject($instanceId);
-            $module = IPS_GetModule(IPS_GetInstance($instanceId)['ModuleID']);
+            $obj        = IPS_GetObject($instanceId);
+            $inst       = IPS_GetInstance($instanceId);
+            $moduleID   = $inst['ModuleID'] ?? ($inst['Module'] ?? '');
+            $moduleName = '';
+            if (!empty($moduleID) && @IPS_ModuleExists($moduleID)) {
+                $moduleInfo = IPS_GetModule($moduleID);
+                $moduleName = $moduleInfo['ModuleName'] ?? '';
+            }
 
             // Kind-Variablen prüfen
             $children = IPS_GetChildrenIDs($instanceId);
