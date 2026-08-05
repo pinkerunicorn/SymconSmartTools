@@ -255,7 +255,7 @@ class GoogleHomeGateway extends IPSModuleStrict
                             if (is_array($devices)) {
                                 foreach ($devices as &$dev) {
                                     $status   = 'OK';
-                                    $rowColor = '#00FF00'; // Gruen fuer OK
+                                    $rowColor = ''; // Kein spezieller Hintergrund bei OK (Symcon Standard)
                                     $hasError = false;
 
                                     if ($propName === 'DevicesScene') {
@@ -287,7 +287,11 @@ class GoogleHomeGateway extends IPSModuleStrict
                                     }
 
                                     $dev['Status']   = $status;
-                                    $dev['rowColor'] = $rowColor;
+                                    if ($rowColor !== '') {
+                                        $dev['rowColor'] = $rowColor;
+                                    } else {
+                                        unset($dev['rowColor']);
+                                    }
                                 }
                                 unset($dev);
                                 $item['values'] = $devices;
