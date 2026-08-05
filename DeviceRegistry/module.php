@@ -31,6 +31,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
         // Zähler
         $this->RegisterPropertyString('DevicesMeter', '[]');
         
+        // Diagnose
+        $this->RegisterPropertyString('DevicesHealth', '[]');
+        
         $this->RegisterVariableInteger('RegisteredDevices', 'Registrierte Geraete', '', 1);
     }
 
@@ -42,7 +45,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene',
             'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
-            'DevicesAlarmSensor', 'DevicesMeter'
+            'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth'
         ];
         
         $changed = false;
@@ -264,7 +267,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
     }
 
     // Auto-Discovery Funktion
-    public function DiscoverDevices(): void
+    public function DiscoverDevices(string $category = ''): void
     {
         $variables = IPS_GetVariableList();
         
@@ -498,24 +501,51 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 ];
                 $existingVars[] = $varId;
             }
+            // Gerätestatus / Health
+            elseif (($var['VariableType'] === 0 || $var['VariableType'] === 1) && !$hasAction && (
+                strpos(strtolower($profile), 'reachable') !== false ||
+                strpos(strtolower($profile), 'online') !== false ||
+                strpos(strtolower($profile), 'availability') !== false ||
+                strpos(strtolower($name), 'gerätestatus') !== false ||
+                strpos(strtolower($name), 'geraetestatus') !== false ||
+                strpos(strtolower($name), 'erreichbarkeit') !== false ||
+                strpos(strtolower($name), 'online') !== false ||
+                strpos(strtolower($name), 'offline') !== false ||
+                strpos(strtolower($name), 'reachable') !== false ||
+                strpos(strtolower($name), 'available') !== false
+            )) {
+                $newDevices['DevicesHealth'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'Status_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
         }
         
         $changed = false;
+        $count = 0;
         foreach ($newDevices as $propName => $list) {
+            if ($category === 'Aktorik' && !in_array($propName, ['DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene'])) continue;
+            if ($category === 'Sensorik' && !in_array($propName, ['DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor', 'DevicesAlarmSensor'])) continue;
+            if ($category === 'Meter' && $propName !== 'DevicesMeter') continue;
+            if ($category === 'Health' && $propName !== 'DevicesHealth') continue;
+
             if (count($list) > 0) {
                 $existingJson = $this->ReadPropertyString($propName);
                 $existingList = json_decode($existingJson, true) ?: [];
                 $merged = array_merge($existingList, $list);
                 IPS_SetProperty($this->InstanceID, $propName, json_encode($merged));
                 $changed = true;
+                $count += count($list);
             }
         }
         
         if ($changed) {
             IPS_ApplyChanges($this->InstanceID);
-            echo "Es wurden neue Geraete gefunden und hinzugefuegt! Bitte die Seite neu laden.";
+            echo "Es wurden $count neue Geraete in dieser Kategorie gefunden und hinzugefuegt! Bitte die Seite neu laden.";
         } else {
-            echo "Es wurden keine neuen, ungemappten Geraete gefunden.";
+            echo "Es wurden keine neuen, ungemappten Geraete in dieser Kategorie gefunden.";
         }
     }
 }

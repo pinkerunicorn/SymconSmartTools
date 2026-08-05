@@ -38,7 +38,7 @@
                 {
                     "type": "Button",
                     "caption": "Aktorik automatisch suchen",
-                    "onClick": "SDR_DiscoverDevices($id);"
+                    "onClick": "SDR_DiscoverDevices($id, 'Aktorik');"
                 },
                 {
                     "type": "List",
@@ -158,7 +158,7 @@
                 {
                     "type": "Button",
                     "caption": "Sensorik automatisch suchen",
-                    "onClick": "SDR_DiscoverDevices($id);"
+                    "onClick": "SDR_DiscoverDevices($id, 'Sensorik');"
                 },
                 {
                     "type": "List",
@@ -234,7 +234,7 @@
                 {
                     "type": "Button",
                     "caption": "Zähler automatisch suchen",
-                    "onClick": "SDR_DiscoverDevices($id);"
+                    "onClick": "SDR_DiscoverDevices($id, 'Meter');"
                 },
                 {
                     "type": "List",
@@ -254,6 +254,30 @@
                             ]
                         }},
                         {"caption": "Zählerstand Variable", "name": "Value_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
+                        {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Diagnose & System",
+            "items": [
+                {
+                    "type": "Button",
+                    "caption": "Gerätestatus automatisch suchen",
+                    "onClick": "SDR_DiscoverDevices($id, 'Health');"
+                },
+                {
+                    "type": "List",
+                    "name": "DevicesHealth",
+                    "caption": "Gerätestatus / Offline-Module",
+                    "add": true,
+                    "delete": true,
+                    "columns": [
+                        {"caption": "Name", "name": "name", "width": "200px", "add": "", "edit": {"type": "ValidationTextBox"}},
+                        {"caption": "Raum", "name": "room", "width": "150px", "add": "", "edit": {"type": "Select", "options": []}},
+                        {"caption": "Status Variable", "name": "Status_VarID", "width": "auto", "add": 0, "edit": {"type": "SelectVariable"}},
                         {"caption": "Status", "name": "Status", "width": "150px", "add": ""}
                     ]
                 }
