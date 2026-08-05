@@ -217,6 +217,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesSwitch' => [],
             'DevicesSocket' => [],
             'DevicesLightDimmer' => [],
+            'DevicesBlind' => [],
             'DevicesMotionSensor' => [],
             'DevicesContactSensor' => []
         ];
@@ -251,6 +252,22 @@ class SymconDeviceRegistry extends IPSModuleStrict
                     'name' => $name,
                     'room' => $room,
                     'Status_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
+            // Blind / Jalousie / Rolllade
+            elseif (($var['VariableType'] === 1 || $var['VariableType'] === 2) && $hasAction && (
+                strpos(strtolower($profile), 'blind') !== false || 
+                strpos(strtolower($profile), 'shutter') !== false || 
+                strpos(strtolower($name), 'rollladen') !== false || 
+                strpos(strtolower($name), 'jalousie') !== false ||
+                strpos(strtolower($room), 'rollladen') !== false || 
+                strpos(strtolower($room), 'jalousie') !== false
+            )) {
+                $newDevices['DevicesBlind'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'OpenClose_VarID' => $varId
                 ];
                 $existingVars[] = $varId;
             }
