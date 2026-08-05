@@ -218,6 +218,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesSocket' => [],
             'DevicesLightDimmer' => [],
             'DevicesBlind' => [],
+            'DevicesThermostat' => [],
             'DevicesMotionSensor' => [],
             'DevicesContactSensor' => []
         ];
@@ -268,6 +269,23 @@ class SymconDeviceRegistry extends IPSModuleStrict
                     'name' => $name,
                     'room' => $room,
                     'OpenClose_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
+            // Thermostat / Heizung
+            elseif (($var['VariableType'] === 1 || $var['VariableType'] === 2) && $hasAction && (
+                strpos(strtolower($profile), 'temperature') !== false ||
+                strpos(strtolower($name), 'sollwert') !== false ||
+                strpos(strtolower($name), 'zieltemperatur') !== false ||
+                strpos(strtolower($name), 'setpoint') !== false ||
+                strpos(strtolower($room), 'heizen') !== false ||
+                strpos(strtolower($room), 'heizung') !== false ||
+                strpos(strtolower($room), 'thermostat') !== false
+            )) {
+                $newDevices['DevicesThermostat'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'TempSet_VarID' => $varId
                 ];
                 $existingVars[] = $varId;
             }
