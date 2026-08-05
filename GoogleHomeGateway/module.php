@@ -125,7 +125,6 @@ class GoogleHomeGateway extends IPSModuleStrict
         $this->GH_RegisterHook(self::HOOK_BASE . '/token');
 
         // Variablen-Watcher auf alle konfigurierten Variablen registrieren
-        $this->UnregisterAllReferences();
         $devices = $this->GetDevices();
         foreach ($devices as $device) {
             foreach (['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID'] as $field) {
