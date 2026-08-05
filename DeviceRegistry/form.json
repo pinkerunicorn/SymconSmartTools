@@ -5,11 +5,6 @@
             "caption": "Single Source of Truth - Zentrale Verwaltung für alle Geräte im Haus."
         },
         {
-            "type": "Button",
-            "caption": "Geräte automatisch suchen (Auto-Discovery)",
-            "onClick": "SDR_DiscoverDevices($id);"
-        },
-        {
             "type": "ExpansionPanel",
             "caption": "Räume & Gebäude",
             "items": [
@@ -40,6 +35,11 @@
             "type": "ExpansionPanel",
             "caption": "Aktorik (Schalter, Dimmer, Jalousien)",
             "items": [
+                {
+                    "type": "Button",
+                    "caption": "Aktorik automatisch suchen",
+                    "onClick": "SDR_DiscoverDevices($id);"
+                },
                 {
                     "type": "List",
                     "name": "DevicesSwitch",
@@ -156,6 +156,11 @@
             "caption": "Sensorik (Bewegung, Melder)",
             "items": [
                 {
+                    "type": "Button",
+                    "caption": "Sensorik automatisch suchen",
+                    "onClick": "SDR_DiscoverDevices($id);"
+                },
+                {
                     "type": "List",
                     "name": "DevicesMotionSensor",
                     "caption": "Bewegungsmelder",
@@ -226,6 +231,11 @@
             "type": "ExpansionPanel",
             "caption": "Zähler & Verbrauch (Strom, Wasser, Gas)",
             "items": [
+                {
+                    "type": "Button",
+                    "caption": "Zähler automatisch suchen",
+                    "onClick": "SDR_DiscoverDevices($id);"
+                },
                 {
                     "type": "List",
                     "name": "DevicesMeter",
