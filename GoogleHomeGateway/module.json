@@ -1,0 +1,15 @@
+{
+    "id": "{B6D2C625-4A7E-4B83-9D1F-3C8E5A2F7B9D}",
+    "name": "Google Home Gateway",
+    "type": 3,
+    "vendor": "Florian Graßinger",
+    "url": "https://github.com/pinkerunicorn/SymconSmartTools/tree/main/GoogleHomeGateway",
+    "aliases": [
+        "Google Home Gateway"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "GHGW",
+    "author": "Florian Graßinger"
+}
