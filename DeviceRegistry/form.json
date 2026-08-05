@@ -14,6 +14,7 @@
                     "caption": "Etagen & Bereiche",
                     "add": true,
                     "delete": true,
+                    "changeOrder": true,
                     "columns": [
                         {
                             "caption": "Name (z.B. Erdgeschoss)",
@@ -32,6 +33,7 @@
                     "caption": "Verfügbare Räume",
                     "add": true,
                     "delete": true,
+                    "changeOrder": true,
                     "columns": [
                         {
                             "caption": "Raum Name",
