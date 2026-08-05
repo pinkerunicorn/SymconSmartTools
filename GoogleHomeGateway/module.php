@@ -238,6 +238,71 @@ class GoogleHomeGateway extends IPSModuleStrict
         }
     }
 
+
+    public function GetConfigurationForm(): string
+    {
+        $jsonForm = file_get_contents(__DIR__ . '/form.json');
+        $form     = json_decode($jsonForm, true);
+
+        if (is_array($form) && isset($form['elements'])) {
+            foreach ($form['elements'] as &$element) {
+                if (($element['type'] ?? '') === 'ExpansionPanel' && isset($element['items'])) {
+                    foreach ($element['items'] as &$item) {
+                        if (($item['type'] ?? '') === 'List' && isset($item['name']) && str_starts_with($item['name'], 'Devices')) {
+                            $propName    = $item['name'];
+                            $devicesJson = $this->ReadPropertyString($propName);
+                            $devices     = json_decode($devicesJson, true);
+                            if (is_array($devices)) {
+                                foreach ($devices as &$dev) {
+                                    $status   = 'OK';
+                                    $rowColor = '#00FF00'; // Gruen fuer OK
+                                    $hasError = false;
+
+                                    if ($propName === 'DevicesScene') {
+                                        if (empty($dev['ActionOn']) || $dev['ActionOn'] === '{}') {
+                                            $status   = 'Aktion fehlt';
+                                            $rowColor = '#FF8000'; // Orange fuer Warnung
+                                            $hasError = true;
+                                        }
+                                    } else {
+                                        // Standard-Pruefung fuer Variablen
+                                        foreach (['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID'] as $varField) {
+                                            if (isset($dev[$varField]) && $dev[$varField] > 0) {
+                                                if (!IPS_VariableExists((int)$dev[$varField])) {
+                                                    $status   = 'Variable fehlt';
+                                                    $rowColor = '#FF4040'; // Rot fuer Fehler
+                                                    $hasError = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        // OnOff/OpenClose ist zwingend bei Nicht-Szenen (ausser bei Thermostat, aber das hat aktuell noch keine Pflichtfelder in der UI)
+                                        if (!$hasError && $propName !== 'DevicesThermostat') {
+                                            $primary = $dev['OnOff_VarID'] ?? ($dev['OpenClose_VarID'] ?? 0);
+                                            if (empty($primary) || $primary <= 0) {
+                                                $status   = 'Unvollstaendig';
+                                                $rowColor = '#FF8000'; // Orange fuer Warnung
+                                            }
+                                        }
+                                    }
+
+                                    $dev['Status']   = $status;
+                                    $dev['rowColor'] = $rowColor;
+                                }
+                                unset($dev);
+                                $item['values'] = $devices;
+                            }
+                        }
+                    }
+                    unset($item);
+                }
+            }
+            unset($element);
+        }
+
+        return json_encode($form);
+    }
+
     public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
     {
         parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
