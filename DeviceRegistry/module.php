@@ -220,7 +220,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesBlind' => [],
             'DevicesThermostat' => [],
             'DevicesMotionSensor' => [],
-            'DevicesContactSensor' => []
+            'DevicesContactSensor' => [],
+            'DevicesSmokeSensor' => [],
+            'DevicesWaterSensor' => []
         ];
 
         foreach ($variables as $varId) {
@@ -266,6 +268,40 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 (strpos(strtolower($name), 'status') !== false && (strpos(strtolower($room), 'fenster') !== false || strpos(strtolower($room), 'tür') !== false || strpos(strtolower($room), 'kontakt') !== false))
             )) {
                 $newDevices['DevicesContactSensor'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'Status_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
+            // Smoke Sensor
+            elseif (!$hasAction && (
+                strpos(strtolower($profile), 'smoke') !== false ||
+                strpos(strtolower($profile), 'rauch') !== false ||
+                strpos(strtolower($name), 'rauch') !== false ||
+                strpos(strtolower($name), 'smoke') !== false ||
+                strpos(strtolower($name), 'brand') !== false ||
+                (strpos(strtolower($name), 'alarm') !== false && (strpos(strtolower($room), 'rauch') !== false || strpos(strtolower($room), 'smoke') !== false || strpos(strtolower($room), 'brand') !== false))
+            )) {
+                $newDevices['DevicesSmokeSensor'][] = [
+                    'name' => $name,
+                    'room' => $room,
+                    'Status_VarID' => $varId
+                ];
+                $existingVars[] = $varId;
+            }
+            // Water Sensor
+            elseif (!$hasAction && (
+                strpos(strtolower($profile), 'water') !== false ||
+                strpos(strtolower($profile), 'wasser') !== false ||
+                strpos(strtolower($profile), 'leak') !== false ||
+                strpos(strtolower($name), 'wasser') !== false ||
+                strpos(strtolower($name), 'water') !== false ||
+                strpos(strtolower($name), 'leak') !== false ||
+                strpos(strtolower($name), 'leck') !== false ||
+                (strpos(strtolower($name), 'alarm') !== false && (strpos(strtolower($room), 'wasser') !== false || strpos(strtolower($room), 'water') !== false))
+            )) {
+                $newDevices['DevicesWaterSensor'][] = [
                     'name' => $name,
                     'room' => $room,
                     'Status_VarID' => $varId
