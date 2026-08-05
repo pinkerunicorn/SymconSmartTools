@@ -358,16 +358,45 @@ class GoogleHomeGateway extends IPSModuleStrict
             }
 
             // Heuristik: Bekannte Identifier erkennen
-            $suggestion = $this->GuessDeviceType($vars, $obj['ObjectName'], $module['ModuleName'] ?? '');
+            $suggestion = $this->GuessDeviceType($vars, $obj['ObjectName'], $moduleName);
             if ($suggestion !== null) {
                 $found[] = array_merge($suggestion, [
-                    'instanceId' => $instanceId,
-                    'name'       => $obj['ObjectName'],
+                    'id'   => (string)mt_rand(10000, 99999),
+                    'name' => $obj['ObjectName'],
+                    'room' => '',
                 ]);
             }
         }
 
-        return json_encode($found);
+        if (empty($found)) {
+            return 'Keine neuen Geräte gefunden.';
+        }
+
+        // Gefundene Geräte mit bestehenden Geräten zusammenführen (Duplikate anhand Name/VarID vermeiden)
+        $currentDevices = $this->GetDevices();
+        $existingVarIDs = [];
+        foreach ($currentDevices as $dev) {
+            if (!empty($dev['OnOff_VarID']))    $existingVarIDs[] = (int)$dev['OnOff_VarID'];
+            if (!empty($dev['OpenClose_VarID'])) $existingVarIDs[] = (int)$dev['OpenClose_VarID'];
+        }
+
+        $addedCount = 0;
+        foreach ($found as $newDev) {
+            $checkVarId = (int)($newDev['OnOff_VarID'] ?? ($newDev['OpenClose_VarID'] ?? 0));
+            if ($checkVarId > 0 && in_array($checkVarId, $existingVarIDs, true)) {
+                continue; // Bereits vorhanden
+            }
+            $currentDevices[] = $newDev;
+            $addedCount++;
+        }
+
+        if ($addedCount > 0) {
+            IPS_SetProperty($this->InstanceID, 'Devices', json_encode(array_values($currentDevices)));
+            IPS_ApplyChanges($this->InstanceID);
+            return sprintf('%d neue(s) Gerät(e) automatisch zur Tabelle hinzugefügt!', $addedCount);
+        }
+
+        return 'Alle gefundenen Geräte sind bereits in der Tabelle vorhanden.';
     }
 
     /**
