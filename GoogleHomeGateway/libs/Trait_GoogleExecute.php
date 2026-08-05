@@ -60,11 +60,6 @@ if (!trait_exists('GoogleExecute_Trait')) {
                             'status' => 'SUCCESS',
                             'states' => $newState,
                         ];
-
-                        // Sofort Report State pushen
-                        if ($this->ReadPropertyString('HomeGraphAPIKey') !== '') {
-                            $this->PushReportState([(string)$device['id'] => $newState]);
-                        }
                     } else {
                         $results[] = [
                             'ids'       => [$devId],
@@ -169,17 +164,17 @@ if (!trait_exists('GoogleExecute_Trait')) {
         private function SetSymconValue(int $varId, mixed $value): bool
         {
             try {
-                $var = IPS_GetVariable($varId);
                 // Wenn eine Aktion konfiguriert ist, RequestAction nutzen
-                if ($var['VariableAction'] > 0 || $var['VariableCustomAction'] > 0) {
+                if (HasAction($varId)) {
                     RequestAction($varId, $value);
+                    $this->SendDebug('Execute', "RequestAction VarID=$varId -> " . json_encode($value), 0);
                 } else {
                     SetValue($varId, $value);
+                    $this->SendDebug('Execute', "SetValue (Fallback) VarID=$varId -> " . json_encode($value), 0);
                 }
-                $this->SendDebug('Execute', "SetValue VarID=$varId -> " . json_encode($value), 0);
                 return true;
             } catch (\Exception $e) {
-                $this->SLogError('Execute SetValue fehlgeschlagen', "VarID=$varId: " . $e->getMessage());
+                $this->SLogError('Execute Action fehlgeschlagen', "VarID=$varId: " . $e->getMessage());
                 return false;
             }
         }

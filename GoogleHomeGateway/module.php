@@ -173,8 +173,9 @@ class GoogleHomeGateway extends IPSModuleStrict
         parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
         if ($Message === VM_UPDATE) {
-            $this->SendDebug('MessageSink', "Variable $SenderID hat sich geaendert -> ReportState", 0);
-            $this->ReportStateForVariable($SenderID);
+            $this->SendDebug('MessageSink', "Variable $SenderID hat sich geaendert -> async ReportState", 0);
+            $script = "GHGW_ReportStateForVariable({$this->InstanceID}, $SenderID);";
+            IPS_RunScriptText($script);
         }
     }
 
@@ -423,8 +424,7 @@ class GoogleHomeGateway extends IPSModuleStrict
         // Hilfsfunktion: Hat die Variable eine schaltbare Aktion?
         $isActionable = function(int $varId): bool {
             if ($varId <= 0 || !IPS_ObjectExists($varId)) return false;
-            $v = IPS_GetVariable($varId);
-            return ($v['VariableAction'] > 0 || $v['VariableCustomAction'] > 0);
+            return HasAction($varId);
         };
 
         $hasState      = isset($vars['STATE']);
