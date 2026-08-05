@@ -97,6 +97,10 @@ class GoogleHomeGateway extends IPSModuleStrict
         $this->RegisterAttributeString('OAuthTokens', '{}');
         $this->RegisterAttributeString('OAuthCodes', '{}');
 
+        // Queue und Timer für Report State Debouncing
+        $this->RegisterAttributeString('ReportStateQueue', '[]');
+        $this->RegisterTimer('ReportStateTimer', 0, 'GHGW_ProcessReportStateQueue($_IPS[\'TARGET\']);');
+
         // Status-Variablen
         $statusIntervals = json_encode([
             ['IntervalMinValue' => 0, 'IntervalMaxValue' => 0, 'ConstantActive' => true, 'ConstantValue' => 'Nicht konfiguriert', 'ConversionFactor' => 1, 'PrefixActive' => false, 'PrefixValue' => '', 'SuffixActive' => false, 'SuffixValue' => '', 'DigitsActive' => false, 'DigitsValue' => 0, 'IconActive' => true, 'IconValue' => 'Warning', 'ColorActive' => true, 'ColorValue' => 0x888888, 'ContentColorActive' => true, 'ContentColorValue' => 0xFFFFFF],
@@ -312,9 +316,13 @@ class GoogleHomeGateway extends IPSModuleStrict
         parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
         if ($Message === VM_UPDATE) {
-            $this->SendDebug('MessageSink', "Variable $SenderID hat sich geaendert -> async ReportState", 0);
-            $script = "GHGW_ReportStateForVariable({$this->InstanceID}, $SenderID);";
-            IPS_RunScriptText($script);
+            $this->SendDebug('MessageSink', "Variable $SenderID hat sich geaendert -> Debounce ReportState", 0);
+            $queue = json_decode($this->ReadAttributeString('ReportStateQueue'), true) ?: [];
+            if (!in_array($SenderID, $queue, true)) {
+                $queue[] = $SenderID;
+                $this->WriteAttributeString('ReportStateQueue', json_encode($queue));
+            }
+            $this->SetTimerInterval('ReportStateTimer', 2000);
         }
     }
 
@@ -552,5 +560,37 @@ class GoogleHomeGateway extends IPSModuleStrict
         }
         IPS_SetProperty($ids[0], 'Hooks', json_encode($hooks));
         IPS_ApplyChanges($ids[0]);
+    }
+
+    /**
+     * Report State für gepufferte Variablen (Debouncing).
+     */
+    public function ProcessReportStateQueue(): void
+    {
+        $this->SetTimerInterval('ReportStateTimer', 0);
+        $queue = json_decode($this->ReadAttributeString('ReportStateQueue'), true) ?: [];
+        $this->WriteAttributeString('ReportStateQueue', '[]');
+
+        if (empty($queue)) {
+            return;
+        }
+
+        $devices = $this->GetDevices();
+        $statesToReport = [];
+
+        foreach ($devices as $device) {
+            foreach (['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID'] as $field) {
+                $varId = (int)($device[$field] ?? 0);
+                if ($varId > 0 && in_array($varId, $queue, true)) {
+                    $id = (string)$device['id'];
+                    $statesToReport[$id] = $this->BuildDeviceState($device);
+                    break;
+                }
+            }
+        }
+
+        if (!empty($statesToReport)) {
+            $this->PushReportState($statesToReport);
+        }
     }
 }

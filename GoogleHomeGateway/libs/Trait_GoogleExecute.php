@@ -185,6 +185,7 @@ if (!trait_exists('GoogleExecute_Trait')) {
                     RequestAction($varId, $value);
                     $this->SendDebug('Execute', "RequestAction VarID=$varId -> " . json_encode($value), 0);
                 } else {
+                    $this->SLogWarning('Execute', "Variable $varId hat kein Aktionsskript. Fuehre Fallback auf SetValue aus, Hardware schaltet eventuell nicht!");
                     SetValue($varId, $value);
                     $this->SendDebug('Execute', "SetValue (Fallback) VarID=$varId -> " . json_encode($value), 0);
                 }

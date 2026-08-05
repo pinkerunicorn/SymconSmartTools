@@ -55,6 +55,11 @@ if (!trait_exists('ReportState_Trait')) {
             $error    = curl_error($ch);
             curl_close($ch);
 
+            if ($response === false) {
+                $this->SLogWarning('ReportState fehlgeschlagen', "cURL Error: $error");
+                return false;
+            }
+
             if ($httpCode >= 200 && $httpCode < 300) {
                 $this->SendDebug('ReportState', 'Erfolg HTTP ' . $httpCode, 0);
                 return true;
