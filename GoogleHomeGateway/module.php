@@ -80,18 +80,11 @@ class GoogleHomeGateway extends IPSModuleStrict
         $this->RegisterPropertyString('HomeGraphAPIKey', '');
         $this->RegisterPropertyString('PinCode', '');
 
-        // Geräteliste als JSON (zentrale Konfiguration) - Old (for migration)
-        $this->RegisterPropertyString('Devices', '[]');
-
-        // Neue typspezifische Gerätelisten
-        $this->RegisterPropertyString('DevicesSwitch', '[]');
-        $this->RegisterPropertyString('DevicesSocket', '[]');
-        $this->RegisterPropertyString('DevicesLight', '[]');
-        $this->RegisterPropertyString('DevicesLightDimmer', '[]');
-        $this->RegisterPropertyString('DevicesLightColor', '[]');
-        $this->RegisterPropertyString('DevicesBlind', '[]');
-        $this->RegisterPropertyString('DevicesThermostat', '[]');
-        $this->RegisterPropertyString('DevicesScene', '[]');
+        // Device Registry Anbindung
+        $this->RegisterPropertyInteger('RegistryID', 0);
+        
+        // Blacklist (ausgewählte Geräte ignorieren)
+        $this->RegisterPropertyString('Blacklist', '[]');
 
         // Internes Attribut: OAuth Tokens
         $this->RegisterAttributeString('OAuthTokens', '{}');
@@ -144,74 +137,7 @@ class GoogleHomeGateway extends IPSModuleStrict
         $this->GH_RegisterHook(self::HOOK_BASE . '/auth');
         $this->GH_RegisterHook(self::HOOK_BASE . '/token');
 
-        // Migration von alter 'Devices' Liste auf neue typspezifische Listen
-        $oldDevicesStr = $this->ReadPropertyString('Devices');
-        if (!empty($oldDevicesStr) && $oldDevicesStr !== '[]') {
-            $oldDevices = json_decode($oldDevicesStr, true);
-            if (is_array($oldDevices) && count($oldDevices) > 0) {
-                $migrated = [
-                    self::TYPE_SWITCH      => [],
-                    self::TYPE_OUTLET      => [],
-                    self::TYPE_LIGHT_ONOFF => [],
-                    self::TYPE_LIGHT_DIM   => [],
-                    self::TYPE_LIGHT_COLOR => [],
-                    self::TYPE_BLIND       => [],
-                    self::TYPE_THERMOSTAT  => [],
-                ];
-                foreach ($oldDevices as $dev) {
-                    $type = (int)($dev['type'] ?? 0);
-                    unset($dev['type']); // Wird nun implizit durch die Liste bestimmt
-                    if (isset($migrated[$type])) {
-                        $migrated[$type][] = $dev;
-                    }
-                }
-
-                IPS_SetProperty($this->InstanceID, 'DevicesSwitch', json_encode(array_values($migrated[self::TYPE_SWITCH])));
-                IPS_SetProperty($this->InstanceID, 'DevicesSocket', json_encode(array_values($migrated[self::TYPE_OUTLET])));
-                IPS_SetProperty($this->InstanceID, 'DevicesLight', json_encode(array_values($migrated[self::TYPE_LIGHT_ONOFF])));
-                IPS_SetProperty($this->InstanceID, 'DevicesLightDimmer', json_encode(array_values($migrated[self::TYPE_LIGHT_DIM])));
-                IPS_SetProperty($this->InstanceID, 'DevicesLightColor', json_encode(array_values($migrated[self::TYPE_LIGHT_COLOR])));
-                IPS_SetProperty($this->InstanceID, 'DevicesBlind', json_encode(array_values($migrated[self::TYPE_BLIND])));
-                IPS_SetProperty($this->InstanceID, 'DevicesThermostat', json_encode(array_values($migrated[self::TYPE_THERMOSTAT])));
-                
-                IPS_SetProperty($this->InstanceID, 'Devices', '[]');
-                IPS_ApplyChanges($this->InstanceID);
-                return;
-            }
-        }
-
-        // Device-IDs auto-generieren falls fehlend
-        $mappings = [
-            'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
-            'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene'
-        ];
-        
-        $changed = false;
-        foreach ($mappings as $propName) {
-            $json = $this->ReadPropertyString($propName);
-            $devices = json_decode($json, true);
-            if (!is_array($devices)) continue;
-            
-            $propChanged = false;
-            foreach ($devices as &$device) {
-                if (empty($device['id'])) {
-                    $device['id'] = mt_rand(10000, 99999);
-                    $propChanged = true;
-                    $changed = true;
-                }
-            }
-            unset($device);
-            if ($propChanged) {
-                IPS_SetProperty($this->InstanceID, $propName, json_encode(array_values($devices)));
-            }
-        }
-
-        if ($changed) {
-            IPS_ApplyChanges($this->InstanceID);
-            return;
-        }
-
-        // Alle konfigurierten Geräte abrufen (GetDevices liest nun aus den typspezifischen Listen)
+        // Alle konfigurierten Geräte abrufen (GetDevices liest nun aus der Registry)
         $devices = $this->GetDevices();
 
         // Variablen-Referenzen und Message-Watcher registrieren
@@ -249,56 +175,45 @@ class GoogleHomeGateway extends IPSModuleStrict
         $form     = json_decode($jsonForm, true);
 
         if (is_array($form) && isset($form['elements'])) {
-            foreach ($form['elements'] as &$element) {
-                if (($element['type'] ?? '') === 'ExpansionPanel' && isset($element['items'])) {
-                    foreach ($element['items'] as &$item) {
-                        if (($item['type'] ?? '') === 'List' && isset($item['name']) && str_starts_with($item['name'], 'Devices')) {
-                            $propName    = $item['name'];
-                            $devicesJson = $this->ReadPropertyString($propName);
-                            $devices     = json_decode($devicesJson, true);
-                            if (is_array($devices)) {
-                                foreach ($devices as &$dev) {
-                                    $status   = 'OK';
-                                    $rowColor = ''; // Kein spezieller Hintergrund bei OK (Symcon Standard)
-                                    $hasError = false;
-
-                                    if ($propName === 'DevicesScene') {
-                                        if (empty($dev['ActionOn']) || $dev['ActionOn'] === '{}') {
-                                            $status   = 'Aktion fehlt';
-                                            $rowColor = '#FF8000'; // Orange fuer Warnung
-                                            $hasError = true;
-                                        }
-                                    } else {
-                                        // Standard-Pruefung fuer Variablen
-                                        foreach (['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID'] as $varField) {
-                                            if (isset($dev[$varField]) && $dev[$varField] > 0) {
-                                                if (!IPS_VariableExists((int)$dev[$varField])) {
-                                                    $status   = 'Variable fehlt';
-                                                    $rowColor = '#FF4040'; // Rot fuer Fehler
-                                                    $hasError = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        // OnOff/OpenClose ist zwingend bei Nicht-Szenen (ausser bei Thermostat, aber das hat aktuell noch keine Pflichtfelder in der UI)
-                                        if (!$hasError && $propName !== 'DevicesThermostat') {
-                                            $primary = $dev['OnOff_VarID'] ?? ($dev['OpenClose_VarID'] ?? 0);
-                                            if (empty($primary) || $primary <= 0) {
-                                                $status   = 'Unvollstaendig';
-                                                $rowColor = '#FF8000'; // Orange fuer Warnung
-                                            }
-                                        }
-                                    }
-
-                                    $dev['Status']   = $status;
-                                    if ($rowColor !== '') {
-                                        $dev['rowColor'] = $rowColor;
-                                    } else {
-                                        unset($dev['rowColor']);
-                                    }
+            $registryId = $this->ReadPropertyInteger('RegistryID');
+            $deviceOptions = [];
+            
+            if ($registryId > 0 && IPS_InstanceExists($registryId)) {
+                $mappings = [
+                    'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
+                    'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene',
+                    'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor',
+                    'DevicesWaterSensor', 'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth'
+                ];
+                
+                foreach ($mappings as $propName) {
+                    $json = @IPS_GetProperty($registryId, $propName);
+                    if ($json !== false) {
+                        $list = json_decode($json, true);
+                        if (is_array($list)) {
+                            foreach ($list as $dev) {
+                                if (isset($dev['id']) && isset($dev['name'])) {
+                                    $room = !empty($dev['room']) ? " ({$dev['room']})" : "";
+                                    $deviceOptions[] = [
+                                        'caption' => $dev['name'] . $room,
+                                        'value' => (string)$dev['id']
+                                    ];
                                 }
-                                unset($dev);
-                                $item['values'] = $devices;
+                            }
+                        }
+                    }
+                }
+                
+                // Alphabetisch nach Caption sortieren
+                usort($deviceOptions, fn($a, $b) => strcasecmp($a['caption'], $b['caption']));
+            }
+
+            foreach ($form['elements'] as &$element) {
+                if (($element['type'] ?? '') === 'ExpansionPanel' && ($element['caption'] ?? '') === 'Geräte-Filter (Blacklist)' && isset($element['items'])) {
+                    foreach ($element['items'] as &$item) {
+                        if (($item['type'] ?? '') === 'List' && ($item['name'] ?? '') === 'Blacklist') {
+                            if (isset($item['columns'][0]['edit'])) {
+                                $item['columns'][0]['edit']['options'] = $deviceOptions;
                             }
                         }
                     }
@@ -483,6 +398,14 @@ class GoogleHomeGateway extends IPSModuleStrict
     public function GetDevices(): array
     {
         $allDevices = [];
+        $registryId = $this->ReadPropertyInteger('RegistryID');
+        if ($registryId <= 0 || !IPS_InstanceExists($registryId)) {
+            return [];
+        }
+
+        $blacklistJson = $this->ReadPropertyString('Blacklist');
+        $blacklistArr = json_decode($blacklistJson, true) ?: [];
+        $blacklistIds = array_column($blacklistArr, 'id');
 
         $mappings = [
             self::TYPE_SWITCH      => 'DevicesSwitch',
@@ -496,10 +419,17 @@ class GoogleHomeGateway extends IPSModuleStrict
         ];
 
         foreach ($mappings as $type => $propName) {
-            $json = $this->ReadPropertyString($propName);
+            $json = @IPS_GetProperty($registryId, $propName);
+            if ($json === false) {
+                continue;
+            }
+            
             $list = json_decode($json, true);
             if (is_array($list)) {
                 foreach ($list as $dev) {
+                    if (in_array((string)$dev['id'], $blacklistIds, true) || in_array((int)$dev['id'], $blacklistIds, true)) {
+                        continue; // Ausgefiltert
+                    }
                     $dev['type'] = $type; // Typ dynamisch einfügen
                     $allDevices[] = $dev;
                 }

@@ -36,165 +36,44 @@
             "caption": " "
         },
         {
+            "type": "SelectModule",
+            "name": "RegistryID",
+            "caption": "Device Registry",
+            "moduleID": "{F3B4A7D9-C59E-401A-B826-17D3B5C2849E}"
+        },
+        {
+            "type": "Label",
+            "caption": "Wähle hier die Device Registry Instanz aus. Das Gateway synchronisiert automatisch alle dort gepflegten Geräte mit Google Home."
+        },
+        {
+            "type": "Label",
+            "caption": " "
+        },
+        {
             "type": "ExpansionPanel",
-            "caption": "Schalter",
+            "caption": "Geräte-Filter (Blacklist)",
             "expanded": true,
             "items": [
                 {
-                    "type": "List",
-                    "name": "DevicesSwitch",
-                    "rowCount": 5,
-                    "add": true,
-                    "delete": true,
-                    "sort": { "column": "name", "direction": "ascending" },
-                    "columns": [
-                        { "caption": "Name", "name": "name", "width": "250px", "add": "Neues Geraet", "edit": { "type": "ValidationTextBox" } },
-                        { "caption": "Schaltvariable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } },
-                        { "caption": "Status", "name": "Status", "width": "100px", "add": "OK", "edit": { "type": "Label" } }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Steckdose",
-            "expanded": false,
-            "items": [
+                    "type": "Label",
+                    "caption": "Geräte, die in dieser Liste stehen, werden NICHT an Google Home gesendet."
+                },
                 {
                     "type": "List",
-                    "name": "DevicesSocket",
-                    "rowCount": 5,
+                    "name": "Blacklist",
                     "add": true,
                     "delete": true,
-                    "sort": { "column": "name", "direction": "ascending" },
                     "columns": [
-                        { "caption": "Name", "name": "name", "width": "250px", "add": "Neue Steckdose", "edit": { "type": "ValidationTextBox" } },
-                        { "caption": "Schaltvariable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } },
-                        { "caption": "Status", "name": "Status", "width": "100px", "add": "OK", "edit": { "type": "Label" } }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Licht (Schalter)",
-            "expanded": false,
-            "items": [
-                {
-                    "type": "List",
-                    "name": "DevicesLight",
-                    "rowCount": 5,
-                    "add": true,
-                    "delete": true,
-                    "sort": { "column": "name", "direction": "ascending" },
-                    "columns": [
-                        { "caption": "Name", "name": "name", "width": "250px", "add": "Neues Licht", "edit": { "type": "ValidationTextBox" } },
-                        { "caption": "Schaltvariable", "name": "OnOff_VarID", "width": "auto", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } },
-                        { "caption": "Status", "name": "Status", "width": "100px", "add": "OK", "edit": { "type": "Label" } }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Licht (Dimmer)",
-            "expanded": false,
-            "items": [
-                {
-                    "type": "List",
-                    "name": "DevicesLightDimmer",
-                    "rowCount": 5,
-                    "add": true,
-                    "delete": true,
-                    "sort": { "column": "name", "direction": "ascending" },
-                    "columns": [
-                        { "caption": "Name", "name": "name", "width": "250px", "add": "Neuer Dimmer", "edit": { "type": "ValidationTextBox" } },
-                        { "caption": "Schaltvariable", "name": "OnOff_VarID", "width": "250px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } },
-                        { "caption": "Helligkeit", "name": "Brightness_VarID", "width": "auto", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [1, 2] } },
-                        { "caption": "Status", "name": "Status", "width": "100px", "add": "OK", "edit": { "type": "Label" } }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Licht (Farbe)",
-            "expanded": false,
-            "items": [
-                {
-                    "type": "List",
-                    "name": "DevicesLightColor",
-                    "rowCount": 5,
-                    "add": true,
-                    "delete": true,
-                    "sort": { "column": "name", "direction": "ascending" },
-                    "columns": [
-                        { "caption": "Name", "name": "name", "width": "200px", "add": "Neue Farblampe", "edit": { "type": "ValidationTextBox" } },
-                        { "caption": "An/Aus", "name": "OnOff_VarID", "width": "180px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1] } },
-                        { "caption": "Helligkeit", "name": "Brightness_VarID", "width": "180px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [1, 2] } },
-                        { "caption": "Farbe RGB", "name": "ColorRGB_VarID", "width": "180px", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [1] } },
-                        { "caption": "Farbtemperatur", "name": "ColorTemp_VarID", "width": "auto", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [1] } },
-                        { "caption": "Status", "name": "Status", "width": "100px", "add": "OK", "edit": { "type": "Label" } }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Rollladen / Jalousien",
-            "expanded": false,
-            "items": [
-                {
-                    "type": "List",
-                    "name": "DevicesBlind",
-                    "rowCount": 5,
-                    "add": true,
-                    "delete": true,
-                    "sort": { "column": "name", "direction": "ascending" },
-                    "columns": [
-                        { "caption": "Name", "name": "name", "width": "250px", "add": "Neue Rolllade", "edit": { "type": "ValidationTextBox" } },
-                        { "caption": "Oeffnen/Schliessen", "name": "OpenClose_VarID", "width": "auto", "add": 0, "edit": { "type": "SelectVariable", "validVariableTypes": [0, 1, 2] } },
-                        { "caption": "Status", "name": "Status", "width": "100px", "add": "OK", "edit": { "type": "Label" } }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Thermostat",
-            "expanded": false,
-            "items": [
-                {
-                    "type": "List",
-                    "name": "DevicesThermostat",
-                    "rowCount": 5,
-                    "add": true,
-                    "delete": true,
-                    "sort": { "column": "name", "direction": "ascending" },
-                    "columns": [
-                        { "caption": "Name", "name": "name", "width": "auto", "add": "Neues Thermostat", "edit": { "type": "ValidationTextBox" } },
-                        { "caption": "Status", "name": "Status", "width": "100px", "add": "OK", "edit": { "type": "Label" } }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Szenen (deaktivierbar)",
-            "expanded": false,
-            "items": [
-                {
-                    "type": "List",
-                    "name": "DevicesScene",
-                    "rowCount": 5,
-                    "add": true,
-                    "delete": true,
-                    "sort": { "column": "name", "direction": "ascending" },
-                    "columns": [
-                        { "caption": "Name", "name": "name", "width": "250px", "add": "Neue Szene", "edit": { "type": "ValidationTextBox" } },
-                        { "caption": "Aktion beim Aktivieren", "name": "ActionOn", "width": "350px", "add": "{}", "edit": { "type": "SelectAction" } },
-                        { "caption": "Aktion beim Deaktivieren", "name": "ActionOff", "width": "auto", "add": "{}", "edit": { "type": "SelectAction" } },
-                        { "caption": "Status", "name": "Status", "width": "100px", "add": "OK", "edit": { "type": "Label" } }
+                        {
+                            "caption": "Gerät (aus Registry)",
+                            "name": "id",
+                            "width": "400px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        }
                     ]
                 }
             ]
@@ -203,13 +82,20 @@
     "actions": [
         {
             "type": "Button",
-            "caption": "SYNC anfordern (nach Aenderungen)",
-            "onClick": "GHGW_RequestSync($id); echo 'SYNC angefordert!';"
+            "caption": "Google Sync anfordern (nach Änderungen)",
+            "onClick": "GHGW_RequestSync($id);"
+        }
+    ],
+    "status": [
+        {
+            "code": 102,
+            "icon": "active",
+            "caption": "Google Home Gateway ist aktiv"
         },
         {
-            "type": "Button",
-            "caption": "Alle Zustaende pushen (Report State)",
-            "onClick": "GHGW_ReportAllStates($id); echo 'Report State gesendet!';"
+            "code": 104,
+            "icon": "inactive",
+            "caption": "Google Home Gateway ist inaktiv (Zugangsdaten fehlen)"
         }
     ]
 }
