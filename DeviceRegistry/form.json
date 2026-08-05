@@ -694,6 +694,15 @@
                             }
                         },
                         {
+                            "caption": "Wert = geschlossen",
+                            "name": "ClosedValue",
+                            "width": "130px",
+                            "add": "false",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
