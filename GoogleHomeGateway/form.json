@@ -153,21 +153,5 @@
             "onClick": "GHGW_ReportAllStates($id); echo 'Report State gesendet!';"
         }
     ],
-    "status": [
-        {
-            "code": 102,
-            "color": -1,
-            "caption": "Online"
-        },
-        {
-            "code": 104,
-            "color": -1,
-            "caption": "Nicht konfiguriert"
-        },
-        {
-            "code": 201,
-            "color": -1,
-            "caption": "Fehler"
-        }
-    ]
+
 }
