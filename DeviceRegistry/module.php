@@ -503,8 +503,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                 $newDevices['DevicesLightDimmer'][] = [
                     'name' => $name,
                     'room' => $room,
-                    'Brightness_VarID' => $varId,
-                    'OnOff_VarID' => 0
+                    'Brightness_VarID' => $varId
                 ];
                 $existingVars[] = $varId;
             }

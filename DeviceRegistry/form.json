@@ -287,15 +287,6 @@
               }
             },
             {
-              "caption": "OnOff Variable",
-              "name": "OnOff_VarID",
-              "width": "auto",
-              "add": 0,
-              "edit": {
-                "type": "SelectVariable"
-              }
-            },
-            {
               "caption": "Brightness Variable",
               "name": "Brightness_VarID",
               "width": "auto",
@@ -353,15 +344,6 @@
               "edit": {
                 "type": "Select",
                 "options": []
-              }
-            },
-            {
-              "caption": "OnOff Variable",
-              "name": "OnOff_VarID",
-              "width": "auto",
-              "add": 0,
-              "edit": {
-                "type": "SelectVariable"
               }
             },
             {
