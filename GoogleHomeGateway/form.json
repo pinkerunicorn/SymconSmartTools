@@ -19,8 +19,8 @@
                 },
                 {
                     "type": "ValidationTextBox",
-                    "name": "HomeGraphAPIKey",
-                    "caption": "Home Graph API Key",
+                    "name": "ServiceAccountJSON",
+                    "caption": "Service Account JSON (fuer Report State)",
                     "width": "400px"
                 },
                 {

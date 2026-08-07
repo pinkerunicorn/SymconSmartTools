@@ -14,15 +14,76 @@ if (!trait_exists('ReportState_Trait')) {
     trait ReportState_Trait
     {
         /**
+         * Erzeugt ein OAuth 2.0 Access Token aus einer Service Account JSON.
+         */
+        private function GetGoogleAccessToken(string $jsonKey): ?string
+        {
+            $key = json_decode($jsonKey, true);
+            if (!$key || empty($key['private_key']) || empty($key['client_email'])) {
+                $this->SLogWarning('ReportState', 'Service Account JSON ist ungueltig oder leer.');
+                return null;
+            }
+
+            $header = json_encode(['alg' => 'RS256', 'typ' => 'JWT']);
+            $now = time();
+            $payload = json_encode([
+                'iss'   => $key['client_email'],
+                'scope' => 'https://www.googleapis.com/auth/homegraph',
+                'aud'   => $key['token_uri'] ?? 'https://oauth2.googleapis.com/token',
+                'exp'   => $now + 3600,
+                'iat'   => $now
+            ]);
+
+            $base64UrlEncode = function ($data) {
+                return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
+            };
+
+            $jwt = $base64UrlEncode($header) . '.' . $base64UrlEncode($payload);
+
+            if (!openssl_sign($jwt, $signature, $key['private_key'], OPENSSL_ALGO_SHA256)) {
+                $this->SLogWarning('ReportState', 'Signieren des JWT fehlgeschlagen (OpenSSL Error).');
+                return null;
+            }
+
+            $jwt .= '.' . $base64UrlEncode($signature);
+
+            $ch = curl_init($key['token_uri'] ?? 'https://oauth2.googleapis.com/token');
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => http_build_query([
+                    'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                    'assertion'  => $jwt
+                ]),
+                CURLOPT_TIMEOUT        => 5,
+            ]);
+            $res = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($res === false || $httpCode >= 400) {
+                $this->SLogWarning('ReportState', "Token-Abruf fehlgeschlagen. HTTP $httpCode | $res");
+                return null;
+            }
+
+            $data = json_decode((string)$res, true);
+            return $data['access_token'] ?? null;
+        }
+
+        /**
          * Pusht den Zustand einer oder mehrerer Geräte an die Google Home Graph API.
          *
          * @param array $deviceStates ['deviceId' => ['on' => true, ...], ...]
          */
         protected function PushReportState(array $deviceStates): bool
         {
-            $apiKey = $this->ReadPropertyString('HomeGraphAPIKey');
-            if (empty($apiKey)) {
-                return false;
+            // Entweder neues Service Account JSON oder alter (kaputter) API Key
+            $serviceAccountJson = $this->ReadPropertyString('ServiceAccountJSON');
+            if (empty($serviceAccountJson)) {
+                $serviceAccountJson = @$this->ReadPropertyString('HomeGraphAPIKey') ?: '';
+                if (empty($serviceAccountJson)) {
+                    return false;
+                }
             }
 
             $agentUserId = $this->GetAgentUserId();
@@ -40,13 +101,28 @@ if (!trait_exists('ReportState_Trait')) {
 
             $this->SendDebug('ReportState', json_encode($payload), 0);
 
+            // Access Token holen
+            $accessToken = $this->GetGoogleAccessToken($serviceAccountJson);
+            if (!$accessToken) {
+                // Fallback: Versuche es als reinen API Key (wird bei Google vermutlich 403 liefern,
+                // aber fängt den Fall ab, falls jemand tatsächlich noch einen funktionierenden Legacy-Key hat)
+                $url = 'https://homegraph.googleapis.com/v1/devices:reportStateAndNotification?key=' . urlencode($serviceAccountJson);
+                $headers = ['Content-Type: application/json'];
+            } else {
+                $url = 'https://homegraph.googleapis.com/v1/devices:reportStateAndNotification';
+                $headers = [
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $accessToken
+                ];
+            }
+
             $ch = curl_init();
             curl_setopt_array($ch, [
-                CURLOPT_URL            => 'https://homegraph.googleapis.com/v1/devices:reportStateAndNotification?key=' . urlencode($apiKey),
+                CURLOPT_URL            => $url,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST           => true,
                 CURLOPT_POSTFIELDS     => json_encode($payload),
-                CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+                CURLOPT_HTTPHEADER     => $headers,
                 CURLOPT_TIMEOUT        => 5,
             ]);
 

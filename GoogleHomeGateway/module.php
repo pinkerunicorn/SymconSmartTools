@@ -77,7 +77,7 @@ class GoogleHomeGateway extends IPSModuleStrict
         // OAuth2 / Google Console
         $this->RegisterPropertyString('GoogleClientID', '');
         $this->RegisterPropertyString('GoogleClientSecret', '');
-        $this->RegisterPropertyString('HomeGraphAPIKey', '');
+        $this->RegisterPropertyString('ServiceAccountJSON', '');
         $this->RegisterPropertyString('PinCode', '');
 
         // Device Registry Anbindung
