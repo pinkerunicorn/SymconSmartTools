@@ -85,7 +85,6 @@ class GoogleHomeGateway extends IPSModuleStrict
         
         // DeviceFilter (Welche Geräte sollen an Google Home gemeldet werden?)
         $this->RegisterPropertyString('DeviceFilter', '[]');
-        $this->RegisterPropertyString('DeviceSyncConfig', '{}');
 
         // Internes Attribut: OAuth Tokens
         $this->RegisterAttributeString('OAuthTokens', '{}');
@@ -134,20 +133,68 @@ class GoogleHomeGateway extends IPSModuleStrict
     {
         parent::ApplyChanges();
 
-        // Workaround für Symcon List Index-Merge Bug:
-        // Benutzereingaben in interne Map überführen und UI-Liste leeren.
-        $filterJson = $this->ReadPropertyString('DeviceFilter');
-        $filterArr = json_decode($filterJson, true);
-        if (is_array($filterArr) && count($filterArr) > 0) {
-            $configJson = $this->ReadPropertyString('DeviceSyncConfig');
-            $configMap = json_decode($configJson, true) ?: [];
-            foreach ($filterArr as $row) {
-                if (isset($row['id'])) {
-                    $configMap[(string)$row['id']] = isset($row['sync']) ? (bool)$row['sync'] : true;
+        // Workaround für Symcon List Index-Merge Bug & dynamische Aktualisierung:
+        // Statt in GetConfigurationForm die Liste zu überschreiben (was beim Speichern zu Index-Verschiebungen führt),
+        // synchronisieren wir die Liste EINMALIG beim Klick auf "Übernehmen" fest in die Eigenschaft.
+        $registryId = $this->ReadPropertyInteger('RegistryID');
+        if ($registryId > 0 && IPS_InstanceExists($registryId)) {
+            $mappings = [
+                'DevicesSwitch'      => 'Schalter',
+                'DevicesSocket'      => 'Steckdose',
+                'DevicesLight'       => 'Licht (Schalter)',
+                'DevicesLightDimmer' => 'Licht (Dimmer)',
+                'DevicesLightColor'  => 'Licht (Farbe)',
+                'DevicesBlind'       => 'Jalousie',
+                'DevicesThermostat'  => 'Thermostat',
+                'DevicesScene'       => 'Szene'
+            ];
+            
+            $registryDevices = [];
+            foreach ($mappings as $propName => $category) {
+                $json = @IPS_GetProperty($registryId, $propName);
+                if ($json !== false) {
+                    $list = json_decode($json, true);
+                    if (is_array($list)) {
+                        foreach ($list as $dev) {
+                            if (isset($dev['id']) && isset($dev['name'])) {
+                                $registryDevices[(string)$dev['id']] = [
+                                    'name' => $dev['name'] . (!empty($dev['room']) ? " ({$dev['room']})" : ""),
+                                    'type' => $category
+                                ];
+                            }
+                        }
+                    }
                 }
             }
-            IPS_SetProperty($this->InstanceID, 'DeviceSyncConfig', json_encode($configMap));
-            IPS_SetProperty($this->InstanceID, 'DeviceFilter', '[]');
+
+            // Lese die aktuelle (vom Benutzer im WebFront evtl. modifizierte und umsortierte) Liste
+            $filterJson = $this->ReadPropertyString('DeviceFilter');
+            $filterArr = json_decode($filterJson, true) ?: [];
+            
+            // Map aufbauen, um die vom Benutzer gesetzten Haken ("sync") exakt anhand der ID zu merken
+            $filterMap = [];
+            foreach ($filterArr as $f) {
+                if (isset($f['id'])) {
+                    $filterMap[(string)$f['id']] = isset($f['sync']) ? (bool)$f['sync'] : true;
+                }
+            }
+            
+            // Baue die neue Liste exakt auf Basis der aktuellsten Registry auf
+            $newFilterArr = [];
+            foreach ($registryDevices as $id => $info) {
+                $newFilterArr[] = [
+                    'id'   => $id,
+                    'sync' => isset($filterMap[$id]) ? $filterMap[$id] : true,
+                    'name' => $info['name'],
+                    'type' => $info['type']
+                ];
+            }
+            
+            // Sauber alphabetisch sortieren, damit das UI beim Neu-Öffnen ordentlich aussieht
+            usort($newFilterArr, fn($a, $b) => strcasecmp($a['name'], $b['name']));
+            
+            // Liste dauerhaft abspeichern. Symcon lädt diese Eigenschaft danach neu ins WebFront.
+            IPS_SetProperty($this->InstanceID, 'DeviceFilter', json_encode($newFilterArr));
         }
 
         $this->GH_RegisterHook(self::HOOK_BASE . '/fulfillment');
@@ -190,65 +237,6 @@ class GoogleHomeGateway extends IPSModuleStrict
     {
         $jsonForm = file_get_contents(__DIR__ . '/form.json');
         $form     = json_decode($jsonForm, true);
-
-        if (is_array($form) && isset($form['elements'])) {
-            $registryId = $this->ReadPropertyInteger('RegistryID');
-            $deviceFilterValues = [];
-            
-            if ($registryId > 0 && IPS_InstanceExists($registryId)) {
-                // Lese aktuelle Filter-Konfiguration
-                $filterJson = $this->ReadPropertyString('DeviceSyncConfig');
-                $filterMap = json_decode($filterJson, true) ?: [];
-
-                $mappings = [
-                    'DevicesSwitch'      => 'Schalter',
-                    'DevicesSocket'      => 'Steckdose',
-                    'DevicesLight'       => 'Licht (Schalter)',
-                    'DevicesLightDimmer' => 'Licht (Dimmer)',
-                    'DevicesLightColor'  => 'Licht (Farbe)',
-                    'DevicesBlind'       => 'Jalousie',
-                    'DevicesThermostat'  => 'Thermostat',
-                    'DevicesScene'       => 'Szene'
-                ];
-                
-                foreach ($mappings as $propName => $category) {
-                    $json = @IPS_GetProperty($registryId, $propName);
-                    if ($json !== false) {
-                        $list = json_decode($json, true);
-                        if (is_array($list)) {
-                            foreach ($list as $dev) {
-                                if (isset($dev['id']) && isset($dev['name'])) {
-                                    $id = (string)$dev['id'];
-                                    $room = !empty($dev['room']) ? " ({$dev['room']})" : "";
-                                    
-                                    $deviceFilterValues[] = [
-                                        'sync' => isset($filterMap[$id]) ? (bool)$filterMap[$id] : true,
-                                        'name' => $dev['name'] . $room,
-                                        'type' => $category,
-                                        'id'   => $id
-                                    ];
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                usort($deviceFilterValues, fn($a, $b) => strcasecmp($a['name'], $b['name']));
-            }
-
-            foreach ($form['elements'] as &$element) {
-                if (($element['type'] ?? '') === 'ExpansionPanel' && ($element['caption'] ?? '') === 'Geräte-Freigabe (Auswahl für Google Home)' && isset($element['items'])) {
-                    foreach ($element['items'] as &$item) {
-                        if (($item['type'] ?? '') === 'List' && ($item['name'] ?? '') === 'DeviceFilter') {
-                            $item['values'] = $deviceFilterValues;
-                        }
-                    }
-                    unset($item);
-                }
-            }
-            unset($element);
-        }
-
         return json_encode($form);
     }
 
@@ -444,8 +432,14 @@ class GoogleHomeGateway extends IPSModuleStrict
             return [];
         }
 
-        $filterJson = $this->ReadPropertyString('DeviceSyncConfig');
-        $filterMap = json_decode($filterJson, true) ?: [];
+        $filterJson = $this->ReadPropertyString('DeviceFilter');
+        $filterArr = json_decode($filterJson, true) ?: [];
+        $filterMap = [];
+        foreach ($filterArr as $f) {
+            if (isset($f['id'])) {
+                $filterMap[(string)$f['id']] = isset($f['sync']) ? (bool)$f['sync'] : true;
+            }
+        }
 
         $this->SendDebug('GetDevices', "RegistryID: $registryId", 0);
 
