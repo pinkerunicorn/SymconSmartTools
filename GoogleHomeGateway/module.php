@@ -85,6 +85,7 @@ class GoogleHomeGateway extends IPSModuleStrict
         
         // DeviceFilter (Welche Geräte sollen an Google Home gemeldet werden?)
         $this->RegisterPropertyString('DeviceFilter', '[]');
+        $this->RegisterPropertyString('DeviceSyncConfig', '{}');
 
         // Internes Attribut: OAuth Tokens
         $this->RegisterAttributeString('OAuthTokens', '{}');
@@ -133,6 +134,22 @@ class GoogleHomeGateway extends IPSModuleStrict
     {
         parent::ApplyChanges();
 
+        // Workaround für Symcon List Index-Merge Bug:
+        // Benutzereingaben in interne Map überführen und UI-Liste leeren.
+        $filterJson = $this->ReadPropertyString('DeviceFilter');
+        $filterArr = json_decode($filterJson, true);
+        if (is_array($filterArr) && count($filterArr) > 0) {
+            $configJson = $this->ReadPropertyString('DeviceSyncConfig');
+            $configMap = json_decode($configJson, true) ?: [];
+            foreach ($filterArr as $row) {
+                if (isset($row['id'])) {
+                    $configMap[(string)$row['id']] = isset($row['sync']) ? (bool)$row['sync'] : true;
+                }
+            }
+            IPS_SetProperty($this->InstanceID, 'DeviceSyncConfig', json_encode($configMap));
+            IPS_SetProperty($this->InstanceID, 'DeviceFilter', '[]');
+        }
+
         $this->GH_RegisterHook(self::HOOK_BASE . '/fulfillment');
         $this->GH_RegisterHook(self::HOOK_BASE . '/auth');
         $this->GH_RegisterHook(self::HOOK_BASE . '/token');
@@ -180,14 +197,8 @@ class GoogleHomeGateway extends IPSModuleStrict
             
             if ($registryId > 0 && IPS_InstanceExists($registryId)) {
                 // Lese aktuelle Filter-Konfiguration
-                $filterJson = $this->ReadPropertyString('DeviceFilter');
-                $filterArr = json_decode($filterJson, true) ?: [];
-                $filterMap = [];
-                foreach ($filterArr as $f) {
-                    if (isset($f['id'])) {
-                        $filterMap[(string)$f['id']] = isset($f['sync']) ? (bool)$f['sync'] : true;
-                    }
-                }
+                $filterJson = $this->ReadPropertyString('DeviceSyncConfig');
+                $filterMap = json_decode($filterJson, true) ?: [];
 
                 $mappings = [
                     'DevicesSwitch'      => 'Schalter',
@@ -211,7 +222,7 @@ class GoogleHomeGateway extends IPSModuleStrict
                                     $room = !empty($dev['room']) ? " ({$dev['room']})" : "";
                                     
                                     $deviceFilterValues[] = [
-                                        'sync' => isset($filterMap[$id]) ? $filterMap[$id] : true,
+                                        'sync' => isset($filterMap[$id]) ? (bool)$filterMap[$id] : true,
                                         'name' => $dev['name'] . $room,
                                         'type' => $category,
                                         'id'   => $id
@@ -433,14 +444,8 @@ class GoogleHomeGateway extends IPSModuleStrict
             return [];
         }
 
-        $filterJson = $this->ReadPropertyString('DeviceFilter');
-        $filterArr = json_decode($filterJson, true) ?: [];
-        $filterMap = [];
-        foreach ($filterArr as $f) {
-            if (isset($f['id'])) {
-                $filterMap[(string)$f['id']] = isset($f['sync']) ? (bool)$f['sync'] : true;
-            }
-        }
+        $filterJson = $this->ReadPropertyString('DeviceSyncConfig');
+        $filterMap = json_decode($filterJson, true) ?: [];
 
         $this->SendDebug('GetDevices', "RegistryID: $registryId", 0);
 
