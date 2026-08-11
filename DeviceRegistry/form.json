@@ -25,6 +25,13 @@
               "edit": {
                 "type": "ValidationTextBox"
               }
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ]
         },
@@ -55,6 +62,13 @@
                 "type": "Select",
                 "options": []
               }
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ]
         }
@@ -120,6 +134,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -180,6 +201,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -240,6 +268,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -300,6 +335,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -378,6 +420,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -438,6 +487,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -498,6 +554,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -567,6 +630,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -633,6 +703,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -702,6 +779,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -762,6 +846,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -822,6 +913,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -882,6 +980,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -971,6 +1076,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
@@ -1037,6 +1149,13 @@
               "name": "Status",
               "width": "150px",
               "add": ""
+            },
+            {
+              "visible": false,
+              "save": true,
+              "width": "0px",
+              "name": "id",
+              "caption": "ID"
             }
           ],
           "rowCount": 15
