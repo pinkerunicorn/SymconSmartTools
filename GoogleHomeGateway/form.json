@@ -64,7 +64,7 @@
                     "add": false,
                     "delete": false,
                     "sort": {
-                        "column": "name",
+                        "column": "type",
                         "direction": "ascending"
                     },
                     "columns": [

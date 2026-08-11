@@ -243,7 +243,13 @@ class GoogleHomeGateway extends IPSModuleStrict
                         'id'   => $id
                     ];
                 }
-                usort($newDevices, fn($a, $b) => strcasecmp($a['name'], $b['name']));
+                usort($newDevices, function($a, $b) {
+                    $cmp = strcasecmp($a['type'], $b['type']);
+                    if ($cmp === 0) {
+                        return strcasecmp($a['name'], $b['name']);
+                    }
+                    return $cmp;
+                });
                 
                 $deviceFilterValues = array_merge($deviceFilterValues, $newDevices);
             }
