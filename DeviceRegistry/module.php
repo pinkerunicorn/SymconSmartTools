@@ -108,6 +108,31 @@ class SymconDeviceRegistry extends IPSModuleStrict
         }
 
         $this->SetValue('RegisteredDevices', $totalDevices);
+        $this->notifyDependentModules();
+    }
+
+    private function notifyDependentModules(): void
+    {
+        $allInstances = IPS_GetInstanceList();
+        $myId = $this->InstanceID;
+        $count = 0;
+        
+        foreach ($allInstances as $instId) {
+            if ($instId === $myId) {
+                continue;
+            }
+            if (@IPS_HasProperty($instId, 'RegistryID')) {
+                $regId = @IPS_GetProperty($instId, 'RegistryID');
+                if ($regId === $myId) {
+                    $count++;
+                    @IPS_ApplyChanges($instId);
+                }
+            }
+        }
+        
+        if ($count > 0) {
+            $this->SendDebug('RegistryUpdate', "Triggered IPS_ApplyChanges on $count dependent instances.", 0);
+        }
     }
 
     public function GetConfigurationForm(): string
