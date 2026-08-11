@@ -180,6 +180,19 @@ if (!trait_exists('GoogleExecute_Trait')) {
                         return false;
                     }
 
+                // ─── Thermostat ────────────────────────────────────────────
+                case 'action.devices.commands.ThermostatTemperatureSetpoint':
+                    $varId = (int)($device['TempSet_VarID'] ?? 0);
+                    if ($varId <= 0 || !IPS_ObjectExists($varId)) {
+                        return false;
+                    }
+                    $setpoint = (float)($params['thermostatTemperatureSetpoint'] ?? 0);
+                    return $this->SetSymconValue($varId, $setpoint);
+                    
+                case 'action.devices.commands.ThermostatSetMode':
+                    // Symcon Gateway nutzt hier derzeit nur die TempSet Variable, Modi ignorieren wir vorerst (Gibt 'heat' vor)
+                    return true;
+
                 default:
                     $this->SendDebug('Execute', 'Unbekannter Command: ' . $command, 0);
                     return false;

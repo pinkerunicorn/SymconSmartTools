@@ -111,6 +111,17 @@ if (!trait_exists('GoogleQuery_Trait')) {
                     // Rollladen haben kein OnOff
                     unset($state['on']);
                     break;
+
+                case GoogleHomeGateway::TYPE_THERMOSTAT:
+                    $tempSetVarId = (int)($device['TempSet_VarID'] ?? 0);
+                    if ($tempSetVarId > 0 && IPS_ObjectExists($tempSetVarId)) {
+                        $val = (float)GetValue($tempSetVarId);
+                        $state['thermostatMode'] = 'heat';
+                        $state['thermostatTemperatureSetpoint'] = $val;
+                        $state['thermostatTemperatureAmbient'] = $val; // Mangels separater Variable den Soll-Wert als Ist-Wert melden
+                    }
+                    unset($state['on']);
+                    break;
             }
 
             return $state;

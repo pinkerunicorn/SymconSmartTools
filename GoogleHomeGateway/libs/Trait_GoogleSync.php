@@ -91,6 +91,12 @@ if (!trait_exists('GoogleSync_Trait')) {
                     $attrs['openDirection'] = ['UP', 'DOWN'];
                     break;
 
+                case GoogleHomeGateway::TYPE_THERMOSTAT:
+                    $traits[] = 'action.devices.traits.TemperatureSetting';
+                    $attrs['availableThermostatModes'] = 'off,heat,on';
+                    $attrs['thermostatTemperatureUnit'] = 'C';
+                    break;
+
                 case GoogleHomeGateway::TYPE_SCENE:
                     $traits[] = 'action.devices.traits.Scene';
                     // Szene ist deaktivierbar (reversible), wenn eine Ausschalt-Aktion hinterlegt ist

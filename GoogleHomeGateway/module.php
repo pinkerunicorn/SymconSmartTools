@@ -144,7 +144,7 @@ class GoogleHomeGateway extends IPSModuleStrict
 
         // Variablen-Referenzen und Message-Watcher registrieren
         foreach ($devices as $device) {
-            foreach (['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID'] as $field) {
+            foreach (['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID'] as $field) {
                 $varId = (int)($device[$field] ?? 0);
                 if ($varId > 0 && IPS_ObjectExists($varId)) {
                     $this->RegisterReference($varId);
