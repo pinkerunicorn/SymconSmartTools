@@ -237,7 +237,7 @@ class GoogleHomeGateway extends IPSModuleStrict
                 $newDevices = [];
                 foreach ($registryDevices as $id => $info) {
                     $newDevices[] = [
-                        'sync' => true,
+                        'sync' => false,
                         'name' => $info['name'],
                         'type' => $info['type'],
                         'id'   => $id
@@ -491,7 +491,8 @@ class GoogleHomeGateway extends IPSModuleStrict
                 foreach ($list as $dev) {
                     $id = (string)($dev['id'] ?? '');
                     if ($id !== '') {
-                        $sync = isset($filterMap[$id]) ? $filterMap[$id] : true;
+                        // Default auf false: Neue Geräte müssen erst manuell freigegeben werden
+                        $sync = isset($filterMap[$id]) ? $filterMap[$id] : false;
                         if (!$sync) {
                             continue; // Ausgefiltert (Aktiv = false)
                         }
