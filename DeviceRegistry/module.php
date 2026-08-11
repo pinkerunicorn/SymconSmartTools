@@ -264,8 +264,11 @@ class SymconDeviceRegistry extends IPSModuleStrict
     public function GetDevicesByType(string $type): array
     {
         $list = [];
-        $json = $this->ReadPropertyString($type);
-        $primaryList = json_decode($json, true);
+        $json = @$this->ReadPropertyString($type);
+        if ($json === false || $json === '') {
+            $json = '[]';
+        }
+        $primaryList = json_decode((string)$json, true);
         if (is_array($primaryList)) {
             foreach ($primaryList as $dev) {
                 $dev['Type'] = $type;
@@ -287,8 +290,11 @@ class SymconDeviceRegistry extends IPSModuleStrict
 
         if (!empty($extraTypes) && $requiredVar !== '') {
             foreach ($extraTypes as $eType) {
-                $eJson = $this->ReadPropertyString($eType);
-                $eList = json_decode($eJson, true);
+                $eJson = @$this->ReadPropertyString($eType);
+                if ($eJson === false || $eJson === '') {
+                    $eJson = '[]';
+                }
+                $eList = json_decode((string)$eJson, true);
                 if (is_array($eList)) {
                     foreach ($eList as $dev) {
                         if (!empty($dev[$requiredVar]) && (int)$dev[$requiredVar] > 0) {
