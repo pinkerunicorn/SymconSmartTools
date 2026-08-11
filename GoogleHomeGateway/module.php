@@ -334,20 +334,33 @@ class GoogleHomeGateway extends IPSModuleStrict
      */
     public function RequestSync(): bool
     {
-        $apiKey = $this->ReadPropertyString('HomeGraphAPIKey');
-        if (empty($apiKey)) {
-            $this->SendDebug('RequestSync', 'Kein Home Graph API Key konfiguriert!', 0);
-            $this->SLogError('RequestSync: Kein Home Graph API Key konfiguriert');
+        $serviceAccountJson = $this->ReadPropertyString('ServiceAccountJSON');
+        if (empty($serviceAccountJson)) {
+            $this->SendDebug('RequestSync', 'Kein Service Account JSON konfiguriert!', 0);
+            $this->SLogError('RequestSync: Kein Service Account JSON konfiguriert');
             return false;
         }
 
         $agentUserId = $this->GetAgentUserId();
         $this->SendDebug('RequestSync', 'Sende RequestSync an Google fuer agentUserId: ' . $agentUserId, 0);
 
+        $accessToken = $this->GetGoogleAccessToken($serviceAccountJson);
+        if (!$accessToken) {
+            // Fallback für Legacy-Key
+            $url = 'https://homegraph.googleapis.com/v1/devices:requestSync?key=' . urlencode($serviceAccountJson);
+            $headers = ['Content-Type: application/json'];
+        } else {
+            $url = 'https://homegraph.googleapis.com/v1/devices:requestSync';
+            $headers = [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $accessToken
+            ];
+        }
+
         $result = $this->HttpRequest(
-            'https://homegraph.googleapis.com/v1/devices:requestSync?key=' . urlencode($apiKey),
+            $url,
             'POST',
-            ['Content-Type: application/json'],
+            $headers,
             ['agentUserId' => $agentUserId]
         );
 

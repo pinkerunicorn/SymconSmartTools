@@ -77,13 +77,9 @@ if (!trait_exists('ReportState_Trait')) {
          */
         protected function PushReportState(array $deviceStates): bool
         {
-            // Entweder neues Service Account JSON oder alter (kaputter) API Key
             $serviceAccountJson = $this->ReadPropertyString('ServiceAccountJSON');
             if (empty($serviceAccountJson)) {
-                $serviceAccountJson = @$this->ReadPropertyString('HomeGraphAPIKey') ?: '';
-                if (empty($serviceAccountJson)) {
-                    return false;
-                }
+                return false;
             }
 
             $agentUserId = $this->GetAgentUserId();
