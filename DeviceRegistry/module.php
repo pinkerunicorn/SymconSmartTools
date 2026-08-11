@@ -263,15 +263,44 @@ class SymconDeviceRegistry extends IPSModuleStrict
 
     public function GetDevicesByType(string $type): array
     {
+        $list = [];
         $json = $this->ReadPropertyString($type);
-        $list = json_decode($json, true);
-        if (is_array($list)) {
-            foreach ($list as &$dev) {
+        $primaryList = json_decode($json, true);
+        if (is_array($primaryList)) {
+            foreach ($primaryList as $dev) {
                 $dev['Type'] = $type;
+                $list[] = $dev;
             }
-            return $list;
         }
-        return [];
+
+        // Dimmers and Color Lights with an OnOff Variable can act as standard Lights/Switches
+        if ($type === 'DevicesLight' || $type === 'DevicesSwitch') {
+            $extraTypes = ['DevicesLightDimmer', 'DevicesLightColor'];
+            foreach ($extraTypes as $eType) {
+                $eJson = $this->ReadPropertyString($eType);
+                $eList = json_decode($eJson, true);
+                if (is_array($eList)) {
+                    foreach ($eList as $dev) {
+                        if (!empty($dev['OnOff_VarID']) && (int)$dev['OnOff_VarID'] > 0) {
+                            // Only add if not already in the list (prevent duplicates by ID)
+                            $found = false;
+                            foreach ($list as $existingDev) {
+                                if (($existingDev['id'] ?? '') === ($dev['id'] ?? '')) {
+                                    $found = true;
+                                    break;
+                                }
+                            }
+                            if (!$found) {
+                                $dev['Type'] = $eType;
+                                $list[] = $dev;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $list;
     }
 
     public function GetDeviceVariables(string $deviceId): array
