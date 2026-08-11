@@ -121,12 +121,10 @@ class SymconDeviceRegistry extends IPSModuleStrict
             if ($instId === $myId) {
                 continue;
             }
-            if (@IPS_HasProperty($instId, 'RegistryID')) {
-                $regId = @IPS_GetProperty($instId, 'RegistryID');
-                if ($regId === $myId) {
-                    $count++;
-                    @IPS_ApplyChanges($instId);
-                }
+            $regId = @IPS_GetProperty($instId, 'RegistryID');
+            if ($regId === $myId) {
+                $count++;
+                @IPS_ApplyChanges($instId);
             }
         }
         
