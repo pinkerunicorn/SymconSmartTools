@@ -20,7 +20,7 @@
                         {
                             "caption": "Name (z.B. Erdgeschoss)",
                             "name": "name",
-                            "width": "auto",
+                            "width": "200px",
                             "add": "",
                             "edit": {
                                 "type": "ValidationTextBox"
@@ -57,7 +57,7 @@
                         {
                             "caption": "Etage / Bereich",
                             "name": "floor",
-                            "width": "auto",
+                            "width": "200px",
                             "add": "",
                             "edit": {
                                 "type": "Select",
@@ -125,7 +125,7 @@
                         {
                             "caption": "OnOff Variable",
                             "name": "OnOff_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -193,7 +193,7 @@
                         {
                             "caption": "OnOff Variable",
                             "name": "OnOff_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -261,7 +261,7 @@
                         {
                             "caption": "OnOff Variable",
                             "name": "OnOff_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -330,7 +330,7 @@
                             "edit": {
                                 "type": "SelectVariable"
                             },
-                            "width": "auto",
+                            "width": "200px",
                             "caption": "OnOff Variable",
                             "name": "OnOff_VarID",
                             "add": 0
@@ -338,7 +338,7 @@
                         {
                             "caption": "Brightness Variable",
                             "name": "Brightness_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -407,7 +407,7 @@
                             "edit": {
                                 "type": "SelectVariable"
                             },
-                            "width": "auto",
+                            "width": "200px",
                             "caption": "OnOff Variable",
                             "name": "OnOff_VarID",
                             "add": 0
@@ -415,7 +415,7 @@
                         {
                             "caption": "Brightness Variable",
                             "name": "Brightness_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -424,7 +424,7 @@
                         {
                             "caption": "RGB Variable",
                             "name": "ColorRGB_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -433,7 +433,7 @@
                         {
                             "caption": "Kelvin Variable",
                             "name": "ColorTemp_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -501,7 +501,7 @@
                         {
                             "caption": "OpenClose Variable",
                             "name": "OpenClose_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -569,7 +569,7 @@
                         {
                             "caption": "TempSet Variable",
                             "name": "TempSet_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -643,7 +643,7 @@
                         {
                             "caption": "Status Variable",
                             "name": "Status_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -711,7 +711,7 @@
                         {
                             "caption": "Status Variable",
                             "name": "Status_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -788,7 +788,7 @@
                         {
                             "caption": "Status Variable",
                             "name": "Status_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -856,7 +856,7 @@
                         {
                             "caption": "Status Variable",
                             "name": "Status_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -924,7 +924,7 @@
                         {
                             "caption": "Status Variable",
                             "name": "Status_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -1021,7 +1021,7 @@
                         {
                             "caption": "Zählerstand Variable",
                             "name": "Value_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -1095,7 +1095,7 @@
                         {
                             "caption": "Status Variable",
                             "name": "Status_VarID",
-                            "width": "auto",
+                            "width": "200px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
