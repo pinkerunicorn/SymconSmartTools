@@ -83,8 +83,8 @@ class GoogleHomeGateway extends IPSModuleStrict
         // Device Registry Anbindung
         $this->RegisterPropertyInteger('RegistryID', 0);
         
-        // Blacklist (ausgewählte Geräte ignorieren)
-        $this->RegisterPropertyString('Blacklist', '[]');
+        // DeviceFilter (Welche Geräte sollen an Google Home gemeldet werden?)
+        $this->RegisterPropertyString('DeviceFilter', '[]');
 
         // Internes Attribut: OAuth Tokens
         $this->RegisterAttributeString('OAuthTokens', '{}');
@@ -176,27 +176,45 @@ class GoogleHomeGateway extends IPSModuleStrict
 
         if (is_array($form) && isset($form['elements'])) {
             $registryId = $this->ReadPropertyInteger('RegistryID');
-            $deviceOptions = [];
+            $deviceFilterValues = [];
             
             if ($registryId > 0 && IPS_InstanceExists($registryId)) {
+                // Lese aktuelle Filter-Konfiguration
+                $filterJson = $this->ReadPropertyString('DeviceFilter');
+                $filterArr = json_decode($filterJson, true) ?: [];
+                $filterMap = [];
+                foreach ($filterArr as $f) {
+                    if (isset($f['id'])) {
+                        $filterMap[(string)$f['id']] = isset($f['sync']) ? (bool)$f['sync'] : true;
+                    }
+                }
+
                 $mappings = [
-                    'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
-                    'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene',
-                    'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor',
-                    'DevicesWaterSensor', 'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth'
+                    'DevicesSwitch'      => 'Schalter',
+                    'DevicesSocket'      => 'Steckdose',
+                    'DevicesLight'       => 'Licht (Schalter)',
+                    'DevicesLightDimmer' => 'Licht (Dimmer)',
+                    'DevicesLightColor'  => 'Licht (Farbe)',
+                    'DevicesBlind'       => 'Jalousie',
+                    'DevicesThermostat'  => 'Thermostat',
+                    'DevicesScene'       => 'Szene'
                 ];
                 
-                foreach ($mappings as $propName) {
+                foreach ($mappings as $propName => $category) {
                     $json = @IPS_GetProperty($registryId, $propName);
                     if ($json !== false) {
                         $list = json_decode($json, true);
                         if (is_array($list)) {
                             foreach ($list as $dev) {
                                 if (isset($dev['id']) && isset($dev['name'])) {
+                                    $id = (string)$dev['id'];
                                     $room = !empty($dev['room']) ? " ({$dev['room']})" : "";
-                                    $deviceOptions[] = [
-                                        'caption' => $dev['name'] . $room,
-                                        'value' => (string)$dev['id']
+                                    
+                                    $deviceFilterValues[] = [
+                                        'sync' => isset($filterMap[$id]) ? $filterMap[$id] : true,
+                                        'name' => $dev['name'] . $room,
+                                        'type' => $category,
+                                        'id'   => $id
                                     ];
                                 }
                             }
@@ -204,17 +222,14 @@ class GoogleHomeGateway extends IPSModuleStrict
                     }
                 }
                 
-                // Alphabetisch nach Caption sortieren
-                usort($deviceOptions, fn($a, $b) => strcasecmp($a['caption'], $b['caption']));
+                usort($deviceFilterValues, fn($a, $b) => strcasecmp($a['name'], $b['name']));
             }
 
             foreach ($form['elements'] as &$element) {
-                if (($element['type'] ?? '') === 'ExpansionPanel' && ($element['caption'] ?? '') === 'Geräte-Filter (Blacklist)' && isset($element['items'])) {
+                if (($element['type'] ?? '') === 'ExpansionPanel' && ($element['caption'] ?? '') === 'Geräte-Freigabe (Auswahl für Google Home)' && isset($element['items'])) {
                     foreach ($element['items'] as &$item) {
-                        if (($item['type'] ?? '') === 'List' && ($item['name'] ?? '') === 'Blacklist') {
-                            if (isset($item['columns'][0]['edit'])) {
-                                $item['columns'][0]['edit']['options'] = $deviceOptions;
-                            }
+                        if (($item['type'] ?? '') === 'List' && ($item['name'] ?? '') === 'DeviceFilter') {
+                            $item['values'] = $deviceFilterValues;
                         }
                     }
                     unset($item);
@@ -405,11 +420,16 @@ class GoogleHomeGateway extends IPSModuleStrict
             return [];
         }
 
-        $blacklistJson = $this->ReadPropertyString('Blacklist');
-        $blacklistArr = json_decode($blacklistJson, true) ?: [];
-        $blacklistIds = array_column($blacklistArr, 'id');
+        $filterJson = $this->ReadPropertyString('DeviceFilter');
+        $filterArr = json_decode($filterJson, true) ?: [];
+        $filterMap = [];
+        foreach ($filterArr as $f) {
+            if (isset($f['id'])) {
+                $filterMap[(string)$f['id']] = isset($f['sync']) ? (bool)$f['sync'] : true;
+            }
+        }
 
-        $this->SendDebug('GetDevices', "RegistryID: $registryId, Blacklisted IDs: " . count($blacklistIds), 0);
+        $this->SendDebug('GetDevices', "RegistryID: $registryId", 0);
 
         $mappings = [
             self::TYPE_SWITCH      => 'DevicesSwitch',
@@ -433,8 +453,12 @@ class GoogleHomeGateway extends IPSModuleStrict
             if (is_array($list)) {
                 $this->SendDebug('GetDevices', "Loaded " . count($list) . " devices for $propName", 0);
                 foreach ($list as $dev) {
-                    if (in_array((string)$dev['id'], $blacklistIds, true) || in_array((int)$dev['id'], $blacklistIds, true)) {
-                        continue; // Ausgefiltert
+                    $id = (string)($dev['id'] ?? '');
+                    if ($id !== '') {
+                        $sync = isset($filterMap[$id]) ? $filterMap[$id] : true;
+                        if (!$sync) {
+                            continue; // Ausgefiltert (Aktiv = false)
+                        }
                     }
                     $dev['type'] = $type; // Typ dynamisch einfügen
                     $allDevices[] = $dev;

@@ -51,28 +51,46 @@
         },
         {
             "type": "ExpansionPanel",
-            "caption": "Geräte-Filter (Blacklist)",
+            "caption": "Geräte-Freigabe (Auswahl für Google Home)",
             "expanded": true,
             "items": [
                 {
                     "type": "Label",
-                    "caption": "Geräte, die in dieser Liste stehen, werden NICHT an Google Home gesendet."
+                    "caption": "Wähle hier aus, welche Geräte an Google Home übergeben werden sollen."
                 },
                 {
                     "type": "List",
-                    "name": "Blacklist",
-                    "add": true,
-                    "delete": true,
+                    "name": "DeviceFilter",
+                    "add": false,
+                    "delete": false,
+                    "sort": {
+                        "column": "name",
+                        "direction": "ascending"
+                    },
                     "columns": [
                         {
-                            "caption": "Gerät (aus Registry)",
-                            "name": "id",
-                            "width": "400px",
-                            "add": "",
+                            "caption": "Aktiv",
+                            "name": "sync",
+                            "width": "80px",
                             "edit": {
-                                "type": "Select",
-                                "options": []
+                                "type": "CheckBox"
                             }
+                        },
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "auto"
+                        },
+                        {
+                            "caption": "Kategorie",
+                            "name": "type",
+                            "width": "200px"
+                        },
+                        {
+                            "caption": "ID (intern)",
+                            "name": "id",
+                            "width": "0px",
+                            "visible": false
                         }
                     ]
                 }
