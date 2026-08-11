@@ -132,6 +132,15 @@
                             }
                         },
                         {
+                            "caption": "Schaltwert (Closed)",
+                            "name": "ClosedValue",
+                            "width": "150px",
+                            "add": "CLOSED",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
