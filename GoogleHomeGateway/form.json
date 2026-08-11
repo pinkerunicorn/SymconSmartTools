@@ -79,18 +79,21 @@
                         {
                             "caption": "Name",
                             "name": "name",
-                            "width": "auto"
+                            "width": "auto",
+                            "save": true
                         },
                         {
                             "caption": "Kategorie",
                             "name": "type",
-                            "width": "200px"
+                            "width": "200px",
+                            "save": true
                         },
                         {
                             "caption": "ID (intern)",
                             "name": "id",
                             "width": "0px",
-                            "visible": false
+                            "visible": false,
+                            "save": true
                         }
                     ]
                 }
