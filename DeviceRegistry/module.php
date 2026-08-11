@@ -13,6 +13,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
 
         // Aktorik
         $this->RegisterPropertyString('DevicesSwitch', '[]');
+        
+        // Sensorik
+        $this->RegisterPropertyString('DevicesWallSwitch', '[]');
         $this->RegisterPropertyString('DevicesSocket', '[]');
         $this->RegisterPropertyString('DevicesLight', '[]');
         $this->RegisterPropertyString('DevicesLightDimmer', '[]');
@@ -44,6 +47,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesBlind' => 'Jalousien',
             'DevicesThermostat' => 'Thermostate',
 
+            'DevicesWallSwitch' => 'Wandschalter / Taster',
             'DevicesMotionSensor' => 'Bewegungsmelder',
             'DevicesContactSensor' => 'Fenster-/Türkontakte',
             'DevicesSmokeSensor' => 'Rauchmelder',
@@ -66,7 +70,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $mappings = [
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
-            'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
+            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
             'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth'
         ];
         
@@ -245,7 +249,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $mappings = [
             'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
-            'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor'
+            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor'
         ];
 
         foreach ($mappings as $propName) {
@@ -369,6 +373,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesLightDimmer' => [],
             'DevicesBlind' => [],
             'DevicesThermostat' => [],
+            'DevicesWallSwitch' => [],
             'DevicesMotionSensor' => [],
             'DevicesContactSensor' => [],
             'DevicesSmokeSensor' => [],
