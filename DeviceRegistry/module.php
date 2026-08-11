@@ -19,7 +19,6 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterPropertyString('DevicesLightColor', '[]');
         $this->RegisterPropertyString('DevicesBlind', '[]');
         $this->RegisterPropertyString('DevicesThermostat', '[]');
-        $this->RegisterPropertyString('DevicesScene', '[]');
         
         // Sensorik
         $this->RegisterPropertyString('DevicesMotionSensor', '[]');
@@ -44,7 +43,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesLightColor' => 'Licht (Farbe)',
             'DevicesBlind' => 'Jalousien',
             'DevicesThermostat' => 'Thermostate',
-            'DevicesScene' => 'Szenen',
+
             'DevicesMotionSensor' => 'Bewegungsmelder',
             'DevicesContactSensor' => 'Fenster-/Türkontakte',
             'DevicesSmokeSensor' => 'Rauchmelder',
@@ -66,7 +65,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
 
         $mappings = [
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
-            'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene',
+            'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
             'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
             'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth'
         ];
@@ -169,13 +168,6 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                     $rowColor = ''; 
                                     $hasError = false;
 
-                                    if ($propName === 'DevicesScene') {
-                                        if (empty($dev['ActionOn']) || $dev['ActionOn'] === '{}') {
-                                            $status   = 'Aktion fehlt';
-                                            $rowColor = '#FF8000'; 
-                                            $hasError = true;
-                                        }
-                                    } else {
                                         $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Value_VarID'];
                                         $primaryFieldFound = false;
                                         
@@ -208,7 +200,6 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                              $status   = 'Unvollstaendig';
                                              $rowColor = '#FF8000'; 
                                         }
-                                    }
 
                                     $dev['Status']   = $status;
                                     if ($rowColor !== '') {
@@ -253,7 +244,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $allDevices = [];
         $mappings = [
             'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
-            'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat', 'DevicesScene',
+            'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
             'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor'
         ];
 
