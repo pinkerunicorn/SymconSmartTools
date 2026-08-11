@@ -422,15 +422,6 @@
                             }
                         },
                         {
-                            "edit": {
-                                "type": "SelectVariable"
-                            },
-                            "width": "auto",
-                            "caption": "OnOff Variable",
-                            "name": "OnOff_VarID",
-                            "add": 0
-                        },
-                        {
                             "caption": "RGB Variable",
                             "name": "ColorRGB_VarID",
                             "width": "auto",
