@@ -114,7 +114,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         
         $floorsJson = $this->ReadPropertyString('Floors');
         $floorsList = json_decode($floorsJson, true);
-        $floorOptions = [];
+        $floorOptions = [['caption' => '(Nicht zugewiesen)', 'value' => '']];
         if (is_array($floorsList)) {
             foreach ($floorsList as $f) {
                 if (!empty($f['name'])) {
@@ -125,7 +125,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         
         $roomsJson = $this->ReadPropertyString('Rooms');
         $roomsList = json_decode($roomsJson, true);
-        $roomOptions = [];
+        $roomOptions = [['caption' => '(Nicht zugewiesen)', 'value' => '']];
         if (is_array($roomsList)) {
             foreach ($roomsList as $r) {
                 if (!empty($r['name'])) {
