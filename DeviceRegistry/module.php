@@ -273,15 +273,25 @@ class SymconDeviceRegistry extends IPSModuleStrict
             }
         }
 
-        // Dimmers and Color Lights with an OnOff Variable can act as standard Lights/Switches
+        // Feature: Dimmers and Color Lights can cascade down to simpler types
+        $extraTypes = [];
+        $requiredVar = '';
+        
         if ($type === 'DevicesLight' || $type === 'DevicesSwitch') {
             $extraTypes = ['DevicesLightDimmer', 'DevicesLightColor'];
+            $requiredVar = 'OnOff_VarID';
+        } elseif ($type === 'DevicesLightDimmer') {
+            $extraTypes = ['DevicesLightColor'];
+            $requiredVar = 'Brightness_VarID';
+        }
+
+        if (!empty($extraTypes) && $requiredVar !== '') {
             foreach ($extraTypes as $eType) {
                 $eJson = $this->ReadPropertyString($eType);
                 $eList = json_decode($eJson, true);
                 if (is_array($eList)) {
                     foreach ($eList as $dev) {
-                        if (!empty($dev['OnOff_VarID']) && (int)$dev['OnOff_VarID'] > 0) {
+                        if (!empty($dev[$requiredVar]) && (int)$dev[$requiredVar] > 0) {
                             // Only add if not already in the list (prevent duplicates by ID)
                             $found = false;
                             foreach ($list as $existingDev) {
