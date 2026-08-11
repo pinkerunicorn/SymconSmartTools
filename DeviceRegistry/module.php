@@ -500,10 +500,25 @@ class SymconDeviceRegistry extends IPSModuleStrict
             }
             // Dimmer
             elseif (($var['VariableType'] === 1 || $var['VariableType'] === 2) && $hasAction && strpos(strtolower($profile), 'intensity') !== false) {
+                // Try to find matching OnOff variable under the same parent
+                $onOffId = 0;
+                if ($parentId > 0) {
+                    $children = IPS_GetChildrenIDs($parentId);
+                    foreach ($children as $childId) {
+                        if (IPS_GetObject($childId)['ObjectType'] === 2) {
+                            $childVar = IPS_GetVariable($childId);
+                            if ($childVar['VariableType'] === 0 && ($childVar['VariableCustomAction'] > 0 || $childVar['VariableAction'] > 0)) {
+                                $onOffId = $childId;
+                                break;
+                            }
+                        }
+                    }
+                }
                 $newDevices['DevicesLightDimmer'][] = [
                     'name' => $name,
                     'room' => $room,
-                    'Brightness_VarID' => $varId
+                    'Brightness_VarID' => $varId,
+                    'OnOff_VarID' => $onOffId > 0 ? $onOffId : ''
                 ];
                 $existingVars[] = $varId;
             }

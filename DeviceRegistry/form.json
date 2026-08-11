@@ -322,6 +322,15 @@
               }
             },
             {
+              "edit": {
+                "type": "SelectVariable"
+              },
+              "width": "auto",
+              "caption": "OnOff Variable",
+              "name": "OnOff_VarID",
+              "add": 0
+            },
+            {
               "caption": "Brightness Variable",
               "name": "Brightness_VarID",
               "width": "auto",
@@ -389,6 +398,15 @@
               }
             },
             {
+              "edit": {
+                "type": "SelectVariable"
+              },
+              "width": "auto",
+              "caption": "OnOff Variable",
+              "name": "OnOff_VarID",
+              "add": 0
+            },
+            {
               "caption": "Brightness Variable",
               "name": "Brightness_VarID",
               "width": "auto",
@@ -396,6 +414,15 @@
               "edit": {
                 "type": "SelectVariable"
               }
+            },
+            {
+              "edit": {
+                "type": "SelectVariable"
+              },
+              "width": "auto",
+              "caption": "OnOff Variable",
+              "name": "OnOff_VarID",
+              "add": 0
             },
             {
               "caption": "RGB Variable",
