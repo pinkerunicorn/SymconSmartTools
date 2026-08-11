@@ -361,6 +361,7 @@ class GoogleHomeGateway extends IPSModuleStrict
         if (empty($serviceAccountJson)) {
             $this->SendDebug('RequestSync', 'Kein Service Account JSON konfiguriert!', 0);
             $this->SLogError('RequestSync: Kein Service Account JSON konfiguriert');
+            echo "Fehler: Kein Service Account JSON in den Instanz-Einstellungen hinterlegt!";
             return false;
         }
 
@@ -392,11 +393,13 @@ class GoogleHomeGateway extends IPSModuleStrict
         if ($result !== null) {
             $this->SetValue('LastSync', date('d.m.Y H:i:s'));
             $this->SLogInfo('RequestSync erfolgreich');
+            echo "Google Sync wurde erfolgreich angefordert!";
             return true;
         }
 
         $this->SetValue('GatewayStatus', 2);
         $this->SLogError('RequestSync fehlgeschlagen');
+        echo "Fehler beim Anfordern des Google Syncs. Bitte prüfe das Symcon-Meldungsfenster für Details!";
         return false;
     }
 
