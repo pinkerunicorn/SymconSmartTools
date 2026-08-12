@@ -55,7 +55,7 @@
                             }
                         },
                         {
-                            "caption": "Etage / Bereich",
+                            "caption": "Etage \/ Bereich",
                             "name": "floor",
                             "width": "200px",
                             "add": "",
@@ -492,7 +492,7 @@
                 {
                     "type": "List",
                     "name": "DevicesBlind",
-                    "caption": "Jalousie / Rolllade",
+                    "caption": "Jalousie \/ Rolllade",
                     "add": true,
                     "delete": true,
                     "columns": [
@@ -676,7 +676,7 @@
                 {
                     "type": "List",
                     "name": "DevicesWallSwitch",
-                    "caption": "Wandschalter / Taster",
+                    "caption": "Wandschalter \/ Taster",
                     "add": true,
                     "delete": true,
                     "columns": [
@@ -836,7 +836,7 @@
                 {
                     "type": "List",
                     "name": "DevicesContactSensor",
-                    "caption": "Fenster- / Türkontakte",
+                    "caption": "Fenster- \/ Türkontakte",
                     "add": true,
                     "delete": true,
                     "columns": [
@@ -1054,7 +1054,113 @@
                     ],
                     "rowCount": 15,
                     "changeOrder": true
-                },
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Zähler & Verbrauch (Strom, Wasser, Gas)",
+            "items": [
+                {
+                    "type": "List",
+                    "name": "DevicesMeter",
+                    "caption": "Energiezähler",
+                    "add": true,
+                    "delete": true,
+                    "columns": [
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Typ",
+                            "name": "type",
+                            "width": "100px",
+                            "add": "Strom",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    {
+                                        "caption": "Strom",
+                                        "value": "Strom"
+                                    },
+                                    {
+                                        "caption": "Wasser",
+                                        "value": "Wasser"
+                                    },
+                                    {
+                                        "caption": "Gas",
+                                        "value": "Gas"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "caption": "Zählerstand Variable",
+                            "name": "Value_VarID",
+                            "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Status",
+                            "name": "Status",
+                            "width": "150px",
+                            "add": ""
+                        },
+                        {
+                            "visible": false,
+                            "save": true,
+                            "width": "0px",
+                            "name": "id",
+                            "caption": "ID",
+                            "add": ""
+                        }
+                    ],
+                    "rowCount": 15,
+                    "changeOrder": true
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Ereignisse, Status & Sonstiges",
+            "items": [
                 {
                     "type": "List",
                     "name": "DevicesAlarmSensor",
@@ -1172,117 +1278,11 @@
                             "add": ""
                         }
                     ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Zähler & Verbrauch (Strom, Wasser, Gas)",
-            "items": [
-                {
-                    "type": "List",
-                    "name": "DevicesMeter",
-                    "caption": "Energiezähler",
-                    "add": true,
-                    "delete": true,
-                    "columns": [
-                        {
-                            "caption": "Name",
-                            "name": "name",
-                            "width": "200px",
-                            "add": "",
-                            "edit": {
-                                "type": "ValidationTextBox"
-                            }
-                        },
-                        {
-                            "caption": "Raum",
-                            "name": "room",
-                            "width": "150px",
-                            "add": "",
-                            "edit": {
-                                "type": "Select",
-                                "options": []
-                            }
-                        },
-                        {
-                            "caption": "Typ",
-                            "name": "type",
-                            "width": "100px",
-                            "add": "Strom",
-                            "edit": {
-                                "type": "Select",
-                                "options": [
-                                    {
-                                        "caption": "Strom",
-                                        "value": "Strom"
-                                    },
-                                    {
-                                        "caption": "Wasser",
-                                        "value": "Wasser"
-                                    },
-                                    {
-                                        "caption": "Gas",
-                                        "value": "Gas"
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "caption": "Zählerstand Variable",
-                            "name": "Value_VarID",
-                            "width": "200px",
-                            "add": 0,
-                            "edit": {
-                                "type": "SelectVariable"
-                            }
-                        },
-                        {
-                            "caption": "Erreichbarkeit Variable",
-                            "name": "Reachable_VarID",
-                            "width": "190px",
-                            "add": 0,
-                            "edit": {
-                                "type": "SelectVariable"
-                            }
-                        },
-                        {
-                            "caption": "Batterie Variable",
-                            "name": "Battery_VarID",
-                            "width": "160px",
-                            "add": 0,
-                            "edit": {
-                                "type": "SelectVariable"
-                            }
-                        },
-                        {
-                            "caption": "Status",
-                            "name": "Status",
-                            "width": "150px",
-                            "add": ""
-                        },
-                        {
-                            "visible": false,
-                            "save": true,
-                            "width": "0px",
-                            "name": "id",
-                            "caption": "ID",
-                            "add": ""
-                        }
-                    ],
-                    "rowCount": 15,
-                    "changeOrder": true
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Diagnose & System",
-            "items": [
+                },
                 {
                     "type": "List",
                     "name": "DevicesHealth",
-                    "caption": "Gerätestatus / Offline-Module",
+                    "caption": "Gerätestatus \/ Offline-Module",
                     "add": true,
                     "delete": true,
                     "columns": [
