@@ -506,24 +506,6 @@
                             }
                         },
                         {
-                            "caption": "Modus Auto",
-                            "name": "AutoValue",
-                            "width": "120px",
-                            "add": "AUTOMATIC",
-                            "edit": {
-                                "type": "ValidationTextBox"
-                            }
-                        },
-                        {
-                            "caption": "Modus Manu",
-                            "name": "ManuValue",
-                            "width": "120px",
-                            "add": "MANUAL",
-                            "edit": {
-                                "type": "ValidationTextBox"
-                            }
-                        },
-                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",

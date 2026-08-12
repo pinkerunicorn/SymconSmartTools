@@ -1,0 +1,489 @@
+commit 0b76edbafa2ff3432a697d2e12fab2bee89185f7
+Author: Florian Graßinger <grassinger@ubyte.gmbh>
+Date:   Wed Aug 12 09:21:46 2026 +0200
+
+    Update DeviceRegistry: Remove Discover/Clear, Add Thermostat fields, Make lists sortable
+
+diff --git a/DeviceRegistry/form.json b/DeviceRegistry/form.json
+index d086aa9..7375fd3 100644
+--- a/DeviceRegistry/form.json
++++ b/DeviceRegistry/form.json
+@@ -80,22 +80,6 @@
+             "type": "ExpansionPanel",
+             "caption": "Aktorik (Schalter, Dimmer, Jalousien)",
+             "items": [
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Schalter)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesSwitch');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesSwitch');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
+-                },
+                 {
+                     "type": "List",
+                     "name": "DevicesSwitch",
+@@ -146,23 +130,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Steckdosen)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesSocket');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesSocket');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -214,23 +183,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Licht (Schalter))",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesLight');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesLight');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -282,23 +236,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Licht (Dimmer))",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesLightDimmer');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesLightDimmer');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -359,23 +298,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Licht (Farbe))",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesLightColor');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesLightColor');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -454,23 +378,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Jalousie / Rolllade)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesBlind');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesBlind');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -522,23 +431,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Thermostate)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesThermostat');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesThermostat');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -575,6 +469,60 @@
+                                 "type": "SelectVariable"
+                             }
+                         },
++                        {
++                            "caption": "Ist-Temp VarID",
++                            "name": "ActualTemp_VarID",
++                            "width": "150px",
++                            "add": 0,
++                            "edit": {
++                                "type": "SelectVariable"
++                            }
++                        },
++                        {
++                            "caption": "Luftfeuchte VarID",
++                            "name": "Humidity_VarID",
++                            "width": "150px",
++                            "add": 0,
++                            "edit": {
++                                "type": "SelectVariable"
++                            }
++                        },
++                        {
++                            "caption": "Modus VarID",
++                            "name": "ControlMode_VarID",
++                            "width": "150px",
++                            "add": 0,
++                            "edit": {
++                                "type": "SelectVariable"
++                            }
++                        },
++                        {
++                            "caption": "Boost VarID",
++                            "name": "BoostMode_VarID",
++                            "width": "150px",
++                            "add": 0,
++                            "edit": {
++                                "type": "SelectVariable"
++                            }
++                        },
++                        {
++                            "caption": "Modus Auto",
++                            "name": "AutoValue",
++                            "width": "120px",
++                            "add": "AUTOMATIC",
++                            "edit": {
++                                "type": "ValidationTextBox"
++                            }
++                        },
++                        {
++                            "caption": "Modus Manu",
++                            "name": "ManuValue",
++                            "width": "120px",
++                            "add": "MANUAL",
++                            "edit": {
++                                "type": "ValidationTextBox"
++                            }
++                        },
+                         {
+                             "caption": "Status",
+                             "name": "Status",
+@@ -590,7 +538,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
++                    "rowCount": 15,
++                    "changeOrder": true
+                 }
+             ]
+         },
+@@ -598,22 +547,6 @@
+             "type": "ExpansionPanel",
+             "caption": "Sensorik (Bewegung, Melder)",
+             "items": [
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Wandschalter)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesWallSwitch');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesWallSwitch');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
+-                },
+                 {
+                     "type": "List",
+                     "name": "DevicesWallSwitch",
+@@ -673,23 +606,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Bewegungsmelder)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesMotionSensor');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesMotionSensor');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -741,23 +659,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Fenster- / Türkontakte)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesContactSensor');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesContactSensor');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -818,23 +721,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Rauchmelder)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesSmokeSensor');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesSmokeSensor');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -886,23 +774,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Wassermelder)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesWaterSensor');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesWaterSensor');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -954,23 +827,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
+-                },
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Sonstige Alarmmelder (Sabotage, Glasbruch, etc.))",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesAlarmSensor');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesAlarmSensor');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
++                    "rowCount": 15,
++                    "changeOrder": true
+                 },
+                 {
+                     "type": "List",
+@@ -1022,7 +880,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
++                    "rowCount": 15,
++                    "changeOrder": true
+                 }
+             ]
+         },
+@@ -1030,22 +889,6 @@
+             "type": "ExpansionPanel",
+             "caption": "Zähler & Verbrauch (Strom, Wasser, Gas)",
+             "items": [
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Energiezähler)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesMeter');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesMeter');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
+-                },
+                 {
+                     "type": "List",
+                     "name": "DevicesMeter",
+@@ -1119,7 +962,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
++                    "rowCount": 15,
++                    "changeOrder": true
+                 }
+             ]
+         },
+@@ -1127,22 +971,6 @@
+             "type": "ExpansionPanel",
+             "caption": "Diagnose & System",
+             "items": [
+-                {
+-                    "type": "RowLayout",
+-                    "items": [
+-                        {
+-                            "type": "Button",
+-                            "caption": "Suchen (Gerätestatus / Offline-Module)",
+-                            "onClick": "SDR_DiscoverDevices($id, 'DevicesHealth');"
+-                        },
+-                        {
+-                            "type": "Button",
+-                            "caption": "Alle löschen",
+-                            "onClick": "SDR_ClearList($id, 'DevicesHealth');",
+-                            "confirm": "Möchtest du wirklich alle Einträge aus der Liste unwiderruflich löschen?"
+-                        }
+-                    ]
+-                },
+                 {
+                     "type": "List",
+                     "name": "DevicesHealth",
+@@ -1193,7 +1021,8 @@
+                             "add": ""
+                         }
+                     ],
+-                    "rowCount": 15
++                    "rowCount": 15,
++                    "changeOrder": true
+                 }
+             ]
+         }
