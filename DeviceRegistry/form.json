@@ -116,6 +116,24 @@
                             }
                         },
                         {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
@@ -187,6 +205,24 @@
                             }
                         },
                         {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
@@ -234,6 +270,24 @@
                             "caption": "OnOff Variable",
                             "name": "OnOff_VarID",
                             "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -296,6 +350,24 @@
                             "caption": "Brightness Variable",
                             "name": "Brightness_VarID",
                             "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -382,6 +454,24 @@
                             }
                         },
                         {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
@@ -429,6 +519,24 @@
                             "caption": "OpenClose Variable",
                             "name": "OpenClose_VarID",
                             "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -524,6 +632,24 @@
                             }
                         },
                         {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
@@ -592,6 +718,24 @@
                             }
                         },
                         {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
@@ -648,6 +792,24 @@
                             "caption": "Helligkeit Variable",
                             "name": "Lux_VarID",
                             "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -716,6 +878,24 @@
                             }
                         },
                         {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
@@ -763,6 +943,24 @@
                             "caption": "Status Variable",
                             "name": "Status_VarID",
                             "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -822,6 +1020,24 @@
                             }
                         },
                         {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
@@ -869,6 +1085,24 @@
                             "caption": "Status Variable",
                             "name": "Status_VarID",
                             "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"
@@ -957,6 +1191,24 @@
                             }
                         },
                         {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
@@ -1010,6 +1262,24 @@
                             "caption": "Status Variable",
                             "name": "Status_VarID",
                             "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Erreichbarkeit Variable",
+                            "name": "Reachable_VarID",
+                            "width": "190px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "caption": "Batterie Variable",
+                            "name": "Battery_VarID",
+                            "width": "160px",
                             "add": 0,
                             "edit": {
                                 "type": "SelectVariable"

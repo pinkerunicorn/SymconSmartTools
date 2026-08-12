@@ -352,7 +352,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         foreach ($devices as $dev) {
             if (isset($dev['id']) && $dev['id'] === $deviceId) {
                 $vars = [];
-                $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Lux_VarID', 'ActualTemp_VarID', 'BoostMode_VarID', 'ControlMode_VarID', 'Humidity_VarID', 'Power_VarID', 'Energy_VarID'];
+                $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Lux_VarID', 'ActualTemp_VarID', 'BoostMode_VarID', 'ControlMode_VarID', 'Humidity_VarID', 'Power_VarID', 'Energy_VarID', 'Reachable_VarID', 'Battery_VarID'];
                 foreach ($varFields as $field) {
                     if (isset($dev[$field]) && $dev[$field] > 0) {
                         $vars[$field] = (int)$dev[$field];
