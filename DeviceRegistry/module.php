@@ -195,7 +195,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                     $rowColor = ''; 
                                     $hasError = false;
 
-                                        $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Value_VarID'];
+                                        $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Value_VarID', 'ActualTemp_VarID', 'BoostMode_VarID', 'ControlMode_VarID', 'Humidity_VarID'];
                                         $primaryFieldFound = false;
                                         
                                         $isDimmer = in_array($propName, ['DevicesLightDimmer', 'DevicesLightColor']);
@@ -215,7 +215,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                                 } else {
                                                     if ($varField === 'OnOff_VarID' && $isDimmer && $hasBrightness) {
                                                         // OK: Dimmer darf nur Brightness haben
-                                                    } elseif (in_array($varField, ['OnOff_VarID', 'OpenClose_VarID', 'Status_VarID', 'Value_VarID'])) {
+                                                    } elseif (in_array($varField, ['OnOff_VarID', 'OpenClose_VarID', 'Status_VarID', 'Value_VarID', 'TempSet_VarID', 'ActualTemp_VarID'])) {
                                                         $status   = 'Unvollstaendig';
                                                         $rowColor = '#FF8000';
                                                         $hasError = true;
@@ -223,7 +223,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                                 }
                                             }
                                         }
-                                        if (!$primaryFieldFound && !$hasError && $propName !== 'DevicesThermostat') {
+                                        if (!$primaryFieldFound && !$hasError) {
                                              $status   = 'Unvollstaendig';
                                              $rowColor = '#FF8000'; 
                                         }
@@ -352,7 +352,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         foreach ($devices as $dev) {
             if (isset($dev['id']) && $dev['id'] === $deviceId) {
                 $vars = [];
-                $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID'];
+                $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'ActualTemp_VarID', 'BoostMode_VarID', 'ControlMode_VarID', 'Humidity_VarID'];
                 foreach ($varFields as $field) {
                     if (isset($dev[$field]) && $dev[$field] > 0) {
                         $vars[$field] = (int)$dev[$field];
@@ -364,309 +364,4 @@ class SymconDeviceRegistry extends IPSModuleStrict
         return [];
     }
 
-    public function ClearList(string $listName): void
-    {
-        if (str_starts_with($listName, 'Devices')) {
-            IPS_SetProperty($this->InstanceID, $listName, '[]');
-            IPS_ApplyChanges($this->InstanceID);
-            echo "Die Liste wurde komplett geleert! Bitte die Seite neu laden.";
-        }
     }
-
-    // Auto-Discovery Funktion
-    public function DiscoverDevices(string $category = ''): void
-    {
-        $variables = IPS_GetVariableList();
-        
-        $existingVars = [];
-        $devices = $this->GetDevices();
-        foreach ($devices as $dev) {
-            $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID'];
-            foreach ($varFields as $field) {
-                if (!empty($dev[$field])) {
-                    $existingVars[] = (int)$dev[$field];
-                }
-            }
-        }
-
-        $newDevices = [
-            'DevicesSwitch' => [],
-            'DevicesSocket' => [],
-            'DevicesLight' => [],
-            'DevicesLightDimmer' => [],
-            'DevicesBlind' => [],
-            'DevicesThermostat' => [],
-            'DevicesWallSwitch' => [],
-            'DevicesMotionSensor' => [],
-            'DevicesContactSensor' => [],
-            'DevicesSmokeSensor' => [],
-            'DevicesWaterSensor' => []
-        ];
-
-        foreach ($variables as $varId) {
-            if (in_array($varId, $existingVars)) {
-                continue;
-            }
-            
-            $var = IPS_GetVariable($varId);
-            $obj = IPS_GetObject($varId);
-            $profile = (string)(!empty($var['VariableCustomProfile']) ? $var['VariableCustomProfile'] : $var['VariableProfile']);
-            $action = (int)(!empty($var['VariableCustomAction']) ? $var['VariableCustomAction'] : $var['VariableAction']);
-            $hasAction = ($action > 0);
-            
-            $name = $obj['ObjectName'];
-            $parentId = $obj['ParentID'];
-            $room = IPS_ObjectExists($parentId) ? IPS_GetObject($parentId)['ObjectName'] : 'Unbekannt'; 
-            
-            // Motion
-            if ($var['VariableType'] === 0 && !$hasAction && (
-                strpos(strtolower($profile), 'motion') !== false ||
-                strpos(strtolower($name), 'motion') !== false ||
-                strpos(strtolower($name), 'bewegung') !== false ||
-                (strpos(strtolower($name), 'status') !== false && (strpos(strtolower($room), 'bewegung') !== false || strpos(strtolower($room), 'motion') !== false))
-            )) {
-                // Ignore config variables like "Bewegungserkennung aktiv" (which has an action usually, but just in case)
-                if (strpos(strtolower($name), 'aktiv') === false) {
-                    $newDevices['DevicesMotionSensor'][] = [
-                        'name' => $name,
-                        'room' => $room,
-                        'Status_VarID' => $varId
-                    ];
-                    $existingVars[] = $varId;
-                }
-            }
-            // Window/Door Contact
-            elseif ($var['VariableType'] === 0 && !$hasAction && (
-                strpos(strtolower($profile), 'window') !== false ||
-                strpos(strtolower($name), 'fenster') !== false ||
-                strpos(strtolower($name), 'tür') !== false ||
-                strpos(strtolower($name), 'door') !== false ||
-                strpos(strtolower($name), 'contact') !== false ||
-                strpos(strtolower($name), 'kontakt') !== false ||
-                (strpos(strtolower($name), 'status') !== false && (strpos(strtolower($room), 'fenster') !== false || strpos(strtolower($room), 'tür') !== false || strpos(strtolower($room), 'kontakt') !== false))
-            )) {
-                $newDevices['DevicesContactSensor'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'Status_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Smoke Sensor
-            elseif (($var['VariableType'] === 0 || $var['VariableType'] === 1) && !$hasAction && (
-                strpos(strtolower($profile), 'smoke') !== false ||
-                strpos(strtolower($profile), 'rauch') !== false ||
-                strpos(strtolower($name), 'rauch') !== false ||
-                strpos(strtolower($name), 'smoke') !== false ||
-                strpos(strtolower($name), 'brand') !== false ||
-                (strpos(strtolower($name), 'alarm') !== false && (strpos(strtolower($room), 'rauch') !== false || strpos(strtolower($room), 'smoke') !== false || strpos(strtolower($room), 'brand') !== false))
-            )) {
-                $newDevices['DevicesSmokeSensor'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'Status_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Water Sensor
-            elseif (($var['VariableType'] === 0 || $var['VariableType'] === 1) && !$hasAction && (
-                strpos(strtolower($profile), 'water') !== false ||
-                strpos(strtolower($profile), 'wasser') !== false ||
-                strpos(strtolower($profile), 'leak') !== false ||
-                strpos(strtolower($name), 'wasser') !== false ||
-                strpos(strtolower($name), 'water') !== false ||
-                strpos(strtolower($name), 'leak') !== false ||
-                strpos(strtolower($name), 'leck') !== false ||
-                (strpos(strtolower($name), 'alarm') !== false && (strpos(strtolower($room), 'wasser') !== false || strpos(strtolower($room), 'water') !== false))
-            ) && strpos(strtolower($profile), 'volume') === false && strpos(strtolower($name), 'zähler') === false && strpos(strtolower($name), 'verbrauch') === false) {
-                $newDevices['DevicesWaterSensor'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'Status_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Generic Alarm Sensor (Sabotage, Glass Break, etc)
-            elseif (($var['VariableType'] === 0 || $var['VariableType'] === 1) && !$hasAction && (
-                strpos(strtolower($profile), 'alarm') !== false ||
-                strpos(strtolower($name), 'alarm') !== false ||
-                strpos(strtolower($name), 'sabotage') !== false ||
-                strpos(strtolower($name), 'tamper') !== false ||
-                strpos(strtolower($name), 'glasbruch') !== false ||
-                strpos(strtolower($name), 'erschütterung') !== false ||
-                strpos(strtolower($name), 'vibration') !== false ||
-                strpos(strtolower($name), 'panic') !== false ||
-                strpos(strtolower($name), 'panik') !== false
-            )) {
-                $newDevices['DevicesAlarmSensor'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'Status_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Meter (Strom, Wasser, Gas)
-            elseif (($var['VariableType'] === 1 || $var['VariableType'] === 2) && !$hasAction && (
-                strpos(strtolower($profile), 'electricity') !== false || strpos(strtolower($profile), 'watt') !== false || strpos(strtolower($profile), 'power') !== false ||
-                strpos(strtolower($profile), 'water.volume') !== false || strpos(strtolower($profile), 'gas') !== false ||
-                strpos(strtolower($name), 'strom') !== false || strpos(strtolower($name), 'energie') !== false || strpos(strtolower($name), 'leistung') !== false ||
-                strpos(strtolower($name), 'wasserzähler') !== false || strpos(strtolower($name), 'gaszähler') !== false ||
-                strpos(strtolower($name), 'zähler') !== false || strpos(strtolower($name), 'zaehler') !== false || strpos(strtolower($name), 'verbrauch') !== false ||
-                strpos(strtolower($name), 'meter') !== false
-            )) {
-                $type = 'Strom';
-                if (strpos(strtolower($profile), 'water') !== false || strpos(strtolower($name), 'wasser') !== false) {
-                    $type = 'Wasser';
-                } elseif (strpos(strtolower($profile), 'gas') !== false || strpos(strtolower($name), 'gas') !== false) {
-                    $type = 'Gas';
-                }
-                
-                $newDevices['DevicesMeter'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'type' => $type,
-                    'Value_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Blind / Jalousie / Rolllade
-            elseif (($var['VariableType'] === 1 || $var['VariableType'] === 2) && $hasAction && (
-                strpos(strtolower($profile), 'blind') !== false || 
-                strpos(strtolower($profile), 'shutter') !== false || 
-                strpos(strtolower($name), 'rollladen') !== false || 
-                strpos(strtolower($name), 'jalousie') !== false ||
-                strpos(strtolower($room), 'rollladen') !== false || 
-                strpos(strtolower($room), 'jalousie') !== false
-            )) {
-                $newDevices['DevicesBlind'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'OpenClose_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Thermostat / Heizung
-            elseif (($var['VariableType'] === 1 || $var['VariableType'] === 2) && $hasAction && (
-                strpos(strtolower($profile), 'temperature') !== false ||
-                strpos(strtolower($name), 'sollwert') !== false ||
-                strpos(strtolower($name), 'zieltemperatur') !== false ||
-                strpos(strtolower($name), 'setpoint') !== false ||
-                strpos(strtolower($room), 'heizen') !== false ||
-                strpos(strtolower($room), 'heizung') !== false ||
-                strpos(strtolower($room), 'thermostat') !== false
-            ) && strpos(strtolower($profile), 'color') === false && strpos(strtolower($name), 'color') === false && strpos(strtolower($name), 'farbe') === false && strpos(strtolower($name), 'farbtemperatur') === false) {
-                $newDevices['DevicesThermostat'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'TempSet_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Dimmer
-            elseif (($var['VariableType'] === 1 || $var['VariableType'] === 2) && $hasAction && strpos(strtolower($profile), 'intensity') !== false) {
-                // Try to find matching OnOff variable under the same parent
-                $onOffId = 0;
-                if ($parentId > 0) {
-                    $children = IPS_GetChildrenIDs($parentId);
-                    foreach ($children as $childId) {
-                        if (IPS_GetObject($childId)['ObjectType'] === 2) {
-                            $childVar = IPS_GetVariable($childId);
-                            if ($childVar['VariableType'] === 0 && ($childVar['VariableCustomAction'] > 0 || $childVar['VariableAction'] > 0)) {
-                                $onOffId = $childId;
-                                break;
-                            }
-                        }
-                    }
-                }
-                $newDevices['DevicesLightDimmer'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'Brightness_VarID' => $varId,
-                    'OnOff_VarID' => $onOffId > 0 ? $onOffId : ''
-                ];
-                $existingVars[] = $varId;
-            }
-            // Socket / Steckdose
-            elseif ($var['VariableType'] === 0 && $hasAction && (strpos(strtolower($room), 'steckdose') !== false || strpos(strtolower($name), 'steckdose') !== false)) {
-                $newDevices['DevicesSocket'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'OnOff_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Light (On/Off)
-            elseif ($var['VariableType'] === 0 && $hasAction && (
-                strpos(strtolower($name), 'licht') !== false || 
-                strpos(strtolower($name), 'lampe') !== false || 
-                strpos(strtolower($name), 'leuchte') !== false || 
-                strpos(strtolower($name), 'light') !== false ||
-                strpos(strtolower($room), 'licht') !== false || 
-                strpos(strtolower($room), 'lampe') !== false || 
-                strpos(strtolower($room), 'leuchte') !== false || 
-                strpos(strtolower($room), 'light') !== false
-            )) {
-                $newDevices['DevicesLight'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'OnOff_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Switch
-            elseif ($var['VariableType'] === 0 && $hasAction && (strpos(strtolower($profile), 'switch') !== false || strpos(strtolower($name), 'schalter') !== false || strpos(strtolower($name), 'status') !== false)) {
-                // Bei generischem "Status" prüfen ob es vielleicht ein Licht oder Schalter ist
-                $newDevices['DevicesSwitch'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'OnOff_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-            // Gerätestatus / Health
-            elseif (($var['VariableType'] === 0 || $var['VariableType'] === 1) && !$hasAction && (
-                strpos(strtolower($profile), 'reachable') !== false ||
-                strpos(strtolower($profile), 'online') !== false ||
-                strpos(strtolower($profile), 'availability') !== false ||
-                strpos(strtolower($name), 'gerätestatus') !== false ||
-                strpos(strtolower($name), 'geraetestatus') !== false ||
-                strpos(strtolower($name), 'erreichbarkeit') !== false ||
-                strpos(strtolower($name), 'online') !== false ||
-                strpos(strtolower($name), 'offline') !== false ||
-                strpos(strtolower($name), 'reachable') !== false ||
-                strpos(strtolower($name), 'available') !== false
-            )) {
-                $newDevices['DevicesHealth'][] = [
-                    'name' => $name,
-                    'room' => $room,
-                    'Status_VarID' => $varId
-                ];
-                $existingVars[] = $varId;
-            }
-        }
-        
-        $changed = false;
-        $count = 0;
-        foreach ($newDevices as $propName => $list) {
-            if ($category !== '' && $category !== $propName) {
-                continue;
-            }
-
-            if (count($list) > 0) {
-                $existingJson = $this->ReadPropertyString($propName);
-                $existingList = json_decode($existingJson, true) ?: [];
-                $merged = array_merge($existingList, $list);
-                IPS_SetProperty($this->InstanceID, $propName, json_encode($merged));
-                $changed = true;
-                $count += count($list);
-            }
-        }
-        
-        if ($changed) {
-            IPS_ApplyChanges($this->InstanceID);
-            echo "Es wurden $count neue Geraete in dieser Kategorie gefunden und hinzugefuegt! Bitte die Seite neu laden.";
-        } else {
-            echo "Es wurden keine neuen, ungemappten Geraete in dieser Kategorie gefunden.";
-        }
-    }
-}
