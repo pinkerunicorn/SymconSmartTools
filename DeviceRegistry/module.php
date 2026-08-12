@@ -79,8 +79,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $changed = false;
         $totalDevices = 0;
         foreach ($mappings as $propName) {
-            $json = $this->ReadPropertyString($propName);
-            $devices = json_decode($json, true);
+            $json = @$this->ReadPropertyString($propName);
+            if ($json === false || $json === '') $json = '[]';
+            $devices = json_decode((string)$json, true);
             if (!is_array($devices)) continue;
             
             $propChanged = false;
@@ -140,8 +141,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $jsonForm = file_get_contents(__DIR__ . '/form.json');
         $form     = json_decode($jsonForm, true);
         
-        $floorsJson = $this->ReadPropertyString('Floors');
-        $floorsList = json_decode($floorsJson, true);
+        $floorsJson = @$this->ReadPropertyString('Floors');
+        if ($floorsJson === false || $floorsJson === '') $floorsJson = '[]';
+        $floorsList = json_decode((string)$floorsJson, true);
         $floorOptions = [['caption' => '(Nicht zugewiesen)', 'value' => '']];
         if (is_array($floorsList)) {
             foreach ($floorsList as $f) {
@@ -151,8 +153,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
             }
         }
         
-        $roomsJson = $this->ReadPropertyString('Rooms');
-        $roomsList = json_decode($roomsJson, true);
+        $roomsJson = @$this->ReadPropertyString('Rooms');
+        if ($roomsJson === false || $roomsJson === '') $roomsJson = '[]';
+        $roomsList = json_decode((string)$roomsJson, true);
         $roomOptions = [['caption' => '(Nicht zugewiesen)', 'value' => '']];
         if (is_array($roomsList)) {
             foreach ($roomsList as $r) {
@@ -189,8 +192,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                 }
                                 
                                 $propName    = $item['name'];
-                            $devicesJson = $this->ReadPropertyString($propName);
-                            $devices     = json_decode($devicesJson, true);
+                            $devicesJson = @$this->ReadPropertyString($propName);
+                            if ($devicesJson === false || $devicesJson === '') $devicesJson = '[]';
+                            $devices     = json_decode((string)$devicesJson, true);
                             if (is_array($devices)) {
                                 foreach ($devices as &$dev) {
                                     $status   = 'OK';
@@ -256,15 +260,17 @@ class SymconDeviceRegistry extends IPSModuleStrict
     
     public function GetFloors(): array
     {
-        $json = $this->ReadPropertyString('Floors');
-        $list = json_decode($json, true);
+        $json = @$this->ReadPropertyString('Floors');
+        if ($json === false || $json === '') $json = '[]';
+        $list = json_decode((string)$json, true);
         return is_array($list) ? $list : [];
     }
     
     public function GetRooms(): array
     {
-        $json = $this->ReadPropertyString('Rooms');
-        $list = json_decode($json, true);
+        $json = @$this->ReadPropertyString('Rooms');
+        if ($json === false || $json === '') $json = '[]';
+        $list = json_decode((string)$json, true);
         return is_array($list) ? $list : [];
     }
     
@@ -278,8 +284,9 @@ class SymconDeviceRegistry extends IPSModuleStrict
         ];
 
         foreach ($mappings as $propName) {
-            $json = $this->ReadPropertyString($propName);
-            $list = json_decode($json, true);
+            $json = @$this->ReadPropertyString($propName);
+            if ($json === false || $json === '') $json = '[]';
+            $list = json_decode((string)$json, true);
             if (is_array($list)) {
                 foreach ($list as $dev) {
                     $dev['Type'] = $propName;
