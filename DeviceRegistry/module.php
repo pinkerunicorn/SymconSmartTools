@@ -35,6 +35,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         
         // Diagnose
         $this->RegisterPropertyString('DevicesHealth', '[]');
+        $this->RegisterPropertyString('DevicesEvent', '[]');
         
         $this->RegisterVariableInteger('RegisteredDevices', 'Gesamtanzahl Geraete', '', 1);
         
@@ -54,7 +55,8 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesWaterSensor' => 'Wassermelder',
             'DevicesAlarmSensor' => 'Alarmmelder',
             'DevicesMeter' => 'Zähler',
-            'DevicesHealth' => 'Offline-Module'
+            'DevicesHealth' => 'Offline-Module',
+            'DevicesEvent' => 'Haus-Ereignisse'
         ];
         
         $pos = 10;
@@ -71,7 +73,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
             'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
-            'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth'
+            'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth', 'DevicesEvent'
         ];
         
         $changed = false;
@@ -272,7 +274,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $mappings = [
             'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
-            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor'
+            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor', 'DevicesEvent'
         ];
 
         foreach ($mappings as $propName) {

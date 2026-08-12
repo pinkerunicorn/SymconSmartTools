@@ -1125,6 +1125,53 @@
                     ],
                     "rowCount": 15,
                     "changeOrder": true
+                },
+                {
+                    "type": "List",
+                    "name": "DevicesEvent",
+                    "caption": "Haus-Ereignisse (Sensoren)",
+                    "add": true,
+                    "delete": true,
+                    "changeOrder": true,
+                    "rowCount": 15,
+                    "columns": [
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Raum",
+                            "name": "room",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": []
+                            }
+                        },
+                        {
+                            "caption": "Status Variable",
+                            "name": "Status_VarID",
+                            "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
+                            "visible": false,
+                            "save": true,
+                            "width": "0px",
+                            "name": "id",
+                            "caption": "ID",
+                            "add": ""
+                        }
+                    ]
                 }
             ]
         },
