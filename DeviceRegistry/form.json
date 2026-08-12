@@ -627,6 +627,15 @@
                             }
                         },
                         {
+                            "caption": "Helligkeit Variable",
+                            "name": "Lux_VarID",
+                            "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "SelectVariable"
+                            }
+                        },
+                        {
                             "caption": "Status",
                             "name": "Status",
                             "width": "150px",
