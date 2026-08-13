@@ -105,6 +105,22 @@
         },
         {
             "type": "ExpansionPanel",
+            "caption": "Zeiten & Astro",
+            "items": [
+                {
+                    "type": "SelectVariable",
+                    "name": "SunriseVariableID",
+                    "caption": "Sonnenaufgang (Unix Timestamp)"
+                },
+                {
+                    "type": "SelectVariable",
+                    "name": "SunsetVariableID",
+                    "caption": "Sonnenuntergang (Unix Timestamp)"
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
             "caption": "Aktorik (Schalter, Dimmer, Jalousien)",
             "items": [
                 {

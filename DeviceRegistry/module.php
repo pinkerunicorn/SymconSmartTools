@@ -18,6 +18,10 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterPropertyFloat('PriceGas', 0.12);
         $this->RegisterPropertyFloat('BasePriceGas', 0.0);
 
+        // Astro
+        $this->RegisterPropertyInteger('SunsetVariableID', 0);
+        $this->RegisterPropertyInteger('SunriseVariableID', 0);
+
         // Aktorik
         $this->RegisterPropertyString('DevicesSwitch', '[]');
         
