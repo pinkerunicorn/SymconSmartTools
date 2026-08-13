@@ -38,6 +38,7 @@ class SmartGeminiIO extends IPSModuleStrict
         $this->RegisterPropertyString('ApiKey', '');
         $this->RegisterPropertyString('Model', 'gemini-3.6-flash');
         $this->RegisterPropertyInteger('TimeoutSeconds', 30);
+        $this->RegisterPropertyString('SystemContext', '');
 
         // Statistik & Status (intern, nicht primär für Webfront)
         $this->RegisterVariableInteger('TotalRequests', 'Gesamt-Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Information'], 1);
@@ -82,6 +83,11 @@ class SmartGeminiIO extends IPSModuleStrict
         $userPrompt        = $userPrompt ?? '';
         $systemInstruction = $systemInstruction ?? '';
         $schemaJson        = $schemaJson ?? '';
+
+        $systemContext = trim($this->ReadPropertyString('SystemContext'));
+        if (!empty($systemContext)) {
+            $systemInstruction = !empty($systemInstruction) ? $systemContext . "\n\n" . $systemInstruction : $systemContext;
+        }
 
         if (empty(trim($userPrompt))) {
             $this->SLog('ERROR', 'Query() abgebrochen.', 'Grund: userPrompt ist leer oder null');
@@ -262,6 +268,11 @@ class SmartGeminiIO extends IPSModuleStrict
                     "caption": "Modell (z.B. gemini-3.6-flash)"
                 }
             ]
+        },
+        {
+            "type": "ValidationTextBox",
+            "name": "SystemContext",
+            "caption": "Genereller System-Kontext (wird jedem Prompt angehängt)"
         },
         {
             "type": "NumberSpinner",
