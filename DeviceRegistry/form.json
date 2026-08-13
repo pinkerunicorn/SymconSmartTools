@@ -1270,6 +1270,15 @@
                             }
                         },
                         {
+                            "caption": "Normalzustand",
+                            "name": "NormalState",
+                            "width": "150px",
+                            "add": "false",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
                             "visible": false,
                             "save": true,
                             "width": "0px",
