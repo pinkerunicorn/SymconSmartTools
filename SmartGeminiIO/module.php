@@ -272,7 +272,8 @@ class SmartGeminiIO extends IPSModuleStrict
         {
             "type": "ValidationTextBox",
             "name": "SystemContext",
-            "caption": "Genereller System-Kontext (wird jedem Prompt angehängt)"
+            "caption": "Genereller System-Kontext (wird jedem Prompt angehängt)",
+            "multiline": true
         },
         {
             "type": "NumberSpinner",
