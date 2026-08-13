@@ -11,6 +11,13 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterPropertyString('Floors', '[]');
         $this->RegisterPropertyString('Rooms', '[]');
 
+        $this->RegisterPropertyFloat('PriceElectricity', 0.32);
+        $this->RegisterPropertyFloat('BasePriceElectricity', 0.0);
+        $this->RegisterPropertyFloat('PriceWater', 4.80);
+        $this->RegisterPropertyFloat('BasePriceWater', 0.0);
+        $this->RegisterPropertyFloat('PriceGas', 0.12);
+        $this->RegisterPropertyFloat('BasePriceGas', 0.0);
+
         // Aktorik
         $this->RegisterPropertyString('DevicesSwitch', '[]');
         
@@ -38,6 +45,45 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterPropertyString('DevicesEvent', '[]');
         
         $this->RegisterVariableInteger('RegisteredDevices', 'Gesamtanzahl Geraete', '', 1);
+
+        $this->RegisterVariableFloat('VarPriceElectricity', 'Strompreis', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'SUFFIX' => ' Cent/kWh',
+            'ICON' => 'Electricity',
+            'DIGITS' => 2
+        ], 200);
+        $this->RegisterVariableFloat('VarBasePriceElectricity', 'Strom Grundpreis', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'SUFFIX' => ' €/Jahr',
+            'ICON' => 'Electricity',
+            'DIGITS' => 2
+        ], 201);
+        
+        $this->RegisterVariableFloat('VarPriceWater', 'Wasserpreis', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'SUFFIX' => ' Cent/m³',
+            'ICON' => 'Tap',
+            'DIGITS' => 2
+        ], 202);
+        $this->RegisterVariableFloat('VarBasePriceWater', 'Wasser Grundpreis', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'SUFFIX' => ' €/Jahr',
+            'ICON' => 'Tap',
+            'DIGITS' => 2
+        ], 203);
+        
+        $this->RegisterVariableFloat('VarPriceGas', 'Gaspreis', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'SUFFIX' => ' Cent/kWh',
+            'ICON' => 'Flame',
+            'DIGITS' => 2
+        ], 204);
+        $this->RegisterVariableFloat('VarBasePriceGas', 'Gas Grundpreis', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'SUFFIX' => ' €/Jahr',
+            'ICON' => 'Flame',
+            'DIGITS' => 2
+        ], 205);
         
         $captions = [
             'DevicesSwitch' => 'Schalter',
@@ -68,6 +114,13 @@ class SymconDeviceRegistry extends IPSModuleStrict
     public function ApplyChanges(): void
     {
         parent::ApplyChanges();
+
+        $this->SetValue('VarPriceElectricity', $this->ReadPropertyFloat('PriceElectricity') * 100);
+        $this->SetValue('VarBasePriceElectricity', $this->ReadPropertyFloat('BasePriceElectricity'));
+        $this->SetValue('VarPriceWater', $this->ReadPropertyFloat('PriceWater') * 100);
+        $this->SetValue('VarBasePriceWater', $this->ReadPropertyFloat('BasePriceWater'));
+        $this->SetValue('VarPriceGas', $this->ReadPropertyFloat('PriceGas') * 100);
+        $this->SetValue('VarBasePriceGas', $this->ReadPropertyFloat('BasePriceGas'));
 
         $mappings = [
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',

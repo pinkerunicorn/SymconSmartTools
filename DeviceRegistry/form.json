@@ -78,6 +78,33 @@
         },
         {
             "type": "ExpansionPanel",
+            "caption": "Energie & Kosten",
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "PriceElectricity", "caption": "Strompreis (€/kWh)", "digits": 4 },
+                        { "type": "NumberSpinner", "name": "BasePriceElectricity", "caption": "Strom Grundpreis (€/Jahr)", "digits": 2 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "PriceWater", "caption": "Wasserpreis (€/m³)", "digits": 4 },
+                        { "type": "NumberSpinner", "name": "BasePriceWater", "caption": "Wasser Grundpreis (€/Jahr)", "digits": 2 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "PriceGas", "caption": "Gaspreis (€/kWh)", "digits": 4 },
+                        { "type": "NumberSpinner", "name": "BasePriceGas", "caption": "Gas Grundpreis (€/Jahr)", "digits": 2 }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
             "caption": "Aktorik (Schalter, Dimmer, Jalousien)",
             "items": [
                 {
