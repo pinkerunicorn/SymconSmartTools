@@ -267,7 +267,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                                 if ($val > 0) {
                                                     $primaryFieldFound = true;
                                                     if (!IPS_VariableExists($val)) {
-                                                        $status   = 'Variable fehlt';
+                                                        $status   = 'Var fehlt: ' . str_replace('_VarID', '', $varField);
                                                         $rowColor = '#FF4040'; 
                                                         $hasError = true;
                                                         break;
