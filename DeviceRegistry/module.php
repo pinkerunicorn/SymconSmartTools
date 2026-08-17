@@ -40,6 +40,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterPropertyString('DevicesSmokeSensor', '[]');
         $this->RegisterPropertyString('DevicesWaterSensor', '[]');
         $this->RegisterPropertyString('DevicesAlarmSensor', '[]');
+        $this->RegisterPropertyString('DevicesGenericSensor', '[]');
         
         // Zähler
         $this->RegisterPropertyString('DevicesMeter', '[]');
@@ -104,6 +105,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesSmokeSensor' => 'Rauchmelder',
             'DevicesWaterSensor' => 'Wassermelder',
             'DevicesAlarmSensor' => 'Alarmmelder',
+            'DevicesGenericSensor' => 'Allgemeine Sensoren / Regler',
             'DevicesMeter' => 'Zähler',
             'DevicesHealth' => 'Offline-Module',
             'DevicesEvent' => 'Haus-Ereignisse'
@@ -130,7 +132,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
             'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
-            'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth', 'DevicesEvent'
+            'DevicesAlarmSensor', 'DevicesGenericSensor', 'DevicesMeter', 'DevicesHealth', 'DevicesEvent'
         ];
         
         $changed = false;
@@ -337,8 +339,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $mappings = [
             'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
-            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
-            'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth', 'DevicesEvent'
+            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor', 'DevicesAlarmSensor', 'DevicesGenericSensor', 'DevicesEvent'
         ];
 
         foreach ($mappings as $propName) {
