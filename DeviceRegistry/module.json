@@ -9,7 +9,14 @@
     ],
     "parentRequirements": [],
     "childRequirements": [],
-    "implemented": [],
+    "implemented": [
+        "GetFloors",
+        "GetRooms",
+        "GetDevices",
+        "GetDevicesByType",
+        "GetDeviceVariables",
+        "CleanUpDeadLinks"
+    ],
     "prefix": "SDR",
     "author": "Florian Graßinger"
 }
