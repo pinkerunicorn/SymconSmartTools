@@ -254,10 +254,11 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                     $rowColor = ''; 
                                     $hasError = false;
 
-                                        $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Lux_VarID', 'Value_VarID', 'ActualTemp_VarID', 'BoostMode_VarID', 'ControlMode_VarID', 'Humidity_VarID', 'Power_VarID', 'Energy_VarID'];
+                                        $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Lux_VarID', 'Value_VarID', 'ActualTemp_VarID', 'BoostMode_VarID', 'ControlMode_VarID', 'Humidity_VarID', 'Power_VarID', 'Energy_VarID', 'Battery_VarID', 'Reachable_VarID'];
                                         $primaryFieldFound = false;
                                         
                                         $isDimmer = in_array($propName, ['DevicesLightDimmer', 'DevicesLightColor']);
+                                        $isGeneric = ($propName === 'DevicesGenericSensor');
                                         $hasBrightness = (isset($dev['Brightness_VarID']) && (int)$dev['Brightness_VarID'] > 0 && IPS_VariableExists((int)$dev['Brightness_VarID']));
 
                                         foreach ($varFields as $varField) {
@@ -274,6 +275,8 @@ class SymconDeviceRegistry extends IPSModuleStrict
                                                 } else {
                                                     if ($varField === 'OnOff_VarID' && $isDimmer && $hasBrightness) {
                                                         // OK: Dimmer darf nur Brightness haben
+                                                    } elseif ($isGeneric && in_array($varField, ['Value_VarID', 'Status_VarID'])) {
+                                                        // OK: Generic Sensor needs no specific status/value variable
                                                     } elseif (in_array($varField, ['OnOff_VarID', 'OpenClose_VarID', 'Status_VarID', 'Value_VarID', 'TempSet_VarID', 'ActualTemp_VarID'])) {
                                                         $status   = 'Unvollstaendig';
                                                         $rowColor = '#FF8000';
