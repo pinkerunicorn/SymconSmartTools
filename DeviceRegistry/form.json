@@ -1070,11 +1070,6 @@
     },
     {
       "type": "ExpansionPanel",
-      "caption": "Zähler & Verbrauch (Strom, Wasser, Gas)",
-      "items": []
-    },
-    {
-      "type": "ExpansionPanel",
       "caption": "Ereignisse, Status & Sonstiges",
       "items": [
         {
