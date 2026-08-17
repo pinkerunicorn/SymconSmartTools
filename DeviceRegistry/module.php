@@ -38,12 +38,8 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterPropertyString('DevicesMotionSensor', '[]');
         $this->RegisterPropertyString('DevicesContactSensor', '[]');
         $this->RegisterPropertyString('DevicesSmokeSensor', '[]');
-        $this->RegisterPropertyString('DevicesWaterSensor', '[]');
         $this->RegisterPropertyString('DevicesAlarmSensor', '[]');
         $this->RegisterPropertyString('DevicesGenericSensor', '[]');
-        
-        // Zähler
-        $this->RegisterPropertyString('DevicesMeter', '[]');
         
         // Diagnose
         $this->RegisterPropertyString('DevicesHealth', '[]');
@@ -103,10 +99,8 @@ class SymconDeviceRegistry extends IPSModuleStrict
             'DevicesMotionSensor' => 'Bewegungsmelder',
             'DevicesContactSensor' => 'Fenster-/Türkontakte',
             'DevicesSmokeSensor' => 'Rauchmelder',
-            'DevicesWaterSensor' => 'Wassermelder',
             'DevicesAlarmSensor' => 'Alarmmelder',
             'DevicesGenericSensor' => 'Allgemeine Sensoren / Regler',
-            'DevicesMeter' => 'Zähler',
             'DevicesHealth' => 'Offline-Module',
             'DevicesEvent' => 'Haus-Ereignisse'
         ];
@@ -131,8 +125,8 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $mappings = [
             'Floors', 'Rooms', 'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
-            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
-            'DevicesAlarmSensor', 'DevicesGenericSensor', 'DevicesMeter', 'DevicesHealth', 'DevicesEvent'
+            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor',
+            'DevicesAlarmSensor', 'DevicesGenericSensor', 'DevicesHealth', 'DevicesEvent'
         ];
         
         $changed = false;
@@ -339,7 +333,7 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $mappings = [
             'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
-            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor', 'DevicesAlarmSensor', 'DevicesGenericSensor', 'DevicesEvent'
+            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesAlarmSensor', 'DevicesGenericSensor', 'DevicesEvent'
         ];
 
         foreach ($mappings as $propName) {
