@@ -337,7 +337,8 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $mappings = [
             'DevicesSwitch', 'DevicesSocket', 'DevicesLight', 'DevicesLightDimmer',
             'DevicesLightColor', 'DevicesBlind', 'DevicesThermostat',
-            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor', 'DevicesEvent'
+            'DevicesWallSwitch', 'DevicesMotionSensor', 'DevicesContactSensor', 'DevicesSmokeSensor', 'DevicesWaterSensor',
+            'DevicesAlarmSensor', 'DevicesMeter', 'DevicesHealth', 'DevicesEvent'
         ];
 
         foreach ($mappings as $propName) {
