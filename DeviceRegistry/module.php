@@ -309,6 +309,15 @@ class SymconDeviceRegistry extends IPSModuleStrict
             unset($element);
         }
 
+        if (!isset($form['actions'])) {
+            $form['actions'] = [];
+        }
+        $form['actions'][] = [
+            "type"    => "Button",
+            "caption" => "Tote Variablen-Verknüpfungen bereinigen (Leichen entfernen)",
+            "onClick" => 'SDR_CleanUpDeadLinks($id);'
+        ];
+
         return json_encode($form);
     }
     
@@ -429,4 +438,41 @@ class SymconDeviceRegistry extends IPSModuleStrict
         return [];
     }
 
+    public function CleanUpDeadLinks(): void
+    {
+        $varFields = ['OnOff_VarID', 'Brightness_VarID', 'ColorRGB_VarID', 'ColorTemp_VarID', 'OpenClose_VarID', 'TempSet_VarID', 'Status_VarID', 'Lux_VarID', 'Value_VarID', 'ActualTemp_VarID', 'BoostMode_VarID', 'ControlMode_VarID', 'Humidity_VarID', 'Power_VarID', 'Energy_VarID', 'Battery_VarID', 'Reachable_VarID'];
+        
+        $changes = 0;
+        foreach ($this->GetPropertyNames() as $propName) {
+            if (strpos($propName, 'Devices') === 0) {
+                $json = $this->ReadPropertyString($propName);
+                $list = json_decode($json, true);
+                if (is_array($list)) {
+                    $updated = false;
+                    foreach ($list as &$dev) {
+                        foreach ($varFields as $varField) {
+                            if (isset($dev[$varField])) {
+                                $val = (int)$dev[$varField];
+                                if ($val > 0 && !IPS_VariableExists($val)) {
+                                    $dev[$varField] = 0;
+                                    $updated = true;
+                                    $changes++;
+                                }
+                            }
+                        }
+                    }
+                    if ($updated) {
+                        IPS_SetProperty($this->InstanceID, $propName, json_encode($list));
+                    }
+                }
+            }
+        }
+        
+        if ($changes > 0) {
+            IPS_ApplyChanges($this->InstanceID);
+            echo "Erfolg: Es wurden $changes tote Verknüpfungen (Leichen) bereinigt!";
+        } else {
+            echo "Alles sauber! Keine toten Verknüpfungen gefunden.";
+        }
     }
+}
