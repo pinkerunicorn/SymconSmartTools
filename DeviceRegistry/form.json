@@ -945,6 +945,15 @@
                             "add": ""
                         },
                         {
+                            "caption": "Alarm ignorieren",
+                            "name": "ExcludeFromAlarm",
+                            "width": "120px",
+                            "add": false,
+                            "edit": {
+                                "type": "CheckBox"
+                            }
+                        },
+                        {
                             "visible": false,
                             "save": true,
                             "width": "0px",
