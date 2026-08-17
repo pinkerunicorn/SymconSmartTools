@@ -12,37 +12,37 @@ class SymconSmartSimulator extends IPSModuleStrict
         // Variablen registrieren
         $this->RegisterVariableBoolean('TestWindow', 'Test-Fenster', [
             'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-            'ICON' => 'Window'
+            'ICON' => 'window-maximize'
         ], 10);
         $this->EnableAction('TestWindow');
 
         $this->RegisterVariableBoolean('TestLeakage', 'Test-Wassersensor', [
             'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-            'ICON' => 'Water'
+            'ICON' => 'water'
         ], 11);
         $this->EnableAction('TestLeakage');
 
         $this->RegisterVariableBoolean('TestMotion', 'Test-Bewegungsmelder', [
             'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-            'ICON' => 'Motion'
+            'ICON' => 'person-running'
         ], 12);
         $this->EnableAction('TestMotion');
 
         $this->RegisterVariableBoolean('TestLowBat', 'Test-Batteriestatus', [
             'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-            'ICON' => 'Battery'
+            'ICON' => 'battery-full'
         ], 13);
         $this->EnableAction('TestLowBat');
 
         $this->RegisterVariableBoolean('TestSmoke', 'Test-Rauchmelder', [
             'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-            'ICON' => 'Flame'
+            'ICON' => 'smog'
         ], 14);
         $this->EnableAction('TestSmoke');
 
         $this->RegisterVariableBoolean('TestAvailability', 'Test-Verfügbarkeit', [
             'PRESENTATION' => VARIABLE_PRESENTATION_SWITCH,
-            'ICON' => 'Network'
+            'ICON' => 'network-wired'
         ], 15);
         $this->EnableAction('TestAvailability');
     }

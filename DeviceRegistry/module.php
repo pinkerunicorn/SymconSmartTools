@@ -53,39 +53,39 @@ class SymconDeviceRegistry extends IPSModuleStrict
         $this->RegisterVariableFloat('VarPriceElectricity', 'Strompreis', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'SUFFIX' => ' Cent/kWh',
-            'ICON' => 'Electricity',
+            'ICON' => 'bolt',
             'DIGITS' => 4
         ], 200);
         $this->RegisterVariableFloat('VarBasePriceElectricity', 'Strom Grundpreis', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'SUFFIX' => ' €/Jahr',
-            'ICON' => 'Electricity',
+            'ICON' => 'bolt',
             'DIGITS' => 2
         ], 201);
         
         $this->RegisterVariableFloat('VarPriceWater', 'Wasserpreis', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'SUFFIX' => ' Cent/m³',
-            'ICON' => 'Tap',
+            'ICON' => 'faucet',
             'DIGITS' => 4
         ], 202);
         $this->RegisterVariableFloat('VarBasePriceWater', 'Wasser Grundpreis', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'SUFFIX' => ' €/Jahr',
-            'ICON' => 'Tap',
+            'ICON' => 'faucet',
             'DIGITS' => 2
         ], 203);
         
         $this->RegisterVariableFloat('VarPriceGas', 'Gaspreis', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'SUFFIX' => ' Cent/kWh',
-            'ICON' => 'Flame',
+            'ICON' => 'fire',
             'DIGITS' => 4
         ], 204);
         $this->RegisterVariableFloat('VarBasePriceGas', 'Gas Grundpreis', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'SUFFIX' => ' €/Jahr',
-            'ICON' => 'Flame',
+            'ICON' => 'fire',
             'DIGITS' => 2
         ], 205);
         

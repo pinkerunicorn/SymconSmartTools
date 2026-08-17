@@ -28,22 +28,22 @@ class MVVAbfahrten extends IPSModuleStrict
 
         $this->RegisterVariableString('DepartureTime', 'Abfahrtszeit', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Clock'
+            'ICON' => 'stopwatch'
         ], 1);
         
         $this->RegisterVariableString('DepartureIn', 'In Minuten', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Hourglass'
+            'ICON' => 'hourglass-half'
         ], 2);
         
         $this->RegisterVariableInteger('DepartureDelay', 'Verspätung', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Warning'
+            'ICON' => 'train-tram'
         ], 3);
         
         $this->RegisterVariableString('NextDeparture', 'Nächste Abfahrt (Komplett)', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Distance'
+            'ICON' => 'route'
         ], 4);
     }
 

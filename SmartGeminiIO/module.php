@@ -41,11 +41,11 @@ class SmartGeminiIO extends IPSModuleStrict
         $this->RegisterPropertyString('SystemContext', '');
 
         // Statistik & Status (intern, nicht primär für Webfront)
-        $this->RegisterVariableInteger('TotalRequests', 'Gesamt-Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Information'], 1);
-        $this->RegisterVariableInteger('SuccessfulRequests', 'Erfolgreiche Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Ok'], 2);
-        $this->RegisterVariableInteger('FailedRequests', 'Fehlgeschlagene Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Warning'], 3);
-        $this->RegisterVariableString('LastError', 'Letzter Fehler', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Warning'], 4);
-        $this->RegisterVariableString('LastModel', 'Letztes Modell', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'Information'], 5);
+        $this->RegisterVariableInteger('TotalRequests', 'Gesamt-Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'server'], 1);
+        $this->RegisterVariableInteger('SuccessfulRequests', 'Erfolgreiche Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'circle-check'], 2);
+        $this->RegisterVariableInteger('FailedRequests', 'Fehlgeschlagene Anfragen', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'triangle-exclamation'], 3);
+        $this->RegisterVariableString('LastError', 'Letzter Fehler', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'triangle-exclamation'], 4);
+        $this->RegisterVariableString('LastModel', 'Letztes Modell', ['PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION, 'ICON' => 'microchip'], 5);
     }
 
     public function ApplyChanges(): void

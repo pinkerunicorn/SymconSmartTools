@@ -26,32 +26,32 @@ class DockerUpdateChecker extends IPSModuleStrict
 
         $this->RegisterVariableString('LocalVersion', 'Aktuelle Version', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Information'
+            'ICON' => 'microchip'
         ], 1);
         
         $this->RegisterVariableInteger('LocalBuild', 'Lokales Build-Datum', [
             'PRESENTATION' => VARIABLE_PRESENTATION_DATE_TIME,
-            'ICON' => 'Clock'
+            'ICON' => 'clock'
         ], 2);
         
         $this->RegisterVariableInteger('DockerVersion', 'Neueste Docker Version', [
             'PRESENTATION' => VARIABLE_PRESENTATION_DATE_TIME,
-            'ICON' => 'Network'
+            'ICON' => 'network-wired'
         ], 3);
         
         $this->RegisterVariableBoolean('UpdateAvailable', 'Update verfügbar?', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Warning',
+            'ICON' => 'arrow-up-right-dots',
             'COLOR' => -1,
             'CONTENT_COLOR' => -1,
             'DISPLAY_TYPE' => 0,
             'PREVIEW_STYLE' => 1,
             'SHOW_PREVIEW' => true,
             'OPTIONS' => json_encode([
-                ['Value' => false, 'Caption' => 'Aktuell', 'IconValue' => 'Warning', 'IconActive' => true,
+                ['Value' => false, 'Caption' => 'Aktuell', 'IconValue' => 'triangle-exclamation', 'IconActive' => true,
                  'ColorActive' => true, 'ColorDisplay' => 0x00CC00, 'ContentColorActive' => false,
                  'ContentColorDisplay' => -1, 'ContentColorValue' => -1, 'ColorValue' => 0x00CC00],
-                ['Value' => true, 'Caption' => 'Update verfügbar!', 'IconValue' => 'Warning', 'IconActive' => true,
+                ['Value' => true, 'Caption' => 'Update verfügbar!', 'IconValue' => 'arrow-up-right-dots', 'IconActive' => true,
                  'ColorActive' => true, 'ColorDisplay' => 0xFFA500, 'ContentColorActive' => false,
                  'ContentColorDisplay' => -1, 'ContentColorValue' => -1, 'ColorValue' => 0xFFA500]
             ])
@@ -60,7 +60,7 @@ class DockerUpdateChecker extends IPSModuleStrict
         $this->RegisterVariableInteger('StartUpdate', 'Update durchführen', [
             'PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION,
             'OPTIONS' => json_encode([
-                ['Value' => 1, 'Caption' => 'Jetzt aktualisieren', 'IconActive' => true, 'IconValue' => 'Gear', 'Color' => 0xFF0000]
+                ['Value' => 1, 'Caption' => 'Jetzt aktualisieren', 'IconActive' => true, 'IconValue' => 'gear', 'Color' => 0xFF0000]
             ])
         ], 5);
         $this->EnableAction('StartUpdate');

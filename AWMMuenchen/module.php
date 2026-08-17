@@ -24,51 +24,51 @@ class AWMMuenchen extends IPSModuleStrict
         // Heutige Abholungen
         $this->RegisterVariableBoolean('RestmuellHeute', 'Restmülltonne (Heute)', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Trash',
+            'ICON' => 'trash-can',
             'COLOR' => -1,
             'CONTENT_COLOR' => -1,
             'DISPLAY_TYPE' => 0,
             'PREVIEW_STYLE' => 1,
             'SHOW_PREVIEW' => true,
             'OPTIONS' => json_encode([
-                ['Value' => false, 'Caption' => 'Nein', 'IconValue' => 'Trash', 'IconActive' => true,
+                ['Value' => false, 'Caption' => 'Nein', 'IconValue' => 'trash-can', 'IconActive' => true,
                  'ColorActive' => false, 'ColorDisplay' => -1, 'ContentColorActive' => false,
                  'ContentColorDisplay' => -1, 'ContentColorValue' => -1, 'ColorValue' => -1],
-                ['Value' => true, 'Caption' => 'Heute!', 'IconValue' => 'Trash', 'IconActive' => true,
+                ['Value' => true, 'Caption' => 'Heute!', 'IconValue' => 'trash-can', 'IconActive' => true,
                  'ColorActive' => true, 'ColorDisplay' => 0xFFCC00, 'ContentColorActive' => false,
                  'ContentColorDisplay' => -1, 'ContentColorValue' => -1, 'ColorValue' => 0xFFCC00]
             ])
         ], 10);
         $this->RegisterVariableBoolean('PapierHeute', 'Papiertonne (Heute)', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Trash',
+            'ICON' => 'trash-can',
             'COLOR' => -1,
             'CONTENT_COLOR' => -1,
             'DISPLAY_TYPE' => 0,
             'PREVIEW_STYLE' => 1,
             'SHOW_PREVIEW' => true,
             'OPTIONS' => json_encode([
-                ['Value' => false, 'Caption' => 'Nein', 'IconValue' => 'Trash', 'IconActive' => true,
+                ['Value' => false, 'Caption' => 'Nein', 'IconValue' => 'trash-can', 'IconActive' => true,
                  'ColorActive' => false, 'ColorDisplay' => -1, 'ContentColorActive' => false,
                  'ContentColorDisplay' => -1, 'ContentColorValue' => -1, 'ColorValue' => -1],
-                ['Value' => true, 'Caption' => 'Heute!', 'IconValue' => 'Trash', 'IconActive' => true,
+                ['Value' => true, 'Caption' => 'Heute!', 'IconValue' => 'trash-can', 'IconActive' => true,
                  'ColorActive' => true, 'ColorDisplay' => 0xFFCC00, 'ContentColorActive' => false,
                  'ContentColorDisplay' => -1, 'ContentColorValue' => -1, 'ColorValue' => 0xFFCC00]
             ])
         ], 20);
         $this->RegisterVariableBoolean('BioHeute', 'Biotonne (Heute)', [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
-            'ICON' => 'Trash',
+            'ICON' => 'trash-can',
             'COLOR' => -1,
             'CONTENT_COLOR' => -1,
             'DISPLAY_TYPE' => 0,
             'PREVIEW_STYLE' => 1,
             'SHOW_PREVIEW' => true,
             'OPTIONS' => json_encode([
-                ['Value' => false, 'Caption' => 'Nein', 'IconValue' => 'Trash', 'IconActive' => true,
+                ['Value' => false, 'Caption' => 'Nein', 'IconValue' => 'trash-can', 'IconActive' => true,
                  'ColorActive' => false, 'ColorDisplay' => -1, 'ContentColorActive' => false,
                  'ContentColorDisplay' => -1, 'ContentColorValue' => -1, 'ColorValue' => -1],
-                ['Value' => true, 'Caption' => 'Heute!', 'IconValue' => 'Trash', 'IconActive' => true,
+                ['Value' => true, 'Caption' => 'Heute!', 'IconValue' => 'trash-can', 'IconActive' => true,
                  'ColorActive' => true, 'ColorDisplay' => 0xFFCC00, 'ContentColorActive' => false,
                  'ContentColorDisplay' => -1, 'ContentColorValue' => -1, 'ColorValue' => 0xFFCC00]
             ])

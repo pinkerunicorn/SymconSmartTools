@@ -69,12 +69,12 @@ class Energierechner extends IPSModuleStrict
         $presCons = [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'SUFFIX' => ' kWh',
-            'ICON' => 'Electricity'
+            'ICON' => 'bolt'
         ];
         $presCost = [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
             'SUFFIX' => ' €',
-            'ICON' => 'Euro'
+            'ICON' => 'euro-sign'
         ];
 
         $this->RegisterVariableFloat('ConsumptionDay', 'Verbrauch (Heute)', $presCons, 10);
