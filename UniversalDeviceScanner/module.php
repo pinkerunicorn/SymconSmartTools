@@ -119,23 +119,24 @@ class UniversalDeviceScanner extends IPSModuleStrict
                 }
                 
                 // Variablen der Instanz mappen
-                $variables = $this->mapInstanceVariables($instanceID);
+                $idents = $this->collectInstanceIdents($instanceID);
                 
                 // Für HM-IP: Maintenance-Kanal suchen (:0 hat UNREACH, LOW_BAT)
                 $maintenanceID = $this->findMaintenanceChannel($instanceID);
                 if ($maintenanceID !== null) {
-                    $maintVars = $this->mapInstanceVariables($maintenanceID);
-                    // Maintenance-Variablen übernehmen wenn nicht schon vorhanden
-                    foreach ($maintVars as $key => $varID) {
-                        if (!isset($variables[$key])) {
-                            $variables[$key] = $varID;
+                    $maintIdents = $this->collectInstanceIdents($maintenanceID);
+                    // Maintenance-Idents übernehmen wenn nicht schon vorhanden
+                    foreach ($maintIdents as $ident => $varID) {
+                        if (!isset($idents[$ident])) {
+                            $idents[$ident] = $varID;
                         }
                     }
                 }
                 
                 // Typ erkennen
                 $deviceName = $device['name'] ?? IPS_GetName($instanceID);
-                $deviceType = $this->detectDeviceType($variables, $deviceName);
+                $deviceType = $this->detectDeviceType($idents, $deviceName);
+                $variables = $this->mapVariablesByType($idents, $deviceType);
                 
                 // Standort auflösen
                 $location = IPS_GetLocation($instanceID);
@@ -258,59 +259,26 @@ class UniversalDeviceScanner extends IPSModuleStrict
         return [];
     }
     
-    private function mapInstanceVariables(int $instanceID): array
+    private function collectInstanceIdents(int $instanceID): array
     {
-        $vars = [];
-        $mappings = [
-            'OnOff_VarID'        => ['STATE', 'Status', 'SWITCH', 'Power'],
-            'Brightness_VarID'   => ['LEVEL', 'Brightness', 'Dimmer'],
-            'Position_VarID'     => ['LEVEL', 'Position', 'Shutter'],
-            'Temperature_VarID'  => ['ACTUAL_TEMPERATURE', 'Temperature', 'TEMPERATURE'],
-            'SetPoint_VarID'     => ['SET_POINT_TEMPERATURE', 'SetPoint', 'SET_TEMPERATURE'],
-            'Humidity_VarID'     => ['HUMIDITY', 'Humidity'],
-            'Battery_VarID'      => ['LOW_BAT', 'OPERATING_VOLTAGE', 'BatteryLevel', 'Battery'],
-            'Reachable_VarID'    => ['UNREACH'],
-            'Power_VarID'        => ['POWER', 'ENERGY_COUNTER', 'Wattage'],
-            'Motion_VarID'       => ['MOTION', 'MOTION_DETECTION', 'PRESENCE_DETECTION'],
-            'Smoke_VarID'        => ['SMOKE_DETECTOR_ALARM_STATUS'],
-            'Water_VarID'        => ['ALARMSTATE', 'MOISTURE_DETECTED'],
-            'Wind_VarID'         => ['WIND_SPEED'],
-            'Rain_VarID'         => ['RAINING'],
-            'Illumination_VarID' => ['ILLUMINATION', 'CURRENT_ILLUMINATION'],
-            'Status_VarID'       => ['STATE', 'Status'],
-            'OpenClose_VarID'    => ['STATE'],
-            'Energy_VarID'       => ['ENERGY_COUNTER', 'METER'],
-        ];
-        
+        $idents = []; // ['IDENT' => childVarID, ...]
         $children = @IPS_GetChildrenIDs($instanceID);
-        if (!is_array($children)) return $vars;
+        if (!is_array($children)) return $idents;
         
         foreach ($children as $childID) {
             $obj = @IPS_GetObject($childID);
-            if (!is_array($obj) || ($obj['ObjectType'] ?? -1) !== 2) continue; // nur Variablen
-            
+            if (!is_array($obj) || ($obj['ObjectType'] ?? -1) !== 2) continue;
             $ident = $obj['ObjectIdent'] ?? '';
-            if ($ident === '') continue;
-            
-            foreach ($mappings as $varKey => $identCandidates) {
-                if (in_array($ident, $identCandidates, true) && !isset($vars[$varKey])) {
-                    $vars[$varKey] = $childID;
-                    break;
-                }
+            if ($ident !== '') {
+                $idents[$ident] = $childID;
             }
         }
-        
-        // UNREACH Sonderbehandlung: Flag setzen
-        if (isset($vars['Reachable_VarID'])) {
-            $vars['reachableInverted'] = true;
-        }
-        
-        return $vars;
+        return $idents;
     }
-    
-    private function detectDeviceType(array $variables, string $name): string
+
+    private function detectDeviceType(array $idents, string $name): string
     {
-        // HM-IP Gerätetyp-Mapping (Prefix-Match)
+        // 1. HM-IP Präfix-Matching (höchste Priorität)
         $typeMap = [
             'HmIP-SWDO'  => 'DevicesContactSensor', 'HmIP-SWDM'  => 'DevicesContactSensor',
             'HmIP-SRH'   => 'DevicesContactSensor',
@@ -335,35 +303,134 @@ class UniversalDeviceScanner extends IPSModuleStrict
             'HmIP-WRC2'  => 'DevicesWallSwitch',      'HmIP-WRC6'  => 'DevicesWallSwitch',
             'HmIP-WRCD'  => 'DevicesWallSwitch',      'HmIP-WRCR'  => 'DevicesWallSwitch',
             'HmIP-KRCA'  => 'DevicesWallSwitch',      'HmIP-KRC4'  => 'DevicesWallSwitch',
+            'HmIP-ASIR'  => 'DevicesAlarmSensor',     'HmIP-MP3P'  => 'DevicesGenericSensor',
         ];
         
         foreach ($typeMap as $prefix => $type) {
             if (str_contains($name, $prefix)) return $type;
         }
         
-        // Fallback: Aus Variablen ableiten
-        if (!empty($variables['SetPoint_VarID']))   return 'DevicesThermostat';
-        if (!empty($variables['Motion_VarID']))      return 'DevicesMotionSensor';
-        if (!empty($variables['Smoke_VarID']))       return 'DevicesSmokeSensor';
-        if (!empty($variables['Water_VarID']))       return 'DevicesAlarmSensor';
-        if (!empty($variables['Brightness_VarID']))  return 'DevicesLightDimmer';
-        if (!empty($variables['Position_VarID']))    return 'DevicesBlind';
-        if (!empty($variables['OnOff_VarID']))       return 'DevicesSwitch';
-        if (!empty($variables['Temperature_VarID'])) return 'DevicesGenericSensor';
-        if (!empty($variables['OpenClose_VarID']))   return 'DevicesContactSensor';
+        // 2. Ident-basierter Fallback (eindeutige Idents zuerst)
+        if (isset($idents['SET_POINT_TEMPERATURE']) || isset($idents['ACTUAL_TEMPERATURE']) && isset($idents['HUMIDITY'])) return 'DevicesThermostat';
+        if (isset($idents['SMOKE_DETECTOR_ALARM_STATUS'])) return 'DevicesSmokeSensor';
+        if (isset($idents['MOISTURE_DETECTED'])) return 'DevicesAlarmSensor';
+        if (isset($idents['MOTION']) || isset($idents['MOTION_DETECTION']) || isset($idents['PRESENCE_DETECTION'])) return 'DevicesMotionSensor';
+        if (isset($idents['LEVEL']) && !isset($idents['STATE'])) return 'DevicesBlind'; // Nur LEVEL ohne STATE = Jalousie
+        if (isset($idents['LEVEL']) && isset($idents['STATE'])) return 'DevicesLightDimmer'; // LEVEL + STATE = Dimmer
+        if (isset($idents['STATE']) && !isset($idents['LEVEL'])) {
+            // STATE ohne LEVEL: Kontakt oder Schalter?
+            // Wenn der Name auf Kontakt/Fenster/Tür hindeutet -> Kontakt
+            if (preg_match('/(?:Fenster|T\x{00fc}r|Door|Window|Kontakt|Contact|SRH|SWDO|SWDM)/iu', $name)) {
+                return 'DevicesContactSensor';
+            }
+            return 'DevicesSwitch'; // Default für STATE-only
+        }
+        if (isset($idents['WIND_SPEED']) || isset($idents['RAINING'])) return 'DevicesGenericSensor';
         
         return 'DevicesGenericSensor';
+    }
+
+    private function mapVariablesByType(array $idents, string $deviceType): array
+    {
+        $vars = [];
+        
+        // Typ-spezifische Mappings
+        $typeMappings = [
+            'DevicesSwitch' => [
+                'OnOff_VarID' => ['STATE', 'SWITCH', 'Power', 'Status'],
+            ],
+            'DevicesSocket' => [
+                'OnOff_VarID' => ['STATE', 'SWITCH'],
+                'Power_VarID' => ['POWER', 'CURRENT_POWER'],
+                'Energy_VarID' => ['ENERGY_COUNTER'],
+            ],
+            'DevicesContactSensor' => [
+                'OpenClose_VarID' => ['STATE'],
+            ],
+            'DevicesMotionSensor' => [
+                'Motion_VarID' => ['MOTION', 'MOTION_DETECTION', 'PRESENCE_DETECTION'],
+                'Illumination_VarID' => ['ILLUMINATION', 'CURRENT_ILLUMINATION'],
+            ],
+            'DevicesLightDimmer' => [
+                'OnOff_VarID' => ['STATE'],
+                'Brightness_VarID' => ['LEVEL', 'Brightness'],
+            ],
+            'DevicesLightColor' => [
+                'OnOff_VarID' => ['STATE', 'SWITCH'],
+                'Brightness_VarID' => ['LEVEL', 'Brightness'],
+            ],
+            'DevicesBlind' => [
+                'Position_VarID' => ['LEVEL', 'Position', 'Shutter'],
+            ],
+            'DevicesThermostat' => [
+                'Temperature_VarID' => ['ACTUAL_TEMPERATURE', 'TEMPERATURE'],
+                'SetPoint_VarID' => ['SET_POINT_TEMPERATURE', 'SET_TEMPERATURE'],
+                'Humidity_VarID' => ['HUMIDITY'],
+            ],
+            'DevicesSmokeSensor' => [
+                'Smoke_VarID' => ['SMOKE_DETECTOR_ALARM_STATUS'],
+            ],
+            'DevicesAlarmSensor' => [
+                'Status_VarID' => ['STATE', 'ALARMSTATE', 'MOISTURE_DETECTED'],
+            ],
+            'DevicesWallSwitch' => [
+                'Status_VarID' => ['PRESS_SHORT', 'PRESS_LONG'],
+            ],
+            'DevicesGenericSensor' => [
+                'Temperature_VarID' => ['ACTUAL_TEMPERATURE', 'TEMPERATURE'],
+                'Humidity_VarID' => ['HUMIDITY'],
+                'Status_VarID' => ['STATE', 'Status'],
+            ],
+            'DevicesHealth' => [
+                'Status_VarID' => ['STATE', 'Status'],
+            ],
+        ];
+        
+        $mapping = $typeMappings[$deviceType] ?? $typeMappings['DevicesGenericSensor'];
+        
+        foreach ($mapping as $varKey => $identCandidates) {
+            foreach ($identCandidates as $ident) {
+                if (isset($idents[$ident])) {
+                    $vars[$varKey] = $idents[$ident];
+                    break;
+                }
+            }
+        }
+        
+        // Generische Mappings für alle Typen
+        $genericMappings = [
+            'Battery_VarID'   => ['LOW_BAT', 'OPERATING_VOLTAGE', 'BatteryLevel', 'Battery'],
+            'Reachable_VarID' => ['UNREACH'],
+        ];
+        
+        foreach ($genericMappings as $varKey => $identCandidates) {
+            foreach ($identCandidates as $ident) {
+                if (isset($idents[$ident])) {
+                    $vars[$varKey] = $idents[$ident];
+                    break;
+                }
+            }
+        }
+        
+        if (isset($vars['Reachable_VarID'])) {
+            $vars['reachableInverted'] = true;
+        }
+        
+        return $vars;
     }
     
     private function findMaintenanceChannel(int $instanceID): ?int
     {
+        $hmDeviceGUID = '{EE4A81C6-5C90-4DB7-AD2F-F6BBD521412E}';
+        $modInfo = @IPS_GetInstance($instanceID)['ModuleInfo']['ModuleID'] ?? '';
+        if ($modInfo !== $hmDeviceGUID) return null;
+
         $address = @IPS_GetProperty($instanceID, 'Address');
         if (!is_string($address) || !str_contains($address, ':')) return null;
         
         $baseAddress = explode(':', $address)[0];
         $maintenanceAddress = $baseAddress . ':0';
         
-        $hmDeviceGUID = '{EE4A81C6-5C90-4DB7-AD2F-F6BBD521412E}';
         $instances = @IPS_GetInstanceListByModuleID($hmDeviceGUID);
         if (!is_array($instances)) return null;
         
