@@ -1348,6 +1348,35 @@
           "changeOrder": true
         }
       ]
+    },
+    {
+      "type": "ExpansionPanel",
+      "caption": "Standort-Zuordnung (Auto-Registration)",
+      "items": [
+        {
+          "type": "Label",
+          "caption": "Definiert, welche Ebene im Symcon-Objektbaum als Etage bzw. Raum interpretiert wird. Ebene 0 = Root, 1 = erste Kategorie, usw."
+        },
+        {
+          "type": "RowLayout",
+          "items": [
+            {
+              "type": "NumberSpinner",
+              "name": "LocationFloorLevel",
+              "caption": "Pfad-Ebene fuer Etage",
+              "minimum": 0,
+              "maximum": 10
+            },
+            {
+              "type": "NumberSpinner",
+              "name": "LocationRoomLevel",
+              "caption": "Pfad-Ebene fuer Raum",
+              "minimum": 0,
+              "maximum": 10
+            }
+          ]
+        }
+      ]
     }
   ]
 }
