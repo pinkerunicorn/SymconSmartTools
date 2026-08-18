@@ -10,5 +10,6 @@
     "childRequirements": [],
     "implemented": [],
     "prefix": "SIM",
-    "url": "https://github.com/pinkerunicorn/SymconSmartTools"
+    "url": "https://github.com/pinkerunicorn/SymconSmartTools",
+    "author": "Florian Graßinger"
 }
