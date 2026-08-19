@@ -58,6 +58,7 @@ class DockerUpdateChecker extends IPSModuleStrict
         ], 4);
         
         $this->RegisterVariableInteger('StartUpdate', 'Update durchführen', [
+            'ICON' => 'download',
             'PRESENTATION' => VARIABLE_PRESENTATION_ENUMERATION,
             'OPTIONS' => json_encode([
                 ['Value' => 1, 'Caption' => 'Jetzt aktualisieren', 'IconActive' => true, 'IconValue' => 'gear', 'Color' => 0xFF0000]

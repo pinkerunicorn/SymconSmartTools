@@ -75,16 +75,40 @@ class AWMMuenchen extends IPSModuleStrict
         ], 30);
 
         // Heute: Einzelne String-Variable als Zusammenfassung
-        $this->RegisterVariableString('Heute', 'Heute', '', 4);
-        $this->RegisterVariableString('VestaboardMessage', 'Vestaboard Nachricht', '', 5);
+        $this->RegisterVariableString('Heute', 'Heute', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'calendar-day'
+        ], 4);
+        $this->RegisterVariableString('VestaboardMessage', 'Vestaboard Nachricht', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'message'
+        ], 5);
 
         // Variablen für Wochentage (Wochenübersicht)
-        $this->RegisterVariableString('Montag', 'Montag', '', 11);
-        $this->RegisterVariableString('Dienstag', 'Dienstag', '', 12);
-        $this->RegisterVariableString('Mittwoch', 'Mittwoch', '', 13);
-        $this->RegisterVariableString('Donnerstag', 'Donnerstag', '', 14);
-        $this->RegisterVariableString('Freitag', 'Freitag', '', 15);
-        $this->RegisterVariableString('Samstag', 'Samstag', '', 16);
+        $this->RegisterVariableString('Montag', 'Montag', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'calendar'
+        ], 11);
+        $this->RegisterVariableString('Dienstag', 'Dienstag', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'calendar'
+        ], 12);
+        $this->RegisterVariableString('Mittwoch', 'Mittwoch', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'calendar'
+        ], 13);
+        $this->RegisterVariableString('Donnerstag', 'Donnerstag', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'calendar'
+        ], 14);
+        $this->RegisterVariableString('Freitag', 'Freitag', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'calendar'
+        ], 15);
+        $this->RegisterVariableString('Samstag', 'Samstag', [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
+            'ICON' => 'calendar'
+        ], 16);
     }
 
     public function ApplyChanges(): void{
